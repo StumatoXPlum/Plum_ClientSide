@@ -31,10 +31,12 @@ class PieChartScreen extends StatelessWidget {
                   children: [
                     Text(
                       "AMOUNT SPENT ON\nTRANSPORTATION",
-                      style: AppTextStyles.gilroyRegular.copyWith(
-                          color: Colors.white70,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold),
+                      style: AppTextStyles.gilroyBold.copyWith(
+                        color: Colors.white70,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.4,
+                      ),
                     ),
                     Text(
                       "₹11,250.00",
@@ -59,14 +61,18 @@ class PieChartScreen extends StatelessWidget {
                         children: [
                           Text(
                             "VIEW CASH FLOW",
-                            style: AppTextStyles.gilroyRegular.copyWith(
+                            style: AppTextStyles.gilroyBold.copyWith(
                               fontSize: 10,
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                               height: 2,
+                              letterSpacing: 1.4,
                             ),
                           ),
-                          Icon(Icons.keyboard_arrow_right_outlined)
+                          Icon(
+                            Icons.keyboard_arrow_right_outlined,
+                            size: 18,
+                          )
                         ],
                       ),
                     )

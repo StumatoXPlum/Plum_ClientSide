@@ -6,15 +6,15 @@ import 'package:task1/Utils/painters/guidelines_painter.dart';
 class RecurringPaymentScreen extends StatelessWidget {
   const RecurringPaymentScreen({
     super.key,
-    required this.type,
-    required this.amount,
-    required this.date,
+    this.type,
+    this.amount,
+    this.date,
     this.onCheckNowPressed,
   });
 
-  final String type;
-  final String amount;
-  final String date;
+  final String? type;
+  final String? amount;
+  final String? date;
   final VoidCallback? onCheckNowPressed;
 
   @override
@@ -94,8 +94,8 @@ class ContainerData extends StatelessWidget {
       painter: CustomContainer(),
       child: Container(
         width: 200,
-        height: 65,
-        padding: EdgeInsets.fromLTRB(16, 20, 16, 16),
+        height: 70,
+        padding: EdgeInsets.fromLTRB(16, 24, 24, 14),
         child: Row(
           children: [
             Container(
@@ -107,35 +107,43 @@ class ContainerData extends StatelessWidget {
               ),
             ),
             SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Cook',
-                  style: AppTextStyles.gilroyBold.copyWith(
-                    color: Colors.white,
-                    fontSize: 14,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Cook',
+                        style: AppTextStyles.gilroyBold.copyWith(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(),
+                      ),
+                      Text(
+                        '₹6,700',
+                        style: AppTextStyles.gilroyRegular.copyWith(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                // SizedBox(height: 2),
-                Text(
-                  'PAID ON 02 AUG',
-                  style: AppTextStyles.gilroyRegular.copyWith(
-                    color: Colors.white60,
-                    fontSize: 10,
-                    letterSpacing: 1,
+                  SizedBox(height: 2),
+                  Text(
+                    'PAID ON 02 AUG',
+                    style: AppTextStyles.gilroyRegular.copyWith(
+                      color: Colors.white60,
+                      fontSize: 10,
+                      letterSpacing: 1,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Spacer(),
-            Text(
-              '₹6,700',
-              style: AppTextStyles.gilroyRegular.copyWith(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+                ],
               ),
             ),
           ],

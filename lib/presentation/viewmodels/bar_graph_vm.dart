@@ -320,10 +320,12 @@ class BarLabel extends StatelessWidget {
     super.key,
     required this.label,
     required this.subLabel,
+    required this.color,
   });
 
   final String? label;
   final String? subLabel;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -334,7 +336,7 @@ class BarLabel extends StatelessWidget {
         Text(
           label ?? '',
           style: AppTextStyles.gilroyRegular.copyWith(
-              color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold),
+              color: color, fontSize: 10, fontWeight: FontWeight.bold),
         ),
         // const SizedBox(height: 2),
         // if (subLabel != null)

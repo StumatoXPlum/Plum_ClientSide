@@ -1,5 +1,5 @@
 class RecurringModel {
-  final String count;
+  final String count; // recurring payment count
   final String type;
   final String amount;
   final String date;

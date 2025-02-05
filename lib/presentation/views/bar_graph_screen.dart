@@ -20,6 +20,21 @@ class BarGraphScreen extends StatefulWidget {
 class _BarGraphScreenState extends State<BarGraphScreen> {
   final double _barWidth = 18;
   final double _barLabelHeight = 36;
+  final List<Color> customColors = [
+    Color(0xFF0E0C0C),
+    Color(0xFF181817),
+    Color(0xFF252422),
+    Color(0xFF262523),
+    Color(0xFFF3F2F3),
+  ];
+
+  final List<Color> barLabelColors = [
+    Colors.grey[600]!,
+    Colors.grey[500]!,
+    Colors.grey[400]!,
+    Colors.grey[300]!,
+    Colors.white
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +55,13 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                   children: [
                     Text(
                       "INVESTMENTS ARE HIGHER\nTHAN LAST MONTH",
-                      style: AppTextStyles.gilroyRegular.copyWith(
-                          fontSize: 14,
-                          color: Colors.white70,
-                          fontWeight: FontWeight.bold),
+                      style: AppTextStyles.gilroyBold.copyWith(
+                        fontSize: 12,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.4,
+                      ),
+                      maxLines: 2,
                     ),
                     Text(
                       "₹11,00,250.00",
@@ -65,11 +83,12 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                         children: [
                           Text(
                             "VIEW CASH FLOW",
-                            style: AppTextStyles.gilroyRegular.copyWith(
+                            style: AppTextStyles.gilroyBold.copyWith(
                               fontSize: 10,
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                               height: 2,
+                              letterSpacing: 1.4,
                             ),
                           ),
                           Icon(
@@ -125,6 +144,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                                           .dataPoints[value.toInt()].xLabel,
                                       subLabel: widget.graphVm
                                           .dataPoints[value.toInt()].xSubLabel,
+                                      color: barLabelColors[value.toInt()],
                                     );
                                   },
                                 ),
@@ -141,16 +161,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                                     width: _barWidth,
                                     borderRadius: const BorderRadius.vertical(
                                         top: Radius.circular(0)),
-                                    color: Color.fromRGBO(
-                                      255,
-                                      255,
-                                      255,
-                                      0.2 +
-                                          ((index /
-                                                  (widget.graphVm.numberOfBars -
-                                                      1)) *
-                                              0.9),
-                                    ),
+                                    color: customColors[index],
                                   ),
                                 ],
                               ),
