@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:task1/Utils/fonts.dart';
-import 'package:task1/view%20model/bar_graph_vm.dart';
+import 'package:task1/Utils/fonts/fonts.dart';
+import 'package:task1/presentation/viewmodels/bar_graph_vm.dart';
 
 class BarGraphScreen extends StatefulWidget {
   const BarGraphScreen({

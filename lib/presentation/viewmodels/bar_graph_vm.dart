@@ -1,6 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:task1/Utils/fonts.dart';
+import 'package:task1/Utils/fonts/fonts.dart';
 
 class MoneyBarGraph extends StatefulWidget {
   const MoneyBarGraph({

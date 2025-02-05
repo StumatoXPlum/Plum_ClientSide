@@ -78,9 +78,11 @@ flutter:
     - family: Denton
       fonts:
         - asset: assets/fonts/Denton/Denton-Bold.otf
+          weight: 700
     - family: Gilroy
       fonts:
         - asset: assets/fonts/Gilroy/Gilroy-Regular.ttf
+        - asset: assets/fonts/Gilroy/Gilroy-Bold.ttf
 
   #
   # For details regarding fonts from package dependencies,

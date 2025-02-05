@@ -15,4 +15,8 @@ class AppTextStyles {
     fontFamily: AppFonts.gilroy,
     fontWeight: FontWeight.normal,
   );
+  static TextStyle gilroyBold = TextStyle(
+    fontFamily: AppFonts.gilroy,
+    fontWeight: FontWeight.bold,
+  );
 }

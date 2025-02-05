@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:task1/Utils/fonts.dart';
-import 'package:task1/view%20model/pie_chart_vm.dart';
+import 'package:task1/Utils/fonts/fonts.dart';
+import 'package:task1/presentation/viewmodels/pie_chart_vm.dart';
 
 class PieChartScreen extends StatelessWidget {
   const PieChartScreen({super.key});
