@@ -37,6 +37,7 @@ dependencies:
   flutter_svg: ^2.0.17
   fl_chart: ^0.70.2
   dotted_line: ^3.2.3
+  device_preview: ^1.2.0
 
 dev_dependencies:
   flutter_test:

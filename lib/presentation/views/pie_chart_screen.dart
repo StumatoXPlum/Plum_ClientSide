@@ -13,6 +13,7 @@ class PieChartScreen extends StatelessWidget {
       HomeVisualSectionItemVm(percentage: 20.0),
       HomeVisualSectionItemVm(percentage: 30.0),
     ];
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: Container(
@@ -47,8 +48,9 @@ class PieChartScreen extends StatelessWidget {
                       ),
                     ),
                     Container(
+                      width: screenWidth * 0.32,
                       padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                          EdgeInsets.only(left: 8, top: 6, bottom: 6, right: 1),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.horizontal(
@@ -62,7 +64,7 @@ class PieChartScreen extends StatelessWidget {
                           Text(
                             "VIEW CASH FLOW",
                             style: AppTextStyles.gilroyBold.copyWith(
-                              fontSize: 10,
+                              fontSize: 8,
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                               height: 2,

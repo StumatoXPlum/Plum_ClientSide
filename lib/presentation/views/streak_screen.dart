@@ -26,12 +26,13 @@ class StreakScreen extends StatelessWidget {
         decoration: const BoxDecoration(color: Colors.black),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: Row(
+          child: Stack(
             children: [
-              Expanded(
+              Positioned(
+                bottom: 60,
                 child: Column(
-                  spacing: 25,
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 30,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
@@ -73,9 +74,13 @@ class StreakScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              CustomPaint(
-                painter: GuidelinesPainter(),
-                child: CustomCard(),
+              Positioned(
+                right: 6,
+                bottom: 70,
+                child: CustomPaint(
+                  painter: GuidelinesPainter(),
+                  child: CustomCard(),
+                ),
               ),
             ],
           ),
@@ -90,64 +95,68 @@ class CustomCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return CustomPaint(
       painter: CustomContainer(),
       child: Container(
-        width: 200,
-        height: 70,
-        padding: EdgeInsets.fromLTRB(16, 24, 24, 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        width: screenWidth * 0.48,
+        height: screenHeight * 0.086,
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 28,
-              height: 28,
+              width: 24,
+              height: 24,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.grey[800],
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'Cook',
                         style: AppTextStyles.gilroyBold.copyWith(
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: MediaQuery.of(context).size.width * 0.035,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Expanded(
-                        child: Container(),
                       ),
                       Text(
                         '₹6,700',
                         style: AppTextStyles.gilroyRegular.copyWith(
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: MediaQuery.of(context).size.width * 0.035,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 1),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.local_fire_department,
                         color: Colors.green,
-                        size: 11,
+                        size: 10,
                       ),
-                      SizedBox(width: 2),
+                      const SizedBox(width: 2),
                       Text(
                         '3X STREAK',
                         style: AppTextStyles.gilroyRegular.copyWith(
                           color: Colors.green,
-                          fontSize: 10,
+                          fontSize: MediaQuery.of(context).size.width * 0.026,
                           letterSpacing: 1,
                         ),
                       ),

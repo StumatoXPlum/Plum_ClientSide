@@ -90,56 +90,59 @@ class ContainerData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return CustomPaint(
       painter: CustomContainer(),
       child: Container(
-        width: 200,
-        height: 70,
-        padding: EdgeInsets.fromLTRB(16, 24, 24, 14),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        width: screenWidth * 0.48,
+        height: screenHeight * 0.086,
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 28,
-              height: 28,
+              width: 24,
+              height: 24,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.grey[800],
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'Cook',
                         style: AppTextStyles.gilroyBold.copyWith(
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: MediaQuery.of(context).size.width * 0.035,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Expanded(
-                        child: Container(),
                       ),
                       Text(
                         '₹6,700',
                         style: AppTextStyles.gilroyRegular.copyWith(
                           color: Colors.white,
-                          fontSize: 14,
+                          fontSize: MediaQuery.of(context).size.width * 0.035,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   Text(
                     'PAID ON 02 AUG',
                     style: AppTextStyles.gilroyRegular.copyWith(
-                      color: Colors.white60,
-                      fontSize: 10,
+                      color: Colors.grey,
+                      fontSize: MediaQuery.of(context).size.width * 0.026,
                       letterSpacing: 1,
                     ),
                   ),

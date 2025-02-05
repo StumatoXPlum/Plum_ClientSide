@@ -332,11 +332,13 @@ class BarLabel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const SizedBox(height: 9),
-        Text(
-          label ?? '',
-          style: AppTextStyles.gilroyRegular.copyWith(
-              color: color, fontSize: 10, fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text(
+            label ?? '',
+            style: AppTextStyles.gilroyRegular.copyWith(
+                color: color, fontSize: 10, fontWeight: FontWeight.bold),
+          ),
         ),
         // const SizedBox(height: 2),
         // if (subLabel != null)

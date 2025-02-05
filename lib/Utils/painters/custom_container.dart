@@ -8,20 +8,27 @@ class CustomContainer extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
+    // Calculate relative dimensions
+    final width = size.width;
+    final height = size.height;
+    final indent = width * 0.05;
+    final topHeight = height * 0.1;
+    final rightIndent = width * 0.95;
+
     final path = Path()
-      ..moveTo(30, 0)
-      ..lineTo(170, 0)
-      ..lineTo(170, 10)
-      ..lineTo(190, 10)
-      ..lineTo(190, size.height)
-      ..lineTo(10, size.height)
-      ..lineTo(10, 10)
-      ..lineTo(30, 10)
+      ..moveTo(indent * 3, 0)
+      ..lineTo(rightIndent - indent * 2, 0)
+      ..lineTo(rightIndent - indent * 2, topHeight)
+      ..lineTo(rightIndent, topHeight)
+      ..lineTo(rightIndent, height)
+      ..lineTo(indent, height)
+      ..lineTo(indent, topHeight)
+      ..lineTo(indent * 3, topHeight)
       ..close();
 
     canvas.drawLine(
-      Offset(30, 10),
-      Offset(170, 10),
+      Offset(indent * 3, topHeight),
+      Offset(rightIndent - indent * 2, topHeight),
       paint,
     );
 

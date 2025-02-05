@@ -15,7 +15,7 @@ class GuidelinesPainter extends CustomPainter {
     double y = -50;
     while (y < size.height + 50) {
       // Left vertical dotted line
-      canvas.drawLine( 
+      canvas.drawLine(
         Offset(10, y),
         Offset(10, y + dashWidth),
         paint,
