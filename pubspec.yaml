@@ -1,0 +1,52 @@
+name: task1
+description: "A new Flutter project."
+
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.0
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.8
+  flutter_svg: ^2.0.17
+  fl_chart: ^0.70.2
+  dotted_line: ^3.2.3
+  rive: ^0.13.20
+  flutter_animate: ^4.5.2
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+  flutter_lints: ^5.0.0
+
+
+flutter:
+
+  uses-material-design: true
+
+
+  assets:
+     - assets/rive/money_in_and_out_pie.riv
+
+
+  fonts:
+    - family: Denton
+      fonts:
+        - asset: assets/fonts/Denton/Denton-Bold.otf
+          weight: 700
+    - family: Gilroy
+      fonts:
+        - asset: assets/fonts/Gilroy/Gilroy-Regular.ttf
+
+
