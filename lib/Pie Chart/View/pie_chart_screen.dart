@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:rive/rive.dart';
+import 'package:task1/Pie%20Chart/Model/pie_model.dart';
+import 'package:task1/Pie%20Chart/View%20Model/pie_chart_vm.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
 
 class MoneyInAndOutConstants {
@@ -11,11 +13,6 @@ class MoneyInAndOutConstants {
 class Assets {
   static const String riveMoneyInAndOutPie =
       'assets/rive/money_in_and_out_pie.riv';
-}
-
-class HomeVisualSectionItemVm {
-  final double percentage;
-  HomeVisualSectionItemVm({required this.percentage});
 }
 
 class InAndOutPieGraph extends StatefulWidget {
@@ -253,17 +250,11 @@ class _InAndOutPieGraphState extends State<InAndOutPieGraph>
 }
 
 class PieChartScreen extends StatelessWidget {
-  const PieChartScreen({Key? key}) : super(key: key);
+  PieChartScreen({super.key});
+  final foreGroundWidgetData = DummyPieData.getPieData();
 
   @override
   Widget build(BuildContext context) {
-    final List<HomeVisualSectionItemVm> pieChartData = [
-      HomeVisualSectionItemVm(percentage: 50.0),
-      HomeVisualSectionItemVm(percentage: 30.0),
-      HomeVisualSectionItemVm(percentage: 20.0),
-      HomeVisualSectionItemVm(percentage: 70.0),
-    ];
-
     return Scaffold(
       body: Container(
         height: 270,
@@ -272,113 +263,133 @@ class PieChartScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: Row(
           children: [
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 120,
-                    height: 29,
-                    child: Text(
-                      "AMOUNT SPENT ON TRANSPORTATION",
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontFamily: 'Gilroy',
-                        fontWeight: FontWeight.w700,
-                        height: 1.51,
-                        letterSpacing: 1.61,
-                        color: Color(0xB3FFFFFF),
-                      ),
-                      textAlign: TextAlign.start,
-                      textScaler:
-                          TextScaler.linear(ScaleSize.textScaleFactor(context)),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: '₹11,250',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontFamily: 'Denton',
-                            fontWeight: FontWeight.w700,
-                            height: 1.71,
-                            letterSpacing: 0.12,
-                          ),
-                        ),
-                        const TextSpan(
-                          text: '.00',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontFamily: 'Denton',
-                            fontWeight: FontWeight.w300,
-                            height: 1.71,
-                            letterSpacing: 0.12,
-                          ),
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.start,
-                    textScaler:
-                        TextScaler.linear(ScaleSize.textScaleFactor(context)),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.015,
-                      vertical: MediaQuery.of(context).size.height * 0.005,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.horizontal(
-                        right: Radius.circular(
-                            MediaQuery.of(context).size.width * 0.05),
-                        left: Radius.circular(
-                            MediaQuery.of(context).size.width * 0.05),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "VIEW CASH FLOW",
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.03,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF000000),
-                            letterSpacing: 1,
-                          ),
-                          textAlign: TextAlign.center,
-                          textScaler: TextScaler.linear(
-                              ScaleSize.textScaleFactor(context)),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_right_outlined,
-                          size: MediaQuery.of(context).size.width * 0.045,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            ForeGroundWidget(
+              data: foreGroundWidgetData,
             ),
-            Expanded(
-              child: Center(
-                child: InAndOutPieGraph(
-                  items: pieChartData,
-                  colorNumber: 2,
-                  onPieSectionTap: (index) {
-                    debugPrint("Tapped pie section: $index");
-                  },
-                ),
-              ),
-            ),
+            PieChartWidget(),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class ForeGroundWidget extends StatelessWidget {
+  final ForegroundWidgetVm data;
+  const ForeGroundWidget({super.key, required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            height: 29,
+            child: Text(
+              data.header,
+              style: TextStyle(
+                fontSize: 10,
+                fontFamily: 'Gilroy',
+                fontWeight: FontWeight.w700,
+                height: 1.51,
+                letterSpacing: 1.61,
+                color: Color(0xB3FFFFFF),
+              ),
+              textAlign: TextAlign.start,
+              textScaler: TextScaler.linear(ScaleSize.textScaleFactor(context)),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: data.amount,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'Denton',
+                    fontWeight: FontWeight.w700,
+                    height: 1.71,
+                    letterSpacing: 0.12,
+                  ),
+                ),
+                TextSpan(
+                  text: data.amountSub,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'Denton',
+                    fontWeight: FontWeight.w300,
+                    height: 1.71,
+                    letterSpacing: 0.12,
+                  ),
+                ),
+              ],
+            ),
+            textAlign: TextAlign.start,
+            textScaler: TextScaler.linear(ScaleSize.textScaleFactor(context)),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.015,
+              vertical: MediaQuery.of(context).size.height * 0.005,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.horizontal(
+                right:
+                    Radius.circular(MediaQuery.of(context).size.width * 0.05),
+                left: Radius.circular(MediaQuery.of(context).size.width * 0.05),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  data.buttonText,
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width * 0.03,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF000000),
+                    letterSpacing: 1,
+                  ),
+                  textAlign: TextAlign.center,
+                  textScaler:
+                      TextScaler.linear(ScaleSize.textScaleFactor(context)),
+                ),
+                Icon(
+                  Icons.keyboard_arrow_right_outlined,
+                  size: MediaQuery.of(context).size.width * 0.045,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class PieChartWidget extends StatelessWidget {
+  PieChartWidget({super.key});
+
+  final List<HomeVisualSectionItemVm> pieChartData =
+      HomeVisualSectionItemVm.getPieChartData();
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Center(
+        child: InAndOutPieGraph(
+          items: pieChartData,
+          colorNumber: 2,
+          onPieSectionTap: (index) {
+            debugPrint("Tapped pie section: $index");
+          },
         ),
       ),
     );

@@ -73,7 +73,7 @@ class CombinedHomeScreen extends StatelessWidget {
               const SizedBox(height: 20),
               SizedBox(
                 height: 270,
-                child: const PieChartScreen(),
+                child: PieChartScreen(),
               ),
               const SizedBox(height: 20),
               SizedBox(
