@@ -1,3 +1,5 @@
+import 'package:task1/Recurring/View%20Model/recurring_vm.dart';
+
 class RecurringModel {
   final String count;
   final String type;
@@ -28,4 +30,13 @@ class RecurringModel {
       'date': date,
     };
   }
+}
+
+class DummyRecurringData {
+  static RecurringVm getMockRecurringData() => RecurringVm(
+        count: '2',
+        type: 'Cook',
+        amount: '₹6,700',
+        date: '02 AUG',
+      );
 }

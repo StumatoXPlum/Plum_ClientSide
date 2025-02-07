@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:task1/Recurring/Model/recurring_model.dart';
+import 'package:task1/Recurring/View%20Model/recurring_vm.dart';
 import 'package:task1/Utils/fonts/fonts.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
 import 'package:task1/Utils/painters/custom_container.dart';
 import 'package:task1/Utils/painters/guidelines_painter.dart';
 
 class RecurringPaymentScreen extends StatelessWidget {
-  const RecurringPaymentScreen({
+  RecurringPaymentScreen({
     super.key,
     this.type,
     this.amount,
@@ -17,6 +19,7 @@ class RecurringPaymentScreen extends StatelessWidget {
   final String? amount;
   final String? date;
   final VoidCallback? onCheckNowPressed;
+  final recurringData = DummyRecurringData.getMockRecurringData();
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,11 @@ class RecurringPaymentScreen extends StatelessWidget {
           child: Stack(
             children: [
               // Left content column
-              Positioned(bottom: 55, child: LeftColumn()),
+              Positioned(
+                  bottom: 55,
+                  child: LeftColumn(
+                    data: recurringData,
+                  )),
               // Right side: custom painted container
               Positioned(
                 right: 1,
@@ -39,6 +46,7 @@ class RecurringPaymentScreen extends StatelessWidget {
                   painter: GuidelinesPainter(),
                   child: ContainerData(
                     width: MediaQuery.of(context).size.width * 0.5,
+                    data: recurringData,
                   ),
                 ),
               ),
@@ -52,9 +60,9 @@ class RecurringPaymentScreen extends StatelessWidget {
 
 class ContainerData extends StatelessWidget {
   final double width;
+  const ContainerData({super.key, required this.width, required this.data});
 
-  const ContainerData({super.key, required this.width});
-
+  final RecurringVm data;
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -86,33 +94,38 @@ class ContainerData extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          'Cook',
-                          style: AppTextStyles.gilroyBold.copyWith(
-                            color: Colors.white,
-                            fontSize: screenWidth * 0.035,
+                        Flexible(
+                          child: Text(
+                            data.type,
+                            style: AppTextStyles.gilroyBold.copyWith(
+                              color: Colors.white,
+                              fontSize: screenWidth * 0.035,
+                            ),
+                            textScaler: TextScaler.linear(
+                                ScaleSize.textScaleFactor(context)),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
-                          textScaler: TextScaler.linear(
-                              ScaleSize.textScaleFactor(context)),
-                          overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(width: screenWidth * 0.09),
-                        Text(
-                          '₹6,700',
-                          style: AppTextStyles.gilroyRegular.copyWith(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
+                        SizedBox(width: screenWidth * 0.08),
+                        Flexible(
+                          child: Text(
+                            data.amount,
+                            style: AppTextStyles.gilroyRegular.copyWith(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textScaler: TextScaler.linear(
+                                ScaleSize.textScaleFactor(context)),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          textScaler: TextScaler.linear(
-                              ScaleSize.textScaleFactor(context)),
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                     SizedBox(height: screenHeight * 0.002),
                     Text(
-                      'PAID ON 02 AUG',
+                      'PAID ${data.date}',
                       style: AppTextStyles.gilroyRegular.copyWith(
                         color: Colors.white60,
                         fontSize: 8,
@@ -134,7 +147,8 @@ class ContainerData extends StatelessWidget {
 }
 
 class LeftColumn extends StatelessWidget {
-  const LeftColumn({super.key});
+  final RecurringVm data;
+  const LeftColumn({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +157,7 @@ class LeftColumn extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center, // Center vertically
       children: [
         Text(
-          "2 recurring\npayments detected",
+          "${data.count}  recurring\npayments detected",
           style: AppTextStyles.dentonBold.copyWith(
             fontSize: 14,
             color: Colors.white,

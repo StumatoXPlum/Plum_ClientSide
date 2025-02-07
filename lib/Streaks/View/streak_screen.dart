@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:task1/Streaks/View%20Modal/streaks_vm.dart';
 import 'package:task1/Utils/fonts/fonts.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
 import 'package:task1/Utils/painters/custom_container.dart';
 import 'package:task1/Utils/painters/guidelines_painter.dart';
 
 class StreakScreen extends StatelessWidget {
-  const StreakScreen({
+  StreakScreen({
     super.key,
     this.name,
     this.amount,
@@ -17,6 +18,7 @@ class StreakScreen extends StatelessWidget {
   final String? amount;
   final String? streakCount;
   final VoidCallback? onCheckNowPressed;
+  final streakDummyData = DummyStreaksData.getDummyStreaksData();
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,11 @@ class StreakScreen extends StatelessWidget {
           child: Stack(
             children: [
               // Left content column
-              Positioned(bottom: 65, child: LeftColumn()),
+              Positioned(
+                  bottom: 65,
+                  child: LeftColumn(
+                    data: streakDummyData,
+                  )),
               // Right side: custom painted card
               Positioned(
                 right: 1,
@@ -39,6 +45,7 @@ class StreakScreen extends StatelessWidget {
                   painter: GuidelinesPainter(),
                   child: CustomCard(
                     width: MediaQuery.of(context).size.width * 0.5,
+                    streakData: streakDummyData,
                   ),
                 ),
               ),
@@ -52,8 +59,8 @@ class StreakScreen extends StatelessWidget {
 
 class CustomCard extends StatelessWidget {
   final double width;
-
-  const CustomCard({super.key, required this.width});
+  final StreaksVm streakData;
+  const CustomCard({super.key, required this.width, required this.streakData});
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +96,7 @@ class CustomCard extends StatelessWidget {
                       children: [
                         Flexible(
                           child: Text(
-                            'Cook',
+                            streakData.type,
                             style: AppTextStyles.gilroyBold.copyWith(
                               color: Colors.white,
                               fontSize: screenWidth * 0.035,
@@ -102,7 +109,7 @@ class CustomCard extends StatelessWidget {
                         SizedBox(width: screenWidth * 0.08),
                         Flexible(
                           child: Text(
-                            '₹6,700',
+                            streakData.amount,
                             style: AppTextStyles.gilroyRegular.copyWith(
                               color: Colors.white,
                               fontSize: 14,
@@ -126,7 +133,7 @@ class CustomCard extends StatelessWidget {
                         ),
                         SizedBox(width: screenWidth * 0.005),
                         Text(
-                          '3X STREAK',
+                          '${streakData.streakCount}X STREAK',
                           style: TextStyle(
                             color: Colors.green,
                             fontSize: screenWidth * 0.020,
@@ -149,7 +156,8 @@ class CustomCard extends StatelessWidget {
 }
 
 class LeftColumn extends StatelessWidget {
-  const LeftColumn({super.key});
+  final StreaksVm data;
+  const LeftColumn({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +166,7 @@ class LeftColumn extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center, // Center vertically
       children: [
         Text(
-          "2 investments have\nan 8 month streak",
+          "${data.investmentCount} investments have\nan ${data.monthCount} month streak",
           style: AppTextStyles.dentonBold.copyWith(
             fontSize: 12,
             color: Colors.white,

@@ -50,10 +50,9 @@ class CombinedHomeScreen extends StatelessWidget {
             children: [
               SizedBox(
                 height: 250,
-                child: const StreakScreen(),
+                child: StreakScreen(),
               ),
               const SizedBox(height: 20),
-              // Updated: BarGraphScreen now gets its own dummy data internally.
               SizedBox(
                 height: 300,
                 child: const BarGraphScreen(),
@@ -61,14 +60,7 @@ class CombinedHomeScreen extends StatelessWidget {
               const SizedBox(height: 20),
               SizedBox(
                 height: 250,
-                child: RecurringPaymentScreen(
-                  type: 'Subscription',
-                  amount: '₹6,700',
-                  date: '02 AUG',
-                  onCheckNowPressed: () {
-                    debugPrint("Recurring payment button pressed");
-                  },
-                ),
+                child: RecurringPaymentScreen(),
               ),
               const SizedBox(height: 20),
               SizedBox(
