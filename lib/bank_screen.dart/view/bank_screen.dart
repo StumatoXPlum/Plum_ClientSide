@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
-import 'package:task1/Streaks/View%20Modal/streaks_vm.dart';
 import 'package:task1/Utils/fonts/fonts.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
 import 'package:task1/Utils/painters/guidelines_painter.dart';
+import 'package:task1/bank_screen.dart/view%20modal/bank_vm.dart';
 
-class StreakScreen extends StatelessWidget {
-  StreakScreen({
+class BankScreen extends StatelessWidget {
+  BankScreen({
     super.key,
     this.name,
     this.amount,
@@ -18,7 +18,7 @@ class StreakScreen extends StatelessWidget {
   final String? amount;
   final String? streakCount;
   final VoidCallback? onCheckNowPressed;
-  final streakDummyData = DummyStreaksData.getDummyStreaksData();
+  final interestDummyData = DummyinterestData.getDummyInterestData();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class StreakScreen extends StatelessWidget {
               Positioned(
                 bottom: 50,
                 child: LeftColumn(
-                  data: streakDummyData,
+                  data: interestDummyData,
                 ),
               ),
               Positioned(
@@ -66,15 +66,15 @@ class StreakScreen extends StatelessWidget {
                         child: Swiper(
                           scrollDirection: Axis.vertical,
                           layout: SwiperLayout.STACK,
-                          itemCount: streakDummyData.length,
+                          itemCount: interestDummyData.length,
                           loop: true,
                           autoplay: true,
                           duration: 1000,
                           itemWidth: MediaQuery.of(context).size.width * 0.50,
                           itemHeight: 60,
                           itemBuilder: (context, index) {
-                            return CustomCard(
-                              streakData: streakDummyData[index],
+                            return InterestCard(
+                              interestData: interestDummyData[index],
                             );
                           },
                         ),
@@ -91,9 +91,9 @@ class StreakScreen extends StatelessWidget {
   }
 }
 
-class CustomCard extends StatelessWidget {
-  final StreaksVm streakData;
-  const CustomCard({super.key, required this.streakData});
+class InterestCard extends StatelessWidget {
+  final BankVm interestData;
+  const InterestCard({super.key, required this.interestData});
 
   @override
   Widget build(BuildContext context) {
@@ -140,9 +140,9 @@ class CustomCard extends StatelessWidget {
                     Expanded(
                       flex: 3,
                       child: Text(
-                        streakData.type,
+                        interestData.type,
                         style: AppTextStyles.gilroyBold.copyWith(
-                          color: Colors.white,
+                          color: Color(0xB3FFFFFF),
                           fontSize: titleSize,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -155,11 +155,11 @@ class CustomCard extends StatelessWidget {
                         minWidth: size.width * 0.12,
                       ),
                       child: Text(
-                        streakData.amount,
+                        '+₹${interestData.interestAmount}',
                         style: AppTextStyles.gilroyRegular.copyWith(
                           color: Colors.white,
                           fontSize: amountSize,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w700,
                         ),
                         textAlign: TextAlign.right,
                         softWrap: false,
@@ -168,25 +168,16 @@ class CustomCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.local_fire_department,
-                      color: Colors.green,
-                      size: streakSize,
+                Flexible(
+                  child: Text(
+                    'INTEREST',
+                    style: TextStyle(
+                      fontFamily: 'Gilroy',
+                      fontSize: streakSize,
+                      color: Colors.white70,
+                      letterSpacing: 1,
                     ),
-                    SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        '${streakData.streakCount}X STREAK',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: streakSize,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
@@ -198,40 +189,98 @@ class CustomCard extends StatelessWidget {
 }
 
 class LeftColumn extends StatelessWidget {
-  final List<StreaksVm> data;
+  final List<BankVm> data;
   const LeftColumn({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final spacing = size.height;
+    final textScale = ScaleSize.textScaleFactor(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '${data[0].investmentCount} ${data[0].title.replaceAll('month', '${data[0].monthCount} ${int.parse(data[0].monthCount) == 1 ? "month" : "months"}')}',
+          data[0].title,
+          style: AppTextStyles.gilroyBold.copyWith(
+            fontSize: size.width * 0.03,
+            fontWeight: FontWeight.w700,
+            height: 1.51,
+            letterSpacing: size.width * 0.004,
+            color: Color(0xB3FFFFFF),
+          ),
+          textAlign: TextAlign.start,
+          textScaler: TextScaler.linear(textScale),
+        ),
+        SizedBox(height: size.height * 0.01),
+        Text(
+          '₹${data[0].amount}',
           style: AppTextStyles.dentonBold.copyWith(
-            fontSize: 12,
+            fontSize: size.width * 0.06,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.start,
-          textScaler: TextScaler.linear(
-            ScaleSize.textScaleFactor(context),
-          ),
+          textScaler: TextScaler.linear(textScale),
         ),
-        SizedBox(height: spacing * 0.035),
+        SizedBox(height: size.height * 0.008),
+        Row(
+          children: [
+            Container(
+              height: size.width * 0.04,
+              width: size.width * 0.04,
+              decoration:
+                  BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+            ),
+            SizedBox(width: size.width * 0.012),
+            Text(
+              data[0].bankName,
+              style: AppTextStyles.gilroyBold.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: size.width * 0.03,
+                height: 1.51,
+                letterSpacing: size.width * 0.004,
+                color: Color(0xB3FFFFFF),
+              ),
+              textAlign: TextAlign.start,
+              textScaler: TextScaler.linear(textScale),
+            ),
+            SizedBox(width: size.width * 0.012),
+            Container(
+              height: size.width * 0.015,
+              width: size.width * 0.015,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                shape: BoxShape.circle,
+              ),
+            ),
+            SizedBox(width: size.width * 0.012),
+            Text(
+              data[0].lastDigits,
+              style: AppTextStyles.gilroyBold.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: size.width * 0.03,
+                height: 1.51,
+                letterSpacing: size.width * 0.004,
+                color: Color(0xB3FFFFFF),
+              ),
+              textAlign: TextAlign.start,
+              textScaler: TextScaler.linear(textScale),
+            ),
+          ],
+        ),
+        SizedBox(height: size.height * 0.02),
         Container(
           padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width * 0.015,
-            vertical: MediaQuery.of(context).size.height * 0.005,
+            horizontal: size.width * 0.02,
+            vertical: size.height * 0.007,
           ),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.horizontal(
-              right: Radius.circular(MediaQuery.of(context).size.width * 0.05),
-              left: Radius.circular(MediaQuery.of(context).size.width * 0.05),
+              right: Radius.circular(size.width * 0.05),
+              left: Radius.circular(size.width * 0.05),
             ),
           ),
           child: Row(
@@ -240,18 +289,17 @@ class LeftColumn extends StatelessWidget {
               Text(
                 data[0].ctaText,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.018,
+                  fontSize: size.width * 0.025,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF000000),
-                  letterSpacing: 1,
+                  letterSpacing: size.width * 0.002,
                 ),
                 textAlign: TextAlign.center,
-                textScaler:
-                    TextScaler.linear(ScaleSize.textScaleFactor(context)),
+                textScaler: TextScaler.linear(textScale),
               ),
               Icon(
                 Icons.keyboard_arrow_right_outlined,
-                size: MediaQuery.of(context).size.width * 0.045,
+                size: size.width * 0.045,
               ),
             ],
           ),

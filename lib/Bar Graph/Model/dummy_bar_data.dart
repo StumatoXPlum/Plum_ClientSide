@@ -13,7 +13,7 @@ class DummyBarData {
       selectedBarIndex: 1,
       maxYAxisValue: 800,
       averageValue: 600,
-      averageLabel: "Avg: ₹600",
+      averageLabel: "AVG 1.5K",
     );
   }
 

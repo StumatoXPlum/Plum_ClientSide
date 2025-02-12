@@ -13,11 +13,11 @@ class GuidelinesPainter extends CustomPainter {
 
     double y = -50;
     while (y < size.height + 50) {
-      canvas.drawLine(
-        Offset(1, y),
-        Offset(1, y + dashWidth),
-        paint,
-      );
+      // canvas.drawLine(
+      //   Offset(1, y),
+      //   Offset(1, y + dashWidth),
+      //   paint,
+      // );
 
       canvas.drawLine(
         Offset(size.width - 1, y),
@@ -28,9 +28,9 @@ class GuidelinesPainter extends CustomPainter {
     }
 
     final horizontalLinePositions = [
-      size.height * 0.11,
+      size.height * 0.18,
       size.height * 0.50,
-      size.height * 0.89,
+      size.height * 0.82,
     ];
 
     final horizontalLineLength = 25.0;
@@ -39,15 +39,15 @@ class GuidelinesPainter extends CustomPainter {
       // Left horizontal dotted line (extending to the left)
       double x = 2 -
           horizontalLineLength; // Start from the left edge and extend outward
-      while (x < 2) {
-        // Draw until the left edge of the container
-        canvas.drawLine(
-          Offset(x, position),
-          Offset(x + dashWidth, position),
-          paint,
-        );
-        x += dashWidth + dashSpace;
-      }
+      // while (x < 2) {
+      //   // Draw until the left edge of the container
+      //   canvas.drawLine(
+      //     Offset(x, position),
+      //     Offset(x + dashWidth, position),
+      //     paint,
+      //   );
+      //   x += dashWidth + dashSpace;
+      // }
 
       // Right horizontal dotted line (extending to the right)
       x = size.width - 2; // Start from the right edge of the container

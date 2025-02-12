@@ -1,15 +1,15 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:task1/Bar%20Graph/ViewModel/bar_graph_vm.dart';
-import '../Model/dummy_bar_data.dart';
+import 'package:task1/New%20Bar%20Graph/Model/new_bar_model.dart';
+import 'package:task1/New%20Bar%20Graph/View%20Model/new_bar_vm.dart';
 
-class BarGraphScreen extends StatelessWidget {
-  const BarGraphScreen({super.key});
+class NewBarGraph extends StatelessWidget {
+  const NewBarGraph({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final graphVm = DummyBarData.getMockGraphData();
-    final foregroundData = DummyBarData.getMockForegroundData();
+    final newGraphVm = NewDummyBarData.getMockGraphData();
+    final newForegroundData = NewDummyBarData.getMockForegroundData();
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -21,13 +21,13 @@ class BarGraphScreen extends StatelessWidget {
               Positioned(
                 left: 1,
                 bottom: 80,
-                child: ForegroundDataWidget(data: foregroundData),
+                child: NewForegroundDataWidget(data: newForegroundData),
               ),
               Positioned(
                 right: 1,
                 bottom: 70,
                 child: MoneyBarGraph(
-                  graphVm: graphVm,
+                  graphVm: newGraphVm,
                   width: 170,
                   height: 110,
                 ),
@@ -49,7 +49,7 @@ class MoneyBarGraph extends StatefulWidget {
     this.onBarTap,
   });
 
-  final MoneyBarGraphVm graphVm;
+  final NewBarVm graphVm;
   final void Function(int, bool)? onBarTap;
   final double width;
   final double height;
@@ -205,19 +205,19 @@ class _MoneyBarGraphState extends State<MoneyBarGraph> {
               ),
             ),
           ),
-          // if (widget.graphVm.averageValue != null)
-          //   Positioned(
-          //     bottom: getAverageLinePosition(
-          //         maxYValue: maxYValue,
-          //         averageValue: widget.graphVm.averageValue!),
-          //     left: 0,
-          //     right: 0,
-          //     height: _averageLineHeight,
-          //     child: AverageLine(
-          //       averageLabel: widget.graphVm.averageLabel,
-          //       numberOfBars: numberOfBars,
-          //     ),
-          //   ),
+          if (widget.graphVm.averageValue != null)
+            Positioned(
+              bottom: getAverageLinePosition(
+                  maxYValue: maxYValue,
+                  averageValue: widget.graphVm.averageValue!),
+              left: 0,
+              right: 0,
+              height: _averageLineHeight,
+              child: AverageLine(
+                averageLabel: widget.graphVm.averageLabel,
+                numberOfBars: numberOfBars,
+              ),
+            ),
           Positioned(
             bottom: _barLabelHeight,
             left: 0,
@@ -464,7 +464,7 @@ class _BarTooltips extends StatelessWidget {
   }) : super(key: key);
 
   final int numberOfBars;
-  final List<MoneyBarGraphDataPointVm> dataPoints;
+  final List<NewMoneyBarGraphDataPointVm> dataPoints;
   final double barGraphHeight;
   final double barLabelHeight;
   final double maxYValue;
@@ -494,9 +494,9 @@ class _BarTooltips extends StatelessWidget {
   }
 }
 
-class ForegroundDataWidget extends StatelessWidget {
-  final ForegroundDataVm data;
-  const ForegroundDataWidget({super.key, required this.data});
+class NewForegroundDataWidget extends StatelessWidget {
+  final NewForegroundDataVm data;
+  const NewForegroundDataWidget({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -505,44 +505,15 @@ class ForegroundDataWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          data.header,
+          data.title,
           style: const TextStyle(
-            fontSize: 10,
+            fontSize: 14,
             fontWeight: FontWeight.w700,
+            fontFamily: 'Denton',
             height: 1.51,
-            letterSpacing: 1.61,
-            color: Color(0xB3FFFFFF),
+            color: Colors.white,
           ),
           textAlign: TextAlign.start,
-        ),
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: data.amount,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'Denton',
-                  fontWeight: FontWeight.w700,
-                  height: 1.71,
-                  letterSpacing: 0.12,
-                ),
-              ),
-              TextSpan(
-                text: data.amountSub,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'Denton',
-                  fontWeight: FontWeight.w300,
-                  height: 1.71,
-                  letterSpacing: 0.12,
-                ),
-              ),
-            ],
-          ),
-          textAlign: TextAlign.center,
         ),
         Container(
           padding: EdgeInsets.symmetric(
@@ -560,7 +531,7 @@ class ForegroundDataWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                data.actionText,
+                data.ctaText,
                 style: TextStyle(
                   fontSize: MediaQuery.of(context).size.width * 0.03,
                   fontWeight: FontWeight.w700,

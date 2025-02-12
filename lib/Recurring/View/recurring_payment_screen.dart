@@ -28,7 +28,7 @@ class RecurringPaymentScreen extends StatelessWidget {
         width: double.infinity,
         decoration: const BoxDecoration(color: Colors.black),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Stack(
             children: [
               Positioned(
@@ -40,25 +40,39 @@ class RecurringPaymentScreen extends StatelessWidget {
               Positioned(
                 right: 1,
                 bottom: 70,
-                child: CustomPaint(
-                  painter: GuidelinesPainter(),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.50,
-                    height: 100,
-                    child: Swiper(
-                        scrollDirection: Axis.vertical,
-                        layout: SwiperLayout.STACK,
-                        itemCount: recurringDummyData.length,
-                        loop: true,
-                        autoplay: true,
-                        duration: 1000,
-                        itemWidth: MediaQuery.of(context).size.width * 0.50,
-                        itemHeight: 80,
-                        itemBuilder: (context, index) {
-                          return ContainerData(
-                            recurringData: recurringDummyData[index],
-                          );
-                        }),
+                child: ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    return LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black,
+                      ],
+                      stops: [0.0, 0.6],
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.dstIn,
+                  child: CustomPaint(
+                    painter: GuidelinesPainter(),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.40,
+                      height: 90,
+                      child: Swiper(
+                          scrollDirection: Axis.vertical,
+                          layout: SwiperLayout.STACK,
+                          itemCount: recurringDummyData.length,
+                          loop: true,
+                          autoplay: true,
+                          duration: 1000,
+                          itemWidth: MediaQuery.of(context).size.width * 0.50,
+                          itemHeight: 60,
+                          itemBuilder: (context, index) {
+                            return ContainerData(
+                              recurringData: recurringDummyData[index],
+                            );
+                          }),
+                    ),
                   ),
                 ),
               ),
@@ -77,15 +91,16 @@ class ContainerData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final containerHeight = size.height * 0.1;
-    final circleSize = containerHeight * 0.45;
-    final horizontalPadding = size.width * 0.04;
-    final verticalPadding = containerHeight * 0.15;
-    final titleSize = size.width * 0.04;
-    final amountSize = size.width * 0.035;
-    final dateSize = size.width * 0.025;
+    final containerHeight = size.height * 0.08;
+    final circleSize = containerHeight * 0.4;
+    final horizontalPadding = size.width * 0.03;
+    final verticalPadding = containerHeight * 0.12;
+    final titleSize = size.width * 0.035;
+    final amountSize = size.width * 0.03;
+    final dateSize = size.width * 0.02;
 
     return Container(
+      width: size.width * 0.9,
       height: containerHeight,
       decoration: BoxDecoration(
         color: Colors.black,
@@ -107,7 +122,7 @@ class ContainerData extends StatelessWidget {
               color: Colors.grey[800],
             ),
           ),
-          SizedBox(width: horizontalPadding * 0.75),
+          SizedBox(width: horizontalPadding * 0.6),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -129,8 +144,8 @@ class ContainerData extends StatelessWidget {
                     ),
                     Container(
                       constraints: BoxConstraints(
-                        maxWidth: size.width * 0.25,
-                        minWidth: size.width * 0.15,
+                        maxWidth: size.width * 0.2,
+                        minWidth: size.width * 0.12,
                       ),
                       child: Text(
                         recurringData.amount,
@@ -204,7 +219,7 @@ class LeftColumn extends StatelessWidget {
               Text(
                 "ADD NOW",
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.03,
+                  fontSize: MediaQuery.of(context).size.width * 0.018,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF000000),
                   letterSpacing: 1,
