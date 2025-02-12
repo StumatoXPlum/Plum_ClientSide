@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:task1/Recurring/Model/recurring_model.dart';
+import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:task1/Recurring/View%20Model/recurring_vm.dart';
 import 'package:task1/Utils/fonts/fonts.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
-import 'package:task1/Utils/painters/custom_container.dart';
 import 'package:task1/Utils/painters/guidelines_painter.dart';
 
 class RecurringPaymentScreen extends StatelessWidget {
@@ -19,7 +18,7 @@ class RecurringPaymentScreen extends StatelessWidget {
   final String? amount;
   final String? date;
   final VoidCallback? onCheckNowPressed;
-  final recurringData = DummyRecurringData.getMockRecurringData();
+  final recurringDummyData = DummyRecurringData.getDummyRecurringData();
 
   @override
   Widget build(BuildContext context) {
@@ -32,21 +31,34 @@ class RecurringPaymentScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
           child: Stack(
             children: [
-              // Left content column
               Positioned(
-                  bottom: 55,
-                  child: LeftColumn(
-                    data: recurringData,
-                  )),
-              // Right side: custom painted container
+                bottom: 55,
+                child: LeftColumn(
+                  data: recurringDummyData,
+                ),
+              ),
               Positioned(
                 right: 1,
                 bottom: 70,
                 child: CustomPaint(
                   painter: GuidelinesPainter(),
-                  child: ContainerData(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    data: recurringData,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    height: 100,
+                    child: Swiper(
+                        scrollDirection: Axis.vertical,
+                        layout: SwiperLayout.STACK,
+                        itemCount: recurringDummyData.length,
+                        loop: true,
+                        autoplay: true,
+                        duration: 1000,
+                        itemWidth: MediaQuery.of(context).size.width * 0.50,
+                        itemHeight: 80,
+                        itemBuilder: (context, index) {
+                          return ContainerData(
+                            recurringData: recurringDummyData[index],
+                          );
+                        }),
                   ),
                 ),
               ),
@@ -59,105 +71,112 @@ class RecurringPaymentScreen extends StatelessWidget {
 }
 
 class ContainerData extends StatelessWidget {
-  final double width;
-  const ContainerData({super.key, required this.width, required this.data});
+  final RecurringVm recurringData;
+  const ContainerData({super.key, required this.recurringData});
 
-  final RecurringVm data;
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double containerHeight = screenHeight * 0.10;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: CustomPaint(
-        painter: CustomContainer(width, containerHeight),
-        child: Container(
-          width: width,
-          height: containerHeight,
-          padding: const EdgeInsets.fromLTRB(16, 20, 10, 12),
-          child: Row(
-            children: [
-              Container(
-                width: screenWidth * 0.07,
-                height: screenWidth * 0.07,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey[800],
-                ),
-              ),
-              SizedBox(width: screenWidth * 0.03),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+    final size = MediaQuery.of(context).size;
+    final containerHeight = size.height * 0.1;
+    final circleSize = containerHeight * 0.45;
+    final horizontalPadding = size.width * 0.04;
+    final verticalPadding = containerHeight * 0.15;
+    final titleSize = size.width * 0.04;
+    final amountSize = size.width * 0.035;
+    final dateSize = size.width * 0.025;
+
+    return Container(
+      height: containerHeight,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        border: Border.all(color: Colors.white, width: 1),
+      ),
+      padding: EdgeInsets.symmetric(
+        vertical: verticalPadding,
+        horizontal: horizontalPadding,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: circleSize,
+            height: circleSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey[800],
+            ),
+          ),
+          SizedBox(width: horizontalPadding * 0.75),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            data.type,
-                            style: AppTextStyles.gilroyBold.copyWith(
-                              color: Colors.white,
-                              fontSize: screenWidth * 0.035,
-                            ),
-                            textScaler: TextScaler.linear(
-                                ScaleSize.textScaleFactor(context)),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        recurringData.type,
+                        style: AppTextStyles.gilroyBold.copyWith(
+                          color: Colors.white,
+                          fontSize: titleSize,
                         ),
-                        SizedBox(width: screenWidth * 0.08),
-                        Flexible(
-                          child: Text(
-                            data.amount,
-                            style: AppTextStyles.gilroyRegular.copyWith(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textScaler: TextScaler.linear(
-                                ScaleSize.textScaleFactor(context)),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.002),
-                    Text(
-                      'PAID ${data.date}',
-                      style: AppTextStyles.gilroyRegular.copyWith(
-                        color: Colors.white60,
-                        fontSize: 8,
-                        letterSpacing: 1,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
-                      textScaler:
-                          TextScaler.linear(ScaleSize.textScaleFactor(context)),
-                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Container(
+                      constraints: BoxConstraints(
+                        maxWidth: size.width * 0.25,
+                        minWidth: size.width * 0.15,
+                      ),
+                      child: Text(
+                        recurringData.amount,
+                        style: AppTextStyles.gilroyRegular.copyWith(
+                          color: Colors.white,
+                          fontSize: amountSize,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.right,
+                        softWrap: false,
+                        overflow: TextOverflow.visible,
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
+                SizedBox(height: verticalPadding * 0.5),
+                Text(
+                  'PAID ${recurringData.date}',
+                  style: AppTextStyles.gilroyRegular.copyWith(
+                    color: Colors.white60,
+                    fontSize: dateSize,
+                    letterSpacing: 1,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
 class LeftColumn extends StatelessWidget {
-  final RecurringVm data;
+  final List<RecurringVm> data;
   const LeftColumn({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center, // Center vertically
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "${data.count}  recurring\npayments detected",
+          "${data[0].count}  recurring\npayments detected",
           style: AppTextStyles.dentonBold.copyWith(
             fontSize: 14,
             color: Colors.white,

@@ -15,11 +15,27 @@ class StreaksVm {
 }
 
 class DummyStreaksData {
-  static StreaksVm getDummyStreaksData() => StreaksVm(
+  static List<StreaksVm> getDummyStreaksData() => [
+    StreaksVm(
         type: 'Cook',
         amount: '₹6,700',
         streakCount: '3',
         investmentCount: '2',
         monthCount: '8',
-      );
+      ),
+    StreaksVm(
+        type: 'Shopping',
+        amount: '₹1,700',
+        streakCount: '2',
+        investmentCount: '2',
+        monthCount: '8',
+      ),
+    StreaksVm(
+        type: 'Rent',
+        amount: '₹5,700',
+        streakCount: '3',
+        investmentCount: '2',
+        monthCount: '8',
+      ),
+  ];
 }

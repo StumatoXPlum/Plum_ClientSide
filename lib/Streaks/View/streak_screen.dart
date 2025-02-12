@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:task1/Streaks/View%20Modal/streaks_vm.dart';
 import 'package:task1/Utils/fonts/fonts.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
-import 'package:task1/Utils/painters/custom_container.dart';
 import 'package:task1/Utils/painters/guidelines_painter.dart';
 
 class StreakScreen extends StatelessWidget {
@@ -28,24 +28,40 @@ class StreakScreen extends StatelessWidget {
         width: double.infinity,
         decoration: const BoxDecoration(color: Colors.black),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Stack(
             children: [
               // Left content column
               Positioned(
-                  bottom: 65,
-                  child: LeftColumn(
-                    data: streakDummyData,
-                  )),
+                bottom: 65,
+                child: LeftColumn(
+                  data: streakDummyData,
+                ),
+              ),
               // Right side: custom painted card
               Positioned(
                 right: 1,
                 bottom: 70,
                 child: CustomPaint(
                   painter: GuidelinesPainter(),
-                  child: CustomCard(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    streakData: streakDummyData,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.50,
+                    height: 100,
+                    child: Swiper(
+                      scrollDirection: Axis.vertical,
+                      layout: SwiperLayout.STACK,
+                      itemCount: streakDummyData.length,
+                      loop: true,
+                      autoplay: true,
+                      duration: 1000,
+                      itemWidth: MediaQuery.of(context).size.width * 0.50,
+                      itemHeight: 80,
+                      itemBuilder: (context, index) {
+                        return CustomCard(
+                          streakData: streakDummyData[index],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -58,105 +74,110 @@ class StreakScreen extends StatelessWidget {
 }
 
 class CustomCard extends StatelessWidget {
-  final double width;
   final StreaksVm streakData;
-  const CustomCard({super.key, required this.width, required this.streakData});
+  const CustomCard({super.key, required this.streakData});
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double containerHeight = screenHeight * 0.10;
+    final size = MediaQuery.of(context).size;
+    final containerHeight = size.height * 0.1;
+    final circleSize = containerHeight * 0.45;
+    final horizontalPadding = size.width * 0.04;
+    final verticalPadding = containerHeight * 0.15;
+    final titleSize = size.width * 0.04;
+    final amountSize = size.width * 0.035;
+    final streakSize = size.width * 0.025;
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: CustomPaint(
-        painter: CustomContainer(width, containerHeight),
-        child: Container(
-          width: width,
-          height: containerHeight,
-          padding: const EdgeInsets.fromLTRB(16, 20, 10, 12),
-          child: Row(
-            children: [
-              Container(
-                width: screenWidth * 0.07,
-                height: screenWidth * 0.07,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey[800],
-                ),
-              ),
-              SizedBox(width: screenWidth * 0.03),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black,
+        border: Border.all(color: Colors.white, width: 1),
+      ),
+      padding: EdgeInsets.symmetric(
+        vertical: verticalPadding,
+        horizontal: horizontalPadding,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: circleSize,
+            height: circleSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey[800],
+            ),
+          ),
+          SizedBox(width: horizontalPadding * 0.75),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            streakData.type,
-                            style: AppTextStyles.gilroyBold.copyWith(
-                              color: Colors.white,
-                              fontSize: screenWidth * 0.035,
-                            ),
-                            textScaler: TextScaler.linear(
-                                ScaleSize.textScaleFactor(context)),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        streakData.type,
+                        style: AppTextStyles.gilroyBold.copyWith(
+                          color: Colors.white,
+                          fontSize: titleSize,
                         ),
-                        SizedBox(width: screenWidth * 0.08),
-                        Flexible(
-                          child: Text(
-                            streakData.amount,
-                            style: AppTextStyles.gilroyRegular.copyWith(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.right,
-                            textScaler: TextScaler.linear(
-                                ScaleSize.textScaleFactor(context)),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     ),
-                    SizedBox(height: screenHeight * 0.002),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.local_fire_department,
-                          color: Colors.green,
-                          size: screenWidth * 0.020,
+                    Container(
+                      constraints: BoxConstraints(
+                        maxWidth: size.width * 0.25,
+                        minWidth: size.width * 0.15,
+                      ),
+                      child: Text(
+                        streakData.amount,
+                        style: AppTextStyles.gilroyRegular.copyWith(
+                          color: Colors.white,
+                          fontSize: amountSize,
+                          fontWeight: FontWeight.bold,
                         ),
-                        SizedBox(width: screenWidth * 0.005),
-                        Text(
-                          '${streakData.streakCount}X STREAK',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontSize: screenWidth * 0.020,
-                            letterSpacing: 1,
-                          ),
-                          textScaler: TextScaler.linear(
-                              ScaleSize.textScaleFactor(context)),
-                        ),
-                      ],
+                        textAlign: TextAlign.right,
+                        softWrap: false,
+                        overflow: TextOverflow.visible,
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
+                Row(
+                  children: [
+                    Icon(
+                      Icons.local_fire_department,
+                      color: Colors.green,
+                      size: streakSize,
+                    ),
+                    Flexible(
+                      child: Text(
+                        '${streakData.streakCount}X STREAK',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: streakSize,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
 class LeftColumn extends StatelessWidget {
-  final StreaksVm data;
+  final List<StreaksVm> data;
   const LeftColumn({super.key, required this.data});
 
   @override
@@ -166,7 +187,7 @@ class LeftColumn extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center, // Center vertically
       children: [
         Text(
-          "${data.investmentCount} investments have\nan ${data.monthCount} month streak",
+          "${data[0].investmentCount} investments have\nan ${data[0].monthCount} month streak",
           style: AppTextStyles.dentonBold.copyWith(
             fontSize: 12,
             color: Colors.white,
