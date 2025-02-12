@@ -121,13 +121,41 @@ class InterestCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: circleSize,
-            height: circleSize,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey[800],
-            ),
+          Stack(
+            children: [
+              Container(
+                padding: EdgeInsets.all(4),
+                width: circleSize,
+                height: circleSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[800],
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white),
+                  ),
+                  child: Icon(
+                    Icons.percent,
+                    color: Colors.white,
+                    size: 12,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 1,
+                right: 1,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
           ),
           SizedBox(width: horizontalPadding * 0.6),
           Expanded(
