@@ -1,17 +1,15 @@
 class TagModel {
   final String title;
+  final String subtitle;
   final String assetUrl;
   final String ctaText;
+  final String ctaAction;
 
   TagModel({
     required this.title,
+    required this.subtitle,
     required this.assetUrl,
     required this.ctaText,
+    required this.ctaAction,
   });
-
-  static final TagModel dummyData = TagModel(
-    title: "tag transactions \nfor better insights",
-    ctaText: "TAG TRANSACTIONS",
-    assetUrl: "https://res.cloudinary.com/dn1rz6ufr/image/upload/v1739433044/tag_design_q37m26.svg",
-  );
 }

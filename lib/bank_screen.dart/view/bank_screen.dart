@@ -13,16 +13,20 @@ class BankScreen extends StatelessWidget {
     this.amount,
     this.streakCount,
     this.onCheckNowPressed,
+    required this.bankData,
+    required BankVM bankVM,
   });
 
   final String? name;
   final String? amount;
   final String? streakCount;
   final VoidCallback? onCheckNowPressed;
-  final interestDummyData = DummyinterestData.getDummyInterestData();
+  final List<BankModel> bankData;
+  final BankVM bankVM = BankVM();
 
   @override
   Widget build(BuildContext context) {
+    BankModel bankData = bankVM.getBankData();
     return Scaffold(
       body: Container(
         height: 250,
@@ -35,7 +39,7 @@ class BankScreen extends StatelessWidget {
               Positioned(
                 bottom: 50,
                 child: LeftColumn(
-                  data: interestDummyData,
+                  data: bankData,
                 ),
               ),
               Positioned(
@@ -68,16 +72,18 @@ class BankScreen extends StatelessWidget {
                           axisDirection: AxisDirection.left,
                           scrollDirection: Axis.vertical,
                           layout: SwiperLayout.STACK,
-                          itemCount: interestDummyData.length,
+                          itemCount: bankData.sections.length,
                           loop: true,
                           autoplay: true,
                           duration: 1000,
                           itemWidth: MediaQuery.of(context).size.width * 0.50,
                           itemHeight: 60,
+
                           itemBuilder: (context, index) {
+                            print('index $index ${bankData}');
                             return InterestCard(
-                              interestData: interestDummyData[index],
-                            );
+                                interestSection:
+                                    bankData.sections[index]);
                           },
                         ),
                       ),
@@ -94,8 +100,8 @@ class BankScreen extends StatelessWidget {
 }
 
 class InterestCard extends StatelessWidget {
-  final BankVm interestData;
-  const InterestCard({super.key, required this.interestData});
+  final InterestSection interestSection;
+  const InterestCard({super.key, required this.interestSection});
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +176,7 @@ class InterestCard extends StatelessWidget {
                     Expanded(
                       flex: 3,
                       child: Text(
-                        interestData.type,
+                        interestSection.header,
                         style: AppTextStyles.gilroyBold.copyWith(
                           color: Color(0xB3FFFFFF),
                           fontSize: titleSize,
@@ -185,7 +191,7 @@ class InterestCard extends StatelessWidget {
                         minWidth: size.width * 0.12,
                       ),
                       child: Text(
-                        '+₹${interestData.interestAmount}',
+                        '+₹${interestSection.amount}',
                         style: AppTextStyles.gilroyRegular.copyWith(
                           color: Colors.white,
                           fontSize: amountSize,
@@ -200,7 +206,7 @@ class InterestCard extends StatelessWidget {
                 ),
                 Flexible(
                   child: Text(
-                    'INTEREST',
+                    interestSection.category,
                     style: TextStyle(
                       fontFamily: 'Gilroy',
                       fontSize: streakSize,
@@ -219,7 +225,7 @@ class InterestCard extends StatelessWidget {
 }
 
 class LeftColumn extends StatelessWidget {
-  final List<BankVm> data;
+  final BankModel data;
   const LeftColumn({super.key, required this.data});
 
   @override
@@ -232,7 +238,7 @@ class LeftColumn extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          data[0].title,
+          data.title,
           style: AppTextStyles.gilroyBold.copyWith(
             fontSize: size.width * 0.03,
             fontWeight: FontWeight.w700,
@@ -245,7 +251,7 @@ class LeftColumn extends StatelessWidget {
         ),
         SizedBox(height: size.height * 0.01),
         Text(
-          '₹${data[0].amount}',
+          '₹${data.amount}',
           style: AppTextStyles.dentonBold.copyWith(
             fontSize: size.width * 0.06,
             color: Colors.white,
@@ -265,7 +271,7 @@ class LeftColumn extends StatelessWidget {
             ),
             SizedBox(width: size.width * 0.012),
             Text(
-              data[0].bankName,
+              data.bankName,
               style: AppTextStyles.gilroyBold.copyWith(
                 fontWeight: FontWeight.w700,
                 fontSize: size.width * 0.03,
@@ -287,7 +293,7 @@ class LeftColumn extends StatelessWidget {
             ),
             SizedBox(width: size.width * 0.012),
             Text(
-              data[0].lastDigits,
+              data.lastDigits,
               style: AppTextStyles.gilroyBold.copyWith(
                 fontWeight: FontWeight.w700,
                 fontSize: size.width * 0.03,
@@ -302,7 +308,7 @@ class LeftColumn extends StatelessWidget {
         ),
         SizedBox(height: size.height * 0.02),
         Container(
-         padding: EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.015,
             vertical: MediaQuery.of(context).size.height * 0.005,
           ),
@@ -317,9 +323,9 @@ class LeftColumn extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                data[0].ctaText,
+                data.ctaText,
                 style: TextStyle(
-                   fontSize: MediaQuery.of(context).size.width * 0.018,
+                  fontSize: MediaQuery.of(context).size.width * 0.018,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF000000),
                   letterSpacing: 1,

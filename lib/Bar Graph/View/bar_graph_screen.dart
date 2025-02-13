@@ -2,15 +2,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:task1/Bar%20Graph/ViewModel/bar_graph_vm.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
-import '../Model/dummy_bar_data.dart';
 
 class BarGraphScreen extends StatelessWidget {
   const BarGraphScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final graphVm = DummyBarData.getMockGraphData();
-    final foregroundData = DummyBarData.getMockForegroundData();
+    final foregroundData = dummyGraphData;
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -22,13 +20,19 @@ class BarGraphScreen extends StatelessWidget {
               Positioned(
                 left: 1,
                 bottom: 80,
-                child: ForegroundDataWidget(data: foregroundData),
+                child: ForegroundDataWidget(
+                  data: ForegroundDataVm(
+                      header: dummyGraphData.title,
+                      amount: dummyGraphData.amount,
+                      amountSub: dummyGraphData.amountSub,
+                      actionText: dummyGraphData.ctaLabel),
+                ),
               ),
               Positioned(
                 right: 1,
                 bottom: 70,
                 child: MoneyBarGraph(
-                  graphVm: graphVm,
+                  graphVm: dummyGraphData,
                   width: 170,
                   height: 110,
                 ),
@@ -116,7 +120,7 @@ class _MoneyBarGraphState extends State<MoneyBarGraph> {
   @override
   Widget build(BuildContext context) {
     final maxYValue = widget.graphVm.maxYAxisValue;
-    final numberOfBars = widget.graphVm.numberOfBars;
+    final numberOfBars = widget.graphVm.dataPoints.length;
 
     return SizedBox(
       width: widget.width,
@@ -141,7 +145,7 @@ class _MoneyBarGraphState extends State<MoneyBarGraph> {
                   : Duration(milliseconds: animationDuration),
               BarChartData(
                 barGroups: List.generate(
-                  widget.graphVm.numberOfBars,
+                  widget.graphVm.dataPoints.length,
                   (index) => BarChartGroupData(
                     x: index,
                     barsSpace: 14,
@@ -167,7 +171,8 @@ class _MoneyBarGraphState extends State<MoneyBarGraph> {
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
                         int index = value.toInt();
-                        if (index < 0 || index >= widget.graphVm.numberOfBars) {
+                        if (index < 0 ||
+                            index >= widget.graphVm.dataPoints.length) {
                           return const SizedBox();
                         }
                         return Padding(
@@ -569,7 +574,7 @@ class ForegroundDataWidget extends StatelessWidget {
                   letterSpacing: 1,
                 ),
                 textAlign: TextAlign.center,
-                 textScaler:
+                textScaler:
                     TextScaler.linear(ScaleSize.textScaleFactor(context)),
               ),
               Icon(

@@ -1,9 +1,12 @@
 import 'package:task1/Tag%20Trans/Model/tag_model.dart';
 
 class TagVm {
-  final TagModel tagTransaction = TagModel(
-    title: "Tag transactions \nfor better insights",
-    assetUrl: "assets/svg/tag_design.svg",
-    ctaText: "TAG TRANSACTIONS",
+  static final TagModel dummyData = TagModel(
+    title: "your balance peaked \nON 21 AUG’24",
+    subtitle: "₹20,000.00",
+    ctaText: "Know More",
+    ctaAction: "deeplink",
+    assetUrl:
+        "https://res.cloudinary.com/dn1rz6ufr/image/upload/v1739433044/tag_design_q37m26.svg",
   );
 }

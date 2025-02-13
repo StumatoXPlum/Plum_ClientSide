@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:task1/Tag%20Trans/Model/tag_model.dart';
+import 'package:task1/Tag%20Trans/View%20Model/tag_vm.dart';
 import 'package:task1/Utils/fonts/fonts.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
 
@@ -9,7 +9,10 @@ class TagTransaction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tagData = TagModel.dummyData;
+    final tagData = TagVm.dummyData;
+    final size = MediaQuery.of(context).size;
+    final textScale = ScaleSize.textScaleFactor(context);
+
     return Scaffold(
       body: Container(
         height: 250,
@@ -35,42 +38,53 @@ class TagTransaction extends StatelessWidget {
                     textScaler:
                         TextScaler.linear(ScaleSize.textScaleFactor(context)),
                   ),
-                  const SizedBox(height: 25),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.015,
-                      vertical: MediaQuery.of(context).size.height * 0.005,
-                    ),
-                    decoration: BoxDecoration(
+                  SizedBox(height: size.height * 0.01),
+                  Text(
+                    tagData.subtitle,
+                    style: AppTextStyles.dentonBold.copyWith(
+                      fontSize: 14,
                       color: Colors.white,
-                      borderRadius: BorderRadius.horizontal(
-                        right: Radius.circular(
-                            MediaQuery.of(context).size.width * 0.05),
-                        left: Radius.circular(
-                            MediaQuery.of(context).size.width * 0.05),
-                      ),
+                      fontWeight: FontWeight.bold,
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          tagData.ctaText,
-                          style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.018,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF000000),
-                            letterSpacing: 1,
+                    textAlign: TextAlign.start,
+                    textScaler: TextScaler.linear(textScale),
+                  ),
+                  SizedBox(height: size.height * 0.020),
+                  GestureDetector(
+                    onTap: () {
+                      print(tagData.ctaAction);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.015,
+                        vertical: MediaQuery.of(context).size.height * 0.005,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            tagData.ctaText,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.018,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black,
+                              letterSpacing: 1,
+                            ),
+                            textAlign: TextAlign.center,
+                            textScaler: TextScaler.linear(
+                                ScaleSize.textScaleFactor(context)),
                           ),
-                          textAlign: TextAlign.center,
-                          textScaler: TextScaler.linear(
-                            ScaleSize.textScaleFactor(context),
+                          Icon(
+                            Icons.keyboard_arrow_right_outlined,
+                            size: MediaQuery.of(context).size.width * 0.045,
                           ),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_right_outlined,
-                          size: MediaQuery.of(context).size.width * 0.045,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],
