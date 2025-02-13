@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:task1/Utils/fonts/fonts.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
 import 'package:task1/Utils/painters/guidelines_painter.dart';
+import 'package:task1/bank_screen.dart/Model/bank_model.dart';
 import 'package:task1/bank_screen.dart/view%20modal/bank_vm.dart';
 
 class BankScreen extends StatelessWidget {

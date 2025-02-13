@@ -1,3 +1,5 @@
+import 'package:task1/bank_screen.dart/view%20modal/bank_vm.dart';
+
 class BankModel {
   final String title;
   final String type;
@@ -36,4 +38,37 @@ class BankModel {
       'ctaText': ctaText,
     };
   }
+}
+
+
+class DummyinterestData {
+  static List<BankVm> getDummyInterestData() => [
+        BankVm(
+          title: 'INTEREST EARNED \nHAS CROSSED',
+          type: 'Interest',
+          amount: '450.00',
+          interestAmount: '1700',
+          bankName: 'Axis Bank',
+          lastDigits: '6782',
+          ctaText: 'VIEW BALANCE',
+        ),
+        BankVm(
+          title: 'investments have an \nmonth streak',
+          type: 'Shopping',
+          amount: '1,700',
+          interestAmount: '1700',
+          bankName: 'Axis Bank',
+          lastDigits: '6782',
+          ctaText: 'VIEW BALANCE',
+        ),
+        BankVm(
+          title: 'investments have an \nmonth streak',
+          type: 'Rent',
+          amount: '5,700',
+          interestAmount: '1700',
+          bankName: 'Axis Bank',
+          lastDigits: '6782',
+          ctaText: 'VIEW BALANCE',
+        ),
+      ];
 }
