@@ -1,5 +1,5 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:task1/Recurring/View%20Model/recurring_vm.dart';
 import 'package:task1/Utils/fonts/fonts.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';

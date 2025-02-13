@@ -42,7 +42,7 @@ dependencies:
   device_preview: ^1.2.0
   device_preview_plus:
   auto_size_text: ^3.0.0
-  flutter_swiper_view: ^1.1.8
+  card_swiper: ^3.0.1
 
 dev_dependencies:
   flutter_test:

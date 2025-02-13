@@ -1,5 +1,5 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'package:task1/Streaks/View%20Modal/streaks_vm.dart';
 import 'package:task1/Utils/fonts/fonts.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
@@ -65,6 +65,7 @@ class StreakScreen extends StatelessWidget {
                       Positioned.fill(
                         child: Swiper(
                           scrollDirection: Axis.vertical,
+                          axisDirection: AxisDirection.up,
                           layout: SwiperLayout.STACK,
                           itemCount: streakDummyData.length,
                           loop: true,
