@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:task1/Tag%20Trans/Model/tag_model.dart';
 import 'package:task1/Utils/fonts/fonts.dart';
 import 'package:task1/Utils/fonts/text_scaling.dart';
 
@@ -8,13 +9,14 @@ class TagTransaction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tagData = TagModel.dummyData;
     return Scaffold(
       body: Container(
         height: 250,
         width: double.infinity,
         color: Colors.black,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -23,7 +25,7 @@ class TagTransaction extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "tag transactions\nfor better insights",
+                    tagData.title,
                     style: AppTextStyles.dentonBold.copyWith(
                       fontSize: 12,
                       color: Colors.white,
@@ -52,16 +54,17 @@ class TagTransaction extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "TAG TRANSACTIONS",
+                          tagData.ctaText,
                           style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width * 0.03,
+                            fontSize: MediaQuery.of(context).size.width * 0.018,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF000000),
                             letterSpacing: 1,
                           ),
                           textAlign: TextAlign.center,
                           textScaler: TextScaler.linear(
-                              ScaleSize.textScaleFactor(context)),
+                            ScaleSize.textScaleFactor(context),
+                          ),
                         ),
                         Icon(
                           Icons.keyboard_arrow_right_outlined,
@@ -76,8 +79,8 @@ class TagTransaction extends StatelessWidget {
                 child: Stack(
                   alignment: Alignment.centerRight,
                   children: [
-                    SvgPicture.asset(
-                      'assets/svg/tag_design.svg',
+                    SvgPicture.network(
+                      tagData.assetUrl,
                       width: MediaQuery.of(context).size.width * 0.25,
                       height: MediaQuery.of(context).size.height * 0.2,
                       fit: BoxFit.contain,

@@ -6,7 +6,7 @@ import 'package:task1/Streaks/View/streak_screen.dart';
 import 'package:task1/Bar%20Graph/View/bar_graph_screen.dart';
 import 'package:task1/Recurring/View/recurring_payment_screen.dart';
 import 'package:task1/Pie%20Chart/View/pie_chart_screen.dart';
-import 'package:task1/Tag%20Trans/tag_transaction.dart';
+import 'package:task1/Tag%20Trans/view/tag_transaction.dart';
 import 'package:task1/bank_screen.dart/view/bank_screen.dart';
 
 void main() {
@@ -72,7 +72,7 @@ class CombinedHomeScreen extends StatelessWidget {
               const SizedBox(height: 20),
               SizedBox(
                 height: 270,
-                child: const TagTransaction(),
+                child: TagTransaction(),
               ),
               const SizedBox(height: 20),
               SizedBox(

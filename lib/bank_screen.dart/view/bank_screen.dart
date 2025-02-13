@@ -301,15 +301,15 @@ class LeftColumn extends StatelessWidget {
         ),
         SizedBox(height: size.height * 0.02),
         Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: size.width * 0.02,
-            vertical: size.height * 0.007,
+         padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.015,
+            vertical: MediaQuery.of(context).size.height * 0.005,
           ),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.horizontal(
-              right: Radius.circular(size.width * 0.05),
-              left: Radius.circular(size.width * 0.05),
+              right: Radius.circular(MediaQuery.of(context).size.width * 0.05),
+              left: Radius.circular(MediaQuery.of(context).size.width * 0.05),
             ),
           ),
           child: Row(
@@ -318,17 +318,18 @@ class LeftColumn extends StatelessWidget {
               Text(
                 data[0].ctaText,
                 style: TextStyle(
-                  fontSize: size.width * 0.025,
+                   fontSize: MediaQuery.of(context).size.width * 0.018,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF000000),
-                  letterSpacing: size.width * 0.002,
+                  letterSpacing: 1,
                 ),
                 textAlign: TextAlign.center,
-                textScaler: TextScaler.linear(textScale),
+                textScaler:
+                    TextScaler.linear(ScaleSize.textScaleFactor(context)),
               ),
               Icon(
                 Icons.keyboard_arrow_right_outlined,
-                size: size.width * 0.045,
+                size: MediaQuery.of(context).size.width * 0.045,
               ),
             ],
           ),

@@ -28,7 +28,7 @@ class RecurringPaymentScreen extends StatelessWidget {
         width: double.infinity,
         decoration: const BoxDecoration(color: Colors.black),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Stack(
             children: [
               Positioned(
@@ -186,6 +186,8 @@ class LeftColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final spacing = size.height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -200,7 +202,7 @@ class LeftColumn extends StatelessWidget {
           textAlign: TextAlign.start,
           textScaler: TextScaler.linear(ScaleSize.textScaleFactor(context)),
         ),
-        const SizedBox(height: 25),
+        SizedBox(height: spacing * 0.035),
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.015,

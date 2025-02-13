@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:task1/New%20Bar%20Graph/Model/new_bar_model.dart';
 import 'package:task1/New%20Bar%20Graph/View%20Model/new_bar_vm.dart';
+import 'package:task1/Utils/fonts/text_scaling.dart';
 
 class NewBarGraph extends StatelessWidget {
   const NewBarGraph({super.key});
@@ -15,7 +16,7 @@ class NewBarGraph extends StatelessWidget {
         width: double.infinity,
         decoration: const BoxDecoration(color: Colors.black),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Stack(
             children: [
               Positioned(
@@ -533,12 +534,14 @@ class NewForegroundDataWidget extends StatelessWidget {
               Text(
                 data.ctaText,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.03,
+                  fontSize: MediaQuery.of(context).size.width * 0.018,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF000000),
                   letterSpacing: 1,
                 ),
                 textAlign: TextAlign.center,
+                textScaler:
+                    TextScaler.linear(ScaleSize.textScaleFactor(context)),
               ),
               Icon(
                 Icons.keyboard_arrow_right_outlined,

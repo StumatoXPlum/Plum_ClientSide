@@ -260,7 +260,7 @@ class PieChartScreen extends StatelessWidget {
         height: 270,
         width: double.infinity,
         color: Colors.black,
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Row(
           children: [
             ForeGroundWidget(
@@ -353,7 +353,7 @@ class ForeGroundWidget extends StatelessWidget {
                 Text(
                   data.buttonText,
                   style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width * 0.03,
+                    fontSize: MediaQuery.of(context).size.width * 0.018,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF000000),
                     letterSpacing: 1,
