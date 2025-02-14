@@ -12,12 +12,14 @@ class StreaksModel {
 
 class StreaksCard {
   final String title;
+  final String iconUrl;
   final String subtitle;
   final String amount;
   final String logo;
 
   StreaksCard({
     required this.title,
+    required this.iconUrl,
     required this.subtitle,
     required this.amount,
     required this.logo,
@@ -26,6 +28,7 @@ class StreaksCard {
   factory StreaksCard.fromJson(Map<String, dynamic> json) {
     return StreaksCard(
       title: json['title'] as String,
+      iconUrl: json['iconUrl'] as String,
       subtitle: json['subtitle'] as String,
       amount: json['amount'] as String,
       logo: json['logo'] as String,
@@ -35,6 +38,7 @@ class StreaksCard {
   Map<String, dynamic> toJson() {
     return {
       'title': title,
+      'iconUrl': iconUrl,
       'subtitle': subtitle,
       'amount': amount,
       'logo': logo,

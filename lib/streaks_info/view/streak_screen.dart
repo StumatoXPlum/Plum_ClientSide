@@ -165,16 +165,33 @@ class CustomCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Flexible(
-                  child: Text(
-                    streaksCard.subtitle,
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontSize: streakSize,
-                      letterSpacing: 1,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.network(
+                      streaksCard.iconUrl,
+                      width: 10,
+                      height: 10,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(Icons.broken_image,
+                            size: 10, color: Colors.grey);
+                      },
                     ),
-                  ),
-                ),
+                    const SizedBox(width: 2),
+                    Flexible(
+                      child: Text(
+                        streaksCard.subtitle,
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: streakSize,
+                          letterSpacing: 1,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),

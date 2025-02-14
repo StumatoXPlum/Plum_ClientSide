@@ -27,18 +27,24 @@ class DummyStreaksData {
       cardData: [
         StreaksCard(
           title: "Cook",
+          iconUrl:
+              "https://res.cloudinary.com/dn1rz6ufr/image/upload/v1739522770/streak_l7zekq.svg",
           subtitle: "2x Streak",
           amount: "6700",
           logo: "logo_url",
         ),
         StreaksCard(
           title: "Fuel",
+          iconUrl:
+              "https://res.cloudinary.com/dn1rz6ufr/image/upload/v1739522770/streak_l7zekq.svg",
           subtitle: "3x Streak",
           amount: "2000",
           logo: "logo_url",
         ),
         StreaksCard(
           title: "Rent",
+          iconUrl:
+              "https://res.cloudinary.com/dn1rz6ufr/image/upload/v1739522770/streak_l7zekq.svg",
           subtitle: "5x Streak",
           amount: "8000",
           logo: "logo_url",
