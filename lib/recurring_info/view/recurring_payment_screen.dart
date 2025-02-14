@@ -1,22 +1,21 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:task1/recurring_info/model/recurring_model.dart';
+import 'package:task1/recurring_info/view_model/recurring_vm.dart';
 import 'package:task1/utils/fonts/fonts.dart';
 import 'package:task1/utils/fonts/text_scaling.dart';
 import 'package:task1/utils/painters/guidelines_painter.dart';
-import 'package:task1/bank_screen.dart/model/bank_model.dart';
-import 'package:task1/bank_screen.dart/view_modal/bank_vm.dart';
 
-class BankScreen extends StatelessWidget {
-  BankScreen({
+class RecurringPaymentScreen extends StatelessWidget {
+  RecurringPaymentScreen({
     super.key,
-    required BankVM bankVM,
+    required DummyRecurringData recurringVM,
   });
 
-  final BankVM bankVM = BankVM();
-
+  final DummyRecurringData recurringVM = DummyRecurringData();
   @override
   Widget build(BuildContext context) {
-    BankModel bankData = bankVM.getBankData();
+    RecurringModel recurringData = recurringVM.getRecurringData();
     return Scaffold(
       body: Container(
         height: 250,
@@ -27,9 +26,9 @@ class BankScreen extends StatelessWidget {
           child: Stack(
             children: [
               Positioned(
-                bottom: 50,
+                bottom: 55,
                 child: LeftColumn(
-                  data: bankData,
+                  data: recurringData,
                 ),
               ),
               Positioned(
@@ -48,33 +47,26 @@ class BankScreen extends StatelessWidget {
                     ).createShader(bounds);
                   },
                   blendMode: BlendMode.dstIn,
-                  child: Stack(
-                    children: [
-                      CustomPaint(
-                        painter: GuidelinesPainter(),
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.40,
-                          height: 90,
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: Swiper(
-                          axisDirection: AxisDirection.left,
+                  child: CustomPaint(
+                    painter: GuidelinesPainter(),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.40,
+                      height: 90,
+                      child: Swiper(
                           scrollDirection: Axis.vertical,
                           layout: SwiperLayout.STACK,
-                          itemCount: bankData.sections.length,
+                          itemCount: recurringData.cardData.length,
                           loop: true,
                           autoplay: true,
                           duration: 1000,
                           itemWidth: MediaQuery.of(context).size.width * 0.50,
                           itemHeight: 60,
                           itemBuilder: (context, index) {
-                            return InterestCard(
-                                interestSection: bankData.sections[index]);
-                          },
-                        ),
-                      ),
-                    ],
+                            return ContainerData(
+                              recurringCard: recurringData.cardData[index],
+                            );
+                          }),
+                    ),
                   ),
                 ),
               ),
@@ -86,9 +78,9 @@ class BankScreen extends StatelessWidget {
   }
 }
 
-class InterestCard extends StatelessWidget {
-  final InterestSection interestSection;
-  const InterestCard({super.key, required this.interestSection});
+class ContainerData extends StatelessWidget {
+  final RecurringCard recurringCard;
+  const ContainerData({super.key, required this.recurringCard});
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +91,7 @@ class InterestCard extends StatelessWidget {
     final verticalPadding = containerHeight * 0.12;
     final titleSize = size.width * 0.035;
     final amountSize = size.width * 0.03;
-    final streakSize = size.width * 0.02;
+    final dateSize = size.width * 0.02;
 
     return Container(
       width: size.width * 0.9,
@@ -116,41 +108,14 @@ class InterestCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Stack(
-            children: [
-              Container(
-                padding: EdgeInsets.all(4),
-                width: circleSize,
-                height: circleSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey[800],
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white),
-                  ),
-                  child: Icon(
-                    Icons.percent,
-                    color: Colors.white,
-                    size: 12,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 1,
-                right: 1,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+          Container(
+            width: circleSize,
+            height: circleSize,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey[800],
+            ),
+            child: Text(recurringCard.logo),
           ),
           SizedBox(width: horizontalPadding * 0.6),
           Expanded(
@@ -163,9 +128,9 @@ class InterestCard extends StatelessWidget {
                     Expanded(
                       flex: 3,
                       child: Text(
-                        interestSection.header,
+                        recurringCard.title,
                         style: AppTextStyles.gilroyBold.copyWith(
-                          color: Color(0xB3FFFFFF),
+                          color: Colors.white,
                           fontSize: titleSize,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -178,11 +143,11 @@ class InterestCard extends StatelessWidget {
                         minWidth: size.width * 0.12,
                       ),
                       child: Text(
-                        '+₹${interestSection.amount}',
+                        recurringCard.amount,
                         style: AppTextStyles.gilroyRegular.copyWith(
                           color: Colors.white,
                           fontSize: amountSize,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.right,
                         softWrap: false,
@@ -191,16 +156,15 @@ class InterestCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                Flexible(
-                  child: Text(
-                    interestSection.category,
-                    style: TextStyle(
-                      fontFamily: 'Gilroy',
-                      fontSize: streakSize,
-                      color: Colors.white70,
-                      letterSpacing: 1,
-                    ),
+                SizedBox(height: verticalPadding * 0.5),
+                Text(
+                  recurringCard.subtitle,
+                  style: AppTextStyles.gilroyRegular.copyWith(
+                    color: Colors.white60,
+                    fontSize: dateSize,
+                    letterSpacing: 1,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -212,88 +176,28 @@ class InterestCard extends StatelessWidget {
 }
 
 class LeftColumn extends StatelessWidget {
-  final BankModel data;
+  final RecurringModel data;
   const LeftColumn({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final textScale = ScaleSize.textScaleFactor(context);
-
+    final spacing = size.height;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           data.title,
-          style: AppTextStyles.gilroyBold.copyWith(
-            fontSize: size.width * 0.03,
-            fontWeight: FontWeight.w700,
-            height: 1.51,
-            letterSpacing: size.width * 0.004,
-            color: Color(0xB3FFFFFF),
-          ),
-          textAlign: TextAlign.start,
-          textScaler: TextScaler.linear(textScale),
-        ),
-        SizedBox(height: size.height * 0.01),
-        Text(
-          '₹${data.amount}',
           style: AppTextStyles.dentonBold.copyWith(
-            fontSize: size.width * 0.06,
+            fontSize: 14,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
           textAlign: TextAlign.start,
-          textScaler: TextScaler.linear(textScale),
+          textScaler: TextScaler.linear(ScaleSize.textScaleFactor(context)),
         ),
-        SizedBox(height: size.height * 0.008),
-        Row(
-          children: [
-            Container(
-              height: size.width * 0.04,
-              width: size.width * 0.04,
-              decoration:
-                  BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-            ),
-            SizedBox(width: size.width * 0.012),
-            Text(
-              data.bankName,
-              style: AppTextStyles.gilroyBold.copyWith(
-                fontWeight: FontWeight.w700,
-                fontSize: size.width * 0.03,
-                height: 1.51,
-                letterSpacing: size.width * 0.004,
-                color: Color(0xB3FFFFFF),
-              ),
-              textAlign: TextAlign.start,
-              textScaler: TextScaler.linear(textScale),
-            ),
-            SizedBox(width: size.width * 0.012),
-            Container(
-              height: size.width * 0.015,
-              width: size.width * 0.015,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                shape: BoxShape.circle,
-              ),
-            ),
-            SizedBox(width: size.width * 0.012),
-            Text(
-              data.lastDigits,
-              style: AppTextStyles.gilroyBold.copyWith(
-                fontWeight: FontWeight.w700,
-                fontSize: size.width * 0.03,
-                height: 1.51,
-                letterSpacing: size.width * 0.004,
-                color: Color(0xB3FFFFFF),
-              ),
-              textAlign: TextAlign.start,
-              textScaler: TextScaler.linear(textScale),
-            ),
-          ],
-        ),
-        SizedBox(height: size.height * 0.02),
+        SizedBox(height: spacing * 0.035),
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.015,

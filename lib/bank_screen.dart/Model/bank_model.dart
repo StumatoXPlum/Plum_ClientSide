@@ -7,7 +7,7 @@ class BankModel {
   final List<InterestSection> sections;
 
   BankModel({
-    required this.title,
+    required this.title,  
     required this.amount,
     required this.bankName,
     required this.lastDigits,

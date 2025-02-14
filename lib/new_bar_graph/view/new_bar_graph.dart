@@ -1,0 +1,556 @@
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:task1/new_bar_graph/model/new_bar_model.dart';
+import 'package:task1/new_bar_graph/view_model/new_bar_vm.dart';
+import 'package:task1/utils/fonts/text_scaling.dart';
+
+class NewBarGraph extends StatelessWidget {
+  const NewBarGraph({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final newGraphVm = NewDummyBarData.getMockGraphData();
+    final newForegroundData = NewDummyBarData.getMockForegroundData();
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(color: Colors.black),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Stack(
+            children: [
+              Positioned(
+                left: 1,
+                bottom: 80,
+                child: NewForegroundDataWidget(data: newForegroundData),
+              ),
+              Positioned(
+                right: 1,
+                bottom: 70,
+                child: MoneyBarGraph(
+                  graphVm: newGraphVm,
+                  width: 170,
+                  height: 110,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MoneyBarGraph extends StatefulWidget {
+  const MoneyBarGraph({
+    super.key,
+    required this.graphVm,
+    required this.width,
+    required this.height,
+    this.onBarTap,
+  });
+
+  final NewBarVm graphVm;
+  final void Function(int, bool)? onBarTap;
+  final double width;
+  final double height;
+
+  @override
+  State<MoneyBarGraph> createState() => _MoneyBarGraphState();
+}
+
+class _MoneyBarGraphState extends State<MoneyBarGraph> {
+  final double _barWidth = 20;
+  final double _barLabelHeight = 36;
+  final double _averageLineHeight = 16;
+  final double _barTooltipHeight = 22;
+  int animationDuration = 500;
+
+  late int _selectedIndex;
+  bool _shouldAnimateFast = false;
+  bool _shouldAnimate = true;
+
+  final List<Color> customColors = [
+    const Color(0xFF0E0C0C),
+    const Color(0xFF181817),
+    const Color(0xFF252422),
+    const Color(0xFF262523),
+    const Color(0xFFF3F2F3),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.graphVm.selectedBarIndex;
+    widget.onBarTap?.call(_selectedIndex, false);
+  }
+
+  @override
+  void didUpdateWidget(covariant MoneyBarGraph oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.graphVm != oldWidget.graphVm) {
+      _selectedIndex = widget.graphVm.selectedBarIndex;
+      widget.onBarTap?.call(_selectedIndex, false);
+    }
+  }
+
+  void _handleBarTap(int index) {
+    final touchedIndexYValue = widget.graphVm.dataPoints[index].yValue;
+    if (index != _selectedIndex && touchedIndexYValue > 0) {
+      setState(() {
+        _selectedIndex = index;
+      });
+      widget.onBarTap?.call(index, true);
+    }
+  }
+
+  double getAverageLinePosition(
+      {required double maxYValue, required double averageValue}) {
+    final multiplier = (widget.height - _barLabelHeight) / maxYValue;
+    final halfAverageLineHeight = _averageLineHeight / 2;
+    return _barLabelHeight +
+        (multiplier * averageValue) -
+        halfAverageLineHeight;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final maxYValue = widget.graphVm.maxYAxisValue;
+    final numberOfBars = widget.graphVm.numberOfBars;
+
+    return SizedBox(
+      width: widget.width,
+      height: widget.height + _barTooltipHeight,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Positioned(
+            top: _barTooltipHeight,
+            bottom: -40,
+            left: 0,
+            right: 0,
+            child: GraphGrid(numberOfBars, _barLabelHeight),
+          ),
+          SizedBox(
+            width: widget.width,
+            height: widget.height,
+            child: BarChart(
+              swapAnimationCurve: Curves.easeInOutCubic,
+              swapAnimationDuration: _shouldAnimateFast
+                  ? const Duration(milliseconds: 150)
+                  : Duration(milliseconds: animationDuration),
+              BarChartData(
+                barGroups: List.generate(
+                  widget.graphVm.numberOfBars,
+                  (index) => BarChartGroupData(
+                    x: index,
+                    barsSpace: 14,
+                    barRods: [
+                      BarChartRodData(
+                        toY: widget.graphVm.dataPoints[index].yValue,
+                        width: _barWidth,
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(0)),
+                        color: customColors[index % customColors.length],
+                      ),
+                    ],
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                alignment: BarChartAlignment.center,
+                gridData: const FlGridData(show: false),
+                maxY: maxYValue,
+                titlesData: FlTitlesData(
+                  show: true,
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        int index = value.toInt();
+                        if (index < 0 || index >= widget.graphVm.numberOfBars) {
+                          return const SizedBox();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: BarLabel(
+                            label: widget.graphVm.dataPoints[index].xLabel,
+                            subLabel:
+                                widget.graphVm.dataPoints[index].xSubLabel,
+                            index: index,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  leftTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles:
+                      AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                ),
+                barTouchData: BarTouchData(
+                  handleBuiltInTouches: false,
+                  touchCallback: (touchEvent, touchResponse) {
+                    if (touchEvent is FlTapUpEvent) {
+                      final touchedIndex =
+                          touchResponse?.spot?.touchedBarGroupIndex;
+                      if (touchedIndex == null) return;
+                      _handleBarTap(touchedIndex);
+                    }
+                  },
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) => null,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          if (widget.graphVm.averageValue != null)
+            Positioned(
+              bottom: getAverageLinePosition(
+                  maxYValue: maxYValue,
+                  averageValue: widget.graphVm.averageValue!),
+              left: 0,
+              right: 0,
+              height: _averageLineHeight,
+              child: AverageLine(
+                averageLabel: widget.graphVm.averageLabel,
+                numberOfBars: numberOfBars,
+              ),
+            ),
+          Positioned(
+            bottom: _barLabelHeight,
+            left: 0,
+            right: 0,
+            top: 0,
+            child: _BarTooltips(
+              numberOfBars: numberOfBars,
+              dataPoints: widget.graphVm.dataPoints,
+              barGraphHeight: widget.height,
+              barLabelHeight: _barLabelHeight,
+              maxYValue: maxYValue,
+              selectedIndex: _selectedIndex,
+              tooltipHeight: _barTooltipHeight,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class GraphGrid extends StatelessWidget {
+  const GraphGrid(this.numberOfBars, this.barLabelHeight, {Key? key})
+      : super(key: key);
+
+  final int numberOfBars;
+  final double barLabelHeight;
+  final double strokeWidth = 0.4;
+  final double dashSize = 2.5;
+  final double dashSpace = 1.5;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          bottom: barLabelHeight,
+          child: CustomPaint(
+            painter: GridPainter(
+              numberOfBars: numberOfBars,
+              spacing: strokeWidth + dashSpace,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The [CustomPainter] that draws the dashed grid lines.
+class GridPainter extends CustomPainter {
+  final int numberOfBars;
+  final double spacing;
+
+  GridPainter({required this.numberOfBars, required this.spacing});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = Colors.white24
+      ..strokeWidth = 1;
+
+    // Horizontal Dashed Line
+    double startX = 0;
+    double endX = size.width;
+    double dashWidth = 2;
+    double dashSpace = 2;
+
+    while (startX < endX) {
+      canvas.drawLine(
+        Offset(startX, size.height - 24),
+        Offset(startX + dashWidth, size.height - 24),
+        paint,
+      );
+      startX += dashWidth + dashSpace;
+    }
+
+    double barWidth = 35.0; // Assumed bar width
+    double totalUsableWidth = size.width - (numberOfBars * barWidth);
+    double spaceBetweenBars = totalUsableWidth / (numberOfBars + 1);
+
+    List<double> barPositions = List.generate(numberOfBars, (index) {
+      return spaceBetweenBars + (index * (barWidth + spaceBetweenBars));
+    });
+
+    double extraHeight = 50;
+
+    for (int i = 0; i < numberOfBars - 1; i++) {
+      double x = barPositions[i] + barWidth + (spaceBetweenBars / 2);
+      double y = -extraHeight;
+
+      while (y < size.height) {
+        double fadeFactor =
+            1 + ((y + extraHeight) / (size.height + extraHeight));
+        int alpha = (255 * fadeFactor).toInt();
+
+        final Paint fadingPaint = Paint()
+          ..color = Colors.white.withAlpha(alpha)
+          ..strokeWidth = 0.3;
+
+        canvas.drawLine(
+          Offset(x, y),
+          Offset(x, y + dashWidth),
+          fadingPaint,
+        );
+        y += dashWidth + dashSpace;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+/// widget to display the x-axis labels.
+class BarLabel extends StatelessWidget {
+  BarLabel({
+    super.key,
+    required this.label,
+    required this.subLabel,
+    required this.index,
+  });
+
+  final String? label;
+  final String? subLabel;
+  final int index;
+  final List<Color> monthColors = [
+    Colors.white10,
+    Colors.white30,
+    Colors.white38,
+    Colors.white54,
+    Colors.white70,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          label ?? '',
+          style: TextStyle(
+            color: monthColors[index % monthColors.length],
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        if (subLabel != null)
+          Text(
+            subLabel!,
+            style: TextStyle(
+              color: monthColors[index % monthColors.length],
+              fontSize: 10,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// widget to show the average line and its label.
+
+class AverageLine extends StatelessWidget {
+  const AverageLine({
+    super.key,
+    this.averageLabel,
+    required this.numberOfBars,
+  });
+
+  final String? averageLabel;
+  final int numberOfBars;
+
+  @override
+  Widget build(BuildContext context) {
+    if (numberOfBars <= 1) return const SizedBox.shrink();
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Positioned.fill(
+          child: CustomPaint(
+            painter: DottedLinePainter(),
+          ),
+        ),
+        // Average label in the center
+        if (averageLabel != null)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(2),
+            ),
+            child: Text(
+              averageLabel!,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 9,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+// dotted line for average container
+class DottedLinePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 0.5
+      ..style = PaintingStyle.stroke;
+
+    const double dashWidth = 2;
+    const double dashSpace = 2;
+    double startX = 0;
+
+    while (startX < size.width) {
+      canvas.drawLine(
+        Offset(startX, size.height / 2),
+        Offset(startX + dashWidth, size.height / 2),
+        paint,
+      );
+      startX += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+/// (currently minimal) widget for custom tooltips.
+class _BarTooltips extends StatelessWidget {
+  const _BarTooltips({
+    Key? key,
+    required this.numberOfBars,
+    required this.dataPoints,
+    required this.barGraphHeight,
+    required this.barLabelHeight,
+    required this.maxYValue,
+    required this.selectedIndex,
+    required this.tooltipHeight,
+  }) : super(key: key);
+
+  final int numberOfBars;
+  final List<NewMoneyBarGraphDataPointVm> dataPoints;
+  final double barGraphHeight;
+  final double barLabelHeight;
+  final double maxYValue;
+  final int selectedIndex;
+  final double tooltipHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    if (numberOfBars == 0) return const SizedBox.shrink();
+    return Row(
+      children: List.generate(numberOfBars, (index) {
+        return Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              (selectedIndex == index)
+                  ? Stack(
+                      children: [],
+                    )
+                  : const SizedBox.shrink(),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+}
+
+class NewForegroundDataWidget extends StatelessWidget {
+  final NewForegroundDataVm data;
+  const NewForegroundDataWidget({super.key, required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      spacing: 20,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          data.title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            fontFamily: 'Denton',
+            height: 1.51,
+            color: Colors.white,
+          ),
+          textAlign: TextAlign.start,
+        ),
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.015,
+            vertical: MediaQuery.of(context).size.height * 0.005,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.horizontal(
+              right: Radius.circular(MediaQuery.of(context).size.width * 0.05),
+              left: Radius.circular(MediaQuery.of(context).size.width * 0.05),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                data.ctaText,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width * 0.018,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF000000),
+                  letterSpacing: 1,
+                ),
+                textAlign: TextAlign.center,
+                textScaler:
+                    TextScaler.linear(ScaleSize.textScaleFactor(context)),
+              ),
+              Icon(
+                Icons.keyboard_arrow_right_outlined,
+                size: MediaQuery.of(context).size.width * 0.045,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}

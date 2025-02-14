@@ -1,13 +1,15 @@
 import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:task1/New%20Bar%20Graph/View/new_bar_graph.dart';
-import 'package:task1/Streaks/View/streak_screen.dart';
-import 'package:task1/Bar%20Graph/View/bar_graph_screen.dart';
-import 'package:task1/Recurring/View/recurring_payment_screen.dart';
-import 'package:task1/Pie%20Chart/View/pie_chart_screen.dart';
-import 'package:task1/Tag%20Trans/view/tag_transaction.dart';
-import 'package:task1/bank_screen.dart/view%20modal/bank_vm.dart';
+import 'package:task1/new_bar_graph/view/new_bar_graph.dart';
+import 'package:task1/recurring_info/view_model/recurring_vm.dart';
+import 'package:task1/streaks_info/view/streak_screen.dart';
+import 'package:task1/bar_graph/view/bar_graph_screen.dart';
+import 'package:task1/recurring_info/view/recurring_payment_screen.dart';
+import 'package:task1/pie_chart/view/pie_chart_screen.dart';
+import 'package:task1/streaks_info/view_model/streaks_vm.dart';
+import 'package:task1/tag_trans_info/view/tag_transaction.dart';
+import 'package:task1/bank_screen.dart/view_modal/bank_vm.dart';
 import 'package:task1/bank_screen.dart/view/bank_screen.dart';
 
 void main() {
@@ -53,7 +55,9 @@ class CombinedHomeScreen extends StatelessWidget {
             children: [
               SizedBox(
                 height: 250,
-                child: StreakScreen(),
+                child: StreakScreen(
+                  streaksVM: DummyStreaksData(),
+                ),
               ),
               const SizedBox(height: 20),
               SizedBox(
@@ -63,7 +67,9 @@ class CombinedHomeScreen extends StatelessWidget {
               const SizedBox(height: 20),
               SizedBox(
                 height: 250,
-                child: RecurringPaymentScreen(),
+                child: RecurringPaymentScreen(
+                  recurringVM: DummyRecurringData(),
+                ),
               ),
               const SizedBox(height: 20),
               SizedBox(
@@ -80,7 +86,6 @@ class CombinedHomeScreen extends StatelessWidget {
                 height: 270,
                 child: BankScreen(
                   bankVM: BankVM(),
-                  bankData: [],
                 ),
               ),
               const SizedBox(height: 20),
