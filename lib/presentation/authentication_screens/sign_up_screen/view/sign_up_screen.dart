@@ -1,0 +1,344 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/authentication_screens/phone_number/phone_number.dart';
+import 'package:task2/presentation/authentication_screens/sign_up_screen/auth_service/auth_service.dart';
+import 'package:task2/presentation/authentication_screens/sign_up_screen/cubit/auth_cubit.dart';
+
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final AuthService _authService = AuthService();
+  final TextEditingController _emailController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  bool _showEmailField = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+      if (keyboardHeight > 0 && _showEmailField) {
+        _scrollToTextField();
+      }
+    });
+  }
+
+  void _scrollToTextField() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients) {
+        final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+        final scrollAmount =
+            _scrollController.position.maxScrollExtent + keyboardHeight;
+
+        _scrollController.animateTo(
+          scrollAmount,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void showCustomSnackbar(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        Future.delayed(const Duration(seconds: 2), () {
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
+        });
+
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30, left: 20, right: 20),
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade600,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'Switzer',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
+    return ScaffoldMessenger(
+      child: Material(
+        child: Stack(
+          children: [
+            Image.asset(
+              "assets/splash/back.png",
+              width: size.width,
+              height: size.height,
+              fit: BoxFit.cover,
+            ),
+            Image.asset(
+              "assets/splash/gradient.png",
+              width: size.width,
+              height: size.height,
+              fit: BoxFit.cover,
+            ),
+            NotificationListener<OverscrollIndicatorNotification>(
+              onNotification: (notification) {
+                notification.disallowIndicator();
+                return true;
+              },
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    controller: _scrollController,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            bottom:
+                                bottomInset > 0
+                                    ? bottomInset * 0.4
+                                    : size.height * 0.1,
+                          ),
+                          child: Column(
+                            children: [
+                              Spacer(),
+                              Image.asset(
+                                "assets/splash/logo.png",
+                                width: size.width * 0.5,
+                                height: size.height * 0.12,
+                                fit: BoxFit.contain,
+                              ),
+                              SizedBox(height: size.height * 0.03),
+                              Text(
+                                "Dubai's award-winning Desi club \nexperience awaits you!",
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white70,
+                                  fontSize: size.width * 0.045,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: size.height * 0.08),
+                              _buildButtons(context, size),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButtons(BuildContext context, Size size) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_showEmailField) _buildEmailInput(size),
+
+          if (!_showEmailField)
+            SignInButton(
+              label: "Continue with Email",
+              imageUrl: "assets/sign_up_assets/mail.svg",
+              onTap: () {
+                setState(() {
+                  _showEmailField = true;
+                });
+                _scrollToTextField();
+              },
+            ),
+          const SizedBox(height: 12),
+          SignInButton(
+            label: "Continue with Google",
+            imageUrl: "assets/sign_up_assets/google.svg",
+            onTap: () async {
+              final user = await _authService.signInWithGoogle();
+              if (user != null) {
+                context.read<AuthCubit>().setUserEmail(user.email ?? "");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PhoneNumber()),
+                );
+              }
+            },
+          ),
+
+          const SizedBox(height: 12),
+
+          SignInButton(
+            label: "Continue with Apple",
+            imageUrl: "assets/sign_up_assets/apple.svg",
+            onTap: () {
+              showCustomSnackbar(context, "Coming soon");
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmailInput(Size size) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Please enter your email ",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: 'Switzer',
+              fontSize: size.width * 0.035,
+            ),
+          ),
+          SizedBox(height: 8),
+          TextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            onTap: _scrollToTextField,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.transparent,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: Color(0xff3579DD)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff3579DD)),
+              ),
+            ),
+            style: TextStyle(color: Colors.white),
+            cursorColor: Colors.white,
+          ),
+          SizedBox(height: 12),
+          GestureDetector(
+            onTap: () {
+              showCustomSnackbar(context, "Coming soon");
+            },
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color(0xff3579DD),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width * 0.03,
+                vertical: size.width * 0.03,
+              ),
+              child: Text(
+                "Continue",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontFamily: 'Switzer',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+}
+
+class SignInButton extends StatelessWidget {
+  final String label;
+  final String imageUrl;
+  final VoidCallback onTap;
+  const SignInButton({
+    super.key,
+    required this.label,
+    required this.imageUrl,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+    double padding = size.width * 0.03;
+    double iconSize = size.width * 0.05;
+    double fontSize = size.width * 0.04;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: padding,
+          horizontal: padding * 2,
+        ),
+        width: size.width * 0.8,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(size.width * 0.015),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(imageUrl, height: iconSize, width: iconSize),
+            SizedBox(width: size.width * 0.02),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: fontSize,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
