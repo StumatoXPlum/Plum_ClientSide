@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:task2/presentation/authentication_screens/date_of_birth/date_of_birth.dart';
 import 'package:task2/presentation/authentication_screens/sign_up_screen/view/sign_up_screen.dart';
 
 class UserProfile extends StatefulWidget {
@@ -16,7 +17,7 @@ class UserProfileState extends State<UserProfile> {
   String name = "Loading...";
   String email = "Not Available";
   String phoneNumber = "Not Available";
-  String dateOfBirth = "Not Available";
+  String dateOfBirth = "Not set yer";
   bool isGoogleSignIn = false;
 
   @override
@@ -54,7 +55,11 @@ class UserProfileState extends State<UserProfile> {
     if (userDoc.exists) {
       setState(() {
         phoneNumber = userDoc['phoneNumber'] ?? "Not Available";
-        dateOfBirth = userDoc['dateOfBirth'] ?? "Not Available";
+        dateOfBirth =
+            userDoc['dateOfBirth'] != null &&
+                    userDoc['dateOfBirth'].toString().isNotEmpty
+                ? userDoc['dateOfBirth']
+                : "Not set yet"; 
 
         if (isGoogleSignIn) {
           name = userDoc['name'] ?? email.split('@').first;
@@ -87,6 +92,63 @@ class UserProfileState extends State<UserProfile> {
         (route) => false,
       );
     }
+  }
+
+ Future<void> navigateToDateOfBirthScreen() async {
+  final selectedDate = await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const DateOfBirth()),
+  );
+
+  if (selectedDate != null) {
+    setState(() {
+      dateOfBirth = selectedDate;
+    });
+    fetchUserData();
+  }
+}
+
+
+  Widget buildTextField(
+    String label,
+    String value,
+    IconData icon, {
+    bool isReadOnly = false,
+    VoidCallback? onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontFamily: 'Switzer',
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: onTap,
+          child: AbsorbPointer(
+            absorbing: onTap != null,
+            child: TextField(
+              controller: TextEditingController(text: value),
+              readOnly: isReadOnly,
+              decoration: InputDecoration(
+                prefixIcon: Icon(icon, color: Colors.white70),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                filled: true,
+                fillColor: Colors.transparent,
+              ),
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -137,6 +199,7 @@ class UserProfileState extends State<UserProfile> {
                   dateOfBirth,
                   Icons.calendar_today,
                   isReadOnly: true,
+                  onTap: navigateToDateOfBirthScreen,
                 ),
                 SizedBox(height: size.height * 0.04),
                 GestureDetector(
@@ -166,41 +229,6 @@ class UserProfileState extends State<UserProfile> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget buildTextField(
-    String label,
-    String value,
-    IconData icon, {
-    bool isReadOnly = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-            fontFamily: 'Switzer',
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: TextEditingController(text: value),
-          readOnly: isReadOnly,
-          decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: Colors.white70),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            filled: true,
-            fillColor: Colors.transparent,
-          ),
-          style: const TextStyle(color: Colors.white),
-        ),
-      ],
     );
   }
 }

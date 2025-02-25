@@ -22,6 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _showEmailField = false;
   bool isLoading = false;
+  bool isContinuing = false;
 
   @override
   void initState() {
@@ -238,7 +239,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           SizedBox(height: 12),
           GestureDetector(
             onTap: () async {
-              // if (isLoading) return;
+              if (isContinuing) return;
               String email = _emailController.text.trim();
               if (email.isEmpty || !email.contains('@')) {
                 showCustomSnackbar(
@@ -248,12 +249,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 );
                 return;
               }
-              setState(() => isLoading = true);
+              setState(() => isContinuing = true);
               try {
-                await Supabase.instance.client.auth.signInWithOtp(
-                  // shouldCreateUser: false,
-                  email: email,
-                );
+                await Supabase.instance.client.auth.signInWithOtp(email: email);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -267,7 +265,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Colors.red.shade600,
                 );
               }
-              setState(() => isLoading = false);
+              setState(() => isContinuing = false);
             },
             child: Container(
               width: double.infinity,
@@ -281,7 +279,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               child: Center(
                 child:
-                    isLoading
+                    isContinuing
                         ? SizedBox(
                           height: 24,
                           width: 24,

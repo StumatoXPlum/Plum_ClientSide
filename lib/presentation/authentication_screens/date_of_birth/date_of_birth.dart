@@ -218,19 +218,19 @@ class _DateOfBirthState extends State<DateOfBirth> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildDropdown(
-                    "MM",
-                    selectedMonth,
-                    months,
-                    (val) => setState(() => selectedMonth = val),
-                    monthKey,
-                  ),
-                  SizedBox(width: size.width * 0.03),
-                  _buildDropdown(
                     "DD",
                     selectedDay,
                     days,
                     (val) => setState(() => selectedDay = val),
                     dayKey,
+                  ),
+                  SizedBox(width: size.width * 0.03),
+                  _buildDropdown(
+                    "MM",
+                    selectedMonth,
+                    months,
+                    (val) => setState(() => selectedMonth = val),
+                    monthKey,
                   ),
                   SizedBox(width: size.width * 0.03),
                   _buildDropdown(
@@ -251,10 +251,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
                   String dob = "$selectedDay $selectedMonth $selectedYear";
                   await _storeDateOfBirth(dob);
 
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => BottomNavScreen()),
-                  );
+                  Navigator.pop(context, dob);
                 },
 
                 child: Container(
@@ -274,6 +271,28 @@ class _DateOfBirthState extends State<DateOfBirth> {
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              SizedBox(height: size.height * 0.02),
+              Align(
+                alignment: Alignment.center,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BottomNavScreen(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "Skip for now",
+                    style: TextStyle(
+                      fontSize: fontSize * 0.8,
+                      color: Colors.white70,
+                      fontFamily: 'Switzer',
+                    ),
                   ),
                 ),
               ),
