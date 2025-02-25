@@ -14,6 +14,7 @@ class EmailVerification extends StatefulWidget {
 
 class _EmailVerificationState extends State<EmailVerification> {
   final TextEditingController _otpController = TextEditingController();
+  final FocusNode _otpFocusNode = FocusNode();
   bool isOtpEntered = false;
   bool isVerifying = false;
 
@@ -21,6 +22,9 @@ class _EmailVerificationState extends State<EmailVerification> {
   void initState() {
     super.initState();
     _otpController.addListener(_otpListener);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_otpFocusNode);
+    });
   }
 
   void _otpListener() {
@@ -162,11 +166,16 @@ class _EmailVerificationState extends State<EmailVerification> {
               PinCodeTextField(
                 cursorColor: Colors.white,
                 appContext: context,
+                focusNode: _otpFocusNode,
                 length: 6,
                 keyboardType: TextInputType.number,
                 controller: _otpController,
-                autoFocus: true,
-                textStyle: TextStyle(fontSize: 18, color: Colors.white),
+                autoFocus: false,
+                textStyle: TextStyle(
+                  fontSize: fontSize,
+                  color: Colors.white,
+                  fontFamily: 'Switzer',
+                ),
                 pinTheme: PinTheme(
                   shape: PinCodeFieldShape.box,
                   borderRadius: BorderRadius.circular(12.0),
@@ -197,7 +206,7 @@ class _EmailVerificationState extends State<EmailVerification> {
                         ),
                       ),
                       WidgetSpan(
-                        // alignment: PlaceholderAlignment.baseline,
+                        alignment: PlaceholderAlignment.baseline,
                         baseline: TextBaseline.alphabetic,
                         child: GestureDetector(
                           onTap: () async {
