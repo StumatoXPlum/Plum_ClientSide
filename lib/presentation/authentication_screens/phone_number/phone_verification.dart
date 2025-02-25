@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/presentation/authentication_screens/date_of_birth/date_of_birth.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/phone_auth/phone_auth.dart';
 
@@ -37,15 +38,34 @@ class _PhoneVerificationState extends State<PhoneVerification> {
   }
 
   Future<void> _storePhoneNumber(String phoneNumber) async {
-    User? user = FirebaseAuth.instance.currentUser;
+    final firebaseAuth = FirebaseAuth.instance;
+    final supabaseUser = supabase.Supabase.instance.client.auth.currentUser;
 
-    if (user != null) {
+    String? uid;
+    String? email;
+
+    if (firebaseAuth.currentUser != null) {
+      uid = firebaseAuth.currentUser!.uid;
+      email = firebaseAuth.currentUser!.email;
+    } else if (supabaseUser != null) {
+      uid = supabaseUser.id;
+      email = supabaseUser.email;
+    }
+
+    if (uid != null) {
       try {
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
           'phoneNumber': phoneNumber,
+          'email': email, // Ensures email is stored if missing
         }, SetOptions(merge: true));
 
         print("Phone number stored successfully!");
+
+        // Navigate to Date of Birth screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DateOfBirth()),
+        );
       } catch (e) {
         print("Error storing phone number: $e");
       }

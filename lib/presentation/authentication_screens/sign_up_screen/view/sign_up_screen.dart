@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/presentation/authentication_screens/email/email_verification.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/phone_number.dart';
 import 'package:task2/presentation/authentication_screens/sign_up_screen/auth_service/auth_service.dart';
 import 'package:task2/presentation/authentication_screens/sign_up_screen/cubit/auth_cubit.dart';
@@ -36,7 +38,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
         final scrollAmount =
             _scrollController.position.maxScrollExtent + keyboardHeight;
-
         _scrollController.animateTo(
           scrollAmount,
           duration: const Duration(milliseconds: 300),
@@ -251,8 +252,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
           SizedBox(height: 12),
           GestureDetector(
-            onTap: () {
-              showCustomSnackbar(context, "Coming soon");
+            onTap: () async {
+              String email = _emailController.text.trim();
+              if (email.isEmpty || !email.contains('@')) {
+                showCustomSnackbar(context, "Enter a valid email");
+                return;
+              }
+              try {
+                await Supabase.instance.client.auth.signInWithOtp(email: email);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EmailVerification(email: email),
+                  ),
+                );
+              } catch (e) {
+                showCustomSnackbar(context, "Failed to send OTP. Try again.");
+              }
             },
             child: Container(
               width: double.infinity,

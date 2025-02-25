@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/core/bottom_navigation_bar.dart';
 
 class DateOfBirth extends StatefulWidget {
@@ -45,20 +46,31 @@ class _DateOfBirthState extends State<DateOfBirth> {
   }
 
   Future<void> _storeDateOfBirth(String dob) async {
-    User? user = FirebaseAuth.instance.currentUser;
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    final supabaseUser = supabase.Supabase.instance.client.auth.currentUser;
+    String? uid;
+    String? email;
 
-    if (user != null) {
+    if (firebaseUser != null) {
+      uid = firebaseUser.uid;
+      email = firebaseUser.email;
+    } else if (supabaseUser != null) {
+      uid = supabaseUser.id;
+      email = supabaseUser.email;
+    }
+
+    if (uid != null) {
       try {
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
           'dateOfBirth': dob,
+          'email': email,
         }, SetOptions(merge: true));
-
-        print("Date of Birth stored successfully!");
+        print("dob stored");
       } catch (e) {
-        print("Error storing Date of Birth: $e");
+        print("errror : $e");
       }
     } else {
-      print("No authenticated user found!");
+      print("No user found");
     }
   }
 

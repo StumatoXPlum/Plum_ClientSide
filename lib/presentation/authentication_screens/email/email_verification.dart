@@ -1,33 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:task2/presentation/authentication_screens/phone_number/phone_number.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/presentation/authentication_screens/name_screen/enter_name_screen.dart';
 
 class EmailVerification extends StatefulWidget {
-  const EmailVerification({super.key});
+  final String email;
+  const EmailVerification({super.key, required this.email});
 
   @override
   State<EmailVerification> createState() => _EmailVerificationState();
 }
 
 class _EmailVerificationState extends State<EmailVerification> {
-  final TextEditingController otpController = TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
   bool isOtpEntered = false;
 
-  @override
-  void initState() {
-    super.initState();
-    otpController.addListener(() {
-      setState(() {
-        isOtpEntered = otpController.text.isNotEmpty;
-      });
+  void _otpListener() {
+    setState(() {
+      isOtpEntered = _otpController.text.length == 6;
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+    _otpController.addListener(_otpListener);
+  }
+
+  @override
   void dispose() {
-    otpController.dispose();
+    _otpController.removeListener(_otpListener);
+    _otpController.dispose();
     super.dispose();
+  }
+
+  void showCustomSnackbar(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        Future.delayed(const Duration(seconds: 2), () {
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
+        });
+
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30, left: 20, right: 20),
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade600,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'Switzer',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> verifyOtp() async {
+    String otp = _otpController.text.trim();
+    if (otp.isEmpty) {
+      showCustomSnackbar(context, "Enter OTP");
+      return;
+    }
+
+    try {
+      final response = await Supabase.instance.client.auth.verifyOTP(
+        email: widget.email,
+        token: otp,
+
+        type: OtpType.email,
+      );
+
+      if (response.session != null) {
+        showCustomSnackbar(context, "Email Verified!");
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => EnterNameScreen()),
+        );
+      } else {
+        showCustomSnackbar(context, "Invalid OTP. Try again.");
+      }
+    } catch (e) {
+      showCustomSnackbar(context, "OTP verification failed.");
+    }
   }
 
   @override
@@ -72,7 +149,7 @@ class _EmailVerificationState extends State<EmailVerification> {
               ),
               SizedBox(height: size.height * 0.02),
               Text(
-                "We've sent a code to arf@gmail.com",
+                "We've sent a code to ${widget.email}",
                 style: TextStyle(
                   fontSize: fontSize * 1,
                   color: Colors.white70,
@@ -86,7 +163,7 @@ class _EmailVerificationState extends State<EmailVerification> {
                 appContext: context,
                 length: 6,
                 keyboardType: TextInputType.number,
-                controller: otpController,
+                controller: _otpController,
                 autoFocus: true,
                 textStyle: TextStyle(fontSize: 18, color: Colors.white),
                 pinTheme: PinTheme(
@@ -122,7 +199,25 @@ class _EmailVerificationState extends State<EmailVerification> {
                         alignment: PlaceholderAlignment.baseline,
                         baseline: TextBaseline.alphabetic,
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: () async {
+                            try {
+                              await Supabase.instance.client.auth.signInWithOtp(
+                                shouldCreateUser: false,
+                                email: widget.email,
+                                emailRedirectTo: null,
+                              );
+                              showCustomSnackbar(
+                                context,
+                                "OTP resent to ${widget.email}",
+                              );
+                            } catch (e) {
+                              showCustomSnackbar(
+                                context,
+                                "Failed to resend OTP. try again.",
+                              );
+                            }
+                          },
+
                           child: Text(
                             "Resend",
                             style: TextStyle(
@@ -139,14 +234,7 @@ class _EmailVerificationState extends State<EmailVerification> {
               ),
               SizedBox(height: size.height * 0.04),
               GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PhoneNumber(),
-                    ),
-                  );
-                },
+                onTap: verifyOtp,
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(

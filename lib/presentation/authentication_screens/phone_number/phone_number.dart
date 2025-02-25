@@ -23,7 +23,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
     name: "India",
     example: "2012345678",
     displayName: "India (IN) [+91]",
-    displayNameNoCountryCode: "United States (US)",
+    displayNameNoCountryCode: "India",
     e164Key: "",
   );
 

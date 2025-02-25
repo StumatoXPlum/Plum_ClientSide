@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:task2/presentation/authentication_screens/sign_up_screen/auth_service/auth_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/presentation/authentication_screens/sign_up_screen/view/sign_up_screen.dart';
 
 class UserProfile extends StatefulWidget {
@@ -17,6 +17,7 @@ class UserProfileState extends State<UserProfile> {
   String email = "Not Available";
   String phoneNumber = "Not Available";
   String dateOfBirth = "Not Available";
+  bool isGoogleSignIn = false;
 
   @override
   void initState() {
@@ -25,31 +26,65 @@ class UserProfileState extends State<UserProfile> {
   }
 
   Future<void> fetchUserData() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
+    final firebase_auth.FirebaseAuth firebaseAuth =
+        firebase_auth.FirebaseAuth.instance;
+    final supabase.SupabaseClient supabaseClient =
+        supabase.Supabase.instance.client;
 
-      if (userDoc.exists) {
-        String fetchedEmail = userDoc['email'] ?? "Not Available";
-        setState(() {
-          email = fetchedEmail;
-          String extractedName =
-              fetchedEmail.contains("@")
-                  ? fetchedEmail.split("@").first
-                  : "Unknown";
-          name =
-              extractedName.contains(".") || extractedName.contains("_")
-                  ? extractedName.split(RegExp(r'[._]')).first
-                  : extractedName;
+    firebase_auth.User? firebaseUser = firebaseAuth.currentUser;
+    final supabase.User? supabaseUser = supabaseClient.auth.currentUser;
 
-          phoneNumber = userDoc['phoneNumber'] ?? "Not Available";
-          dateOfBirth = userDoc['dateOfBirth'] ?? "Not Available";
-        });
-      }
+    String userId;
+    if (firebaseUser != null) {
+      isGoogleSignIn = true;
+      email = firebaseUser.email ?? "Not Available";
+      name = email.split("@").first;
+      userId = firebaseUser.uid;
+    } else if (supabaseUser != null) {
+      isGoogleSignIn = false;
+      email = supabaseUser.email ?? "Not Available";
+      name = "Not Availble";
+      userId = supabaseUser.id;
+    } else {
+      return;
+    }
+
+    DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    if (userDoc.exists) {
+      setState(() {
+        phoneNumber = userDoc['phoneNumber'] ?? "Not Available";
+        dateOfBirth = userDoc['dateOfBirth'] ?? "Not Available";
+
+        if (!isGoogleSignIn) {
+          name = userDoc['name'] ?? "Not Available";
+        }
+      });
+    }
+  }
+
+  Future<void> _signOut() async {
+    final firebase_auth.FirebaseAuth firebaseAuth =
+        firebase_auth.FirebaseAuth.instance;
+    final supabase.SupabaseClient supabaseClient =
+        supabase.Supabase.instance.client;
+
+    final firebase_auth.User? firebaseUser = firebaseAuth.currentUser;
+    final supabase.User? supabaseUser = supabaseClient.auth.currentUser;
+
+    if (firebaseUser != null) {
+      await firebaseAuth.signOut();
+    } else if (supabaseUser != null) {
+      await supabaseClient.auth.signOut();
+    }
+
+    if (mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => SignUpScreen()),
+        (route) => false,
+      );
     }
   }
 
@@ -102,20 +137,9 @@ class UserProfileState extends State<UserProfile> {
                   Icons.calendar_today,
                   isReadOnly: true,
                 ),
-                SizedBox(height: size.height * 0.02),
-                buildTextField("Password", "********", Icons.lock),
                 SizedBox(height: size.height * 0.04),
                 GestureDetector(
-                  onTap: () async {
-                    await AuthService().signOut();
-                    if (mounted) {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignUpScreen()),
-                        (route) => false,
-                      );
-                    }
-                  },
+                  onTap: _signOut,
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: padding * 1.5),
                     width: double.infinity,
@@ -124,7 +148,6 @@ class UserProfileState extends State<UserProfile> {
                       border: Border.all(color: Color(0xff3579DD)),
                       borderRadius: BorderRadius.circular(42),
                     ),
-
                     child: Center(
                       child: Text(
                         "Log Out",
