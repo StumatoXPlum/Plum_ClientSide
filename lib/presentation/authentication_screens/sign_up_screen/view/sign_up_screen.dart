@@ -20,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _showEmailField = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -253,13 +254,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
           SizedBox(height: 12),
           GestureDetector(
             onTap: () async {
+              if (isLoading) return; // Prevent multiple taps
               String email = _emailController.text.trim();
               if (email.isEmpty || !email.contains('@')) {
                 showCustomSnackbar(context, "Enter a valid email");
                 return;
               }
+              setState(() => isLoading = true);
               try {
-                await Supabase.instance.client.auth.signInWithOtp(email: email);
+                await Supabase.instance.client.auth.signInWithOtp(
+                  // shouldCreateUser: false,
+                  email: email,
+                );
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -269,6 +275,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               } catch (e) {
                 showCustomSnackbar(context, "Failed to send OTP. Try again.");
               }
+              setState(() => isLoading = false);
             },
             child: Container(
               width: double.infinity,
@@ -277,17 +284,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 borderRadius: BorderRadius.circular(6),
               ),
               padding: EdgeInsets.symmetric(
-                horizontal: size.width * 0.03,
-                vertical: size.width * 0.03,
+                horizontal: MediaQuery.of(context).size.width * 0.03,
+                vertical: MediaQuery.of(context).size.width * 0.03,
               ),
-              child: Text(
-                "Continue",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                  fontFamily: 'Switzer',
-                ),
-                textAlign: TextAlign.center,
+              child: Center(
+                child:
+                    isLoading
+                        ? SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                            strokeWidth: 2.5,
+                          ),
+                        )
+                        : Text(
+                          "Continue",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontFamily: 'Switzer',
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
               ),
             ),
           ),

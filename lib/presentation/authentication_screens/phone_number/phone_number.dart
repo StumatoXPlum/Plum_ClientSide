@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/presentation/authentication_screens/phone_number/country_picker.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/phone_auth/phone_auth.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/phone_verification.dart';
@@ -14,6 +17,8 @@ class PhoneNumber extends StatefulWidget {
 }
 
 class _PhoneNumberState extends State<PhoneNumber> {
+  String userName = "there";
+
   Country selectedCountry = Country(
     phoneCode: "91",
     countryCode: "IN",
@@ -34,6 +39,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
   @override
   void initState() {
     super.initState();
+    fetchUserName();
     phoneController.addListener(() {
       setState(() {
         isPhoneEnter = phoneController.text.isNotEmpty;
@@ -53,6 +59,44 @@ class _PhoneNumberState extends State<PhoneNumber> {
       });
     }
   }
+
+ Future<void> fetchUserName() async {
+  final firebase_auth.User? firebaseUser =
+      firebase_auth.FirebaseAuth.instance.currentUser;
+  final supabase.User? supabaseUser =
+      supabase.Supabase.instance.client.auth.currentUser;
+
+  if (firebaseUser == null && supabaseUser == null) {
+    print("No authenticated user found.");
+    return;
+  }
+
+  String uid = firebaseUser?.uid ?? supabaseUser!.id;
+
+  print("Fetching user data for UID: $uid");
+
+  final userDoc =
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+  if (userDoc.exists && userDoc.data() != null) {
+    print("User data found in Firestore: ${userDoc.data()}");
+    setState(() {
+      userName = userDoc.data()!['name'] ?? "there";
+    });
+  } else {
+    print("User not found in Firestore, trying fallback.");
+
+    if (firebaseUser != null) {
+      String email = firebaseUser.email ?? "";
+      if (email.isNotEmpty) {
+        setState(() {
+          userName = email.split('@').first;
+        });
+      }
+    }
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +129,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
           children: [
             SizedBox(height: size.height * 0.03),
             Text(
-              "Hi there!",
+              "Hi $userName!",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: fontSize * 1.6,

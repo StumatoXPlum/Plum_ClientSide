@@ -14,6 +14,7 @@ class EnterNameScreen extends StatefulWidget {
 class _EnterNameScreenState extends State<EnterNameScreen> {
   final TextEditingController _nameController = TextEditingController();
   bool isNameEntered = false;
+  bool isLoading = false; 
 
   @override
   void dispose() {
@@ -26,6 +27,10 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
     String name = _nameController.text.trim();
     if (name.isEmpty) return;
 
+    setState(() {
+      isLoading = true; 
+    });
+
     try {
       firebase_auth.User? firebaseUser =
           firebase_auth.FirebaseAuth.instance.currentUser;
@@ -33,9 +38,9 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
           supabase.Supabase.instance.client.auth.currentUser;
 
       if (firebaseUser == null && supabaseUser == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('sing in first')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Sign in first')));
         return;
       }
 
@@ -53,7 +58,13 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('error: $e')));
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -122,7 +133,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
               ),
               SizedBox(height: size.height * 0.04),
               GestureDetector(
-                onTap: isNameEntered ? saveUserToFirestore : null,
+                onTap: isNameEntered && !isLoading ? saveUserToFirestore : null,
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -135,15 +146,26 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
                       horizontal: padding,
                       vertical: padding * 1.5,
                     ),
-                    child: Text(
-                      "Add Name",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontFamily: 'Switzer',
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                    child:
+                        isLoading
+                            ? Center(
+                              child: SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                            : Text(
+                              "Add Name",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontFamily: 'Switzer',
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                   ),
                 ),
               ),

@@ -38,12 +38,11 @@ class UserProfileState extends State<UserProfile> {
     if (firebaseUser != null) {
       isGoogleSignIn = true;
       email = firebaseUser.email ?? "Not Available";
-      name = email.split("@").first;
       userId = firebaseUser.uid;
     } else if (supabaseUser != null) {
       isGoogleSignIn = false;
       email = supabaseUser.email ?? "Not Available";
-      name = "Not Availble";
+      name = "Not Available";
       userId = supabaseUser.id;
     } else {
       return;
@@ -57,7 +56,9 @@ class UserProfileState extends State<UserProfile> {
         phoneNumber = userDoc['phoneNumber'] ?? "Not Available";
         dateOfBirth = userDoc['dateOfBirth'] ?? "Not Available";
 
-        if (!isGoogleSignIn) {
+        if (isGoogleSignIn) {
+          name = userDoc['name'] ?? email.split('@').first;
+        } else {
           name = userDoc['name'] ?? "Not Available";
         }
       });

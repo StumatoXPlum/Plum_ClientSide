@@ -15,12 +15,7 @@ class EmailVerification extends StatefulWidget {
 class _EmailVerificationState extends State<EmailVerification> {
   final TextEditingController _otpController = TextEditingController();
   bool isOtpEntered = false;
-
-  void _otpListener() {
-    setState(() {
-      isOtpEntered = _otpController.text.length == 6;
-    });
-  }
+  bool isVerifying = false;
 
   @override
   void initState() {
@@ -28,11 +23,15 @@ class _EmailVerificationState extends State<EmailVerification> {
     _otpController.addListener(_otpListener);
   }
 
-  @override
-  void dispose() {
-    _otpController.removeListener(_otpListener);
-    _otpController.dispose();
-    super.dispose();
+  void _otpListener() {
+    if (!mounted) {
+      print("Widget is disposed, but listener is still running!");
+      return;
+    }
+    print("OTP Listener is updating state...");
+    setState(() {
+      isOtpEntered = _otpController.text.length == 6;
+    });
   }
 
   void showCustomSnackbar(BuildContext context, String message) {
@@ -78,23 +77,22 @@ class _EmailVerificationState extends State<EmailVerification> {
   }
 
   Future<void> verifyOtp() async {
+    if (isVerifying) return; // Prevent multiple taps
     String otp = _otpController.text.trim();
     if (otp.isEmpty) {
       showCustomSnackbar(context, "Enter OTP");
       return;
     }
 
+    setState(() => isVerifying = true);
     try {
       final response = await Supabase.instance.client.auth.verifyOTP(
         email: widget.email,
         token: otp,
-
         type: OtpType.email,
       );
 
       if (response.session != null) {
-        showCustomSnackbar(context, "Email Verified!");
-
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => EnterNameScreen()),
@@ -105,6 +103,7 @@ class _EmailVerificationState extends State<EmailVerification> {
     } catch (e) {
       showCustomSnackbar(context, "OTP verification failed.");
     }
+    setState(() => isVerifying = false);
   }
 
   @override
@@ -196,7 +195,7 @@ class _EmailVerificationState extends State<EmailVerification> {
                         ),
                       ),
                       WidgetSpan(
-                        alignment: PlaceholderAlignment.baseline,
+                        // alignment: PlaceholderAlignment.baseline,
                         baseline: TextBaseline.alphabetic,
                         child: GestureDetector(
                           onTap: () async {
@@ -223,6 +222,7 @@ class _EmailVerificationState extends State<EmailVerification> {
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: fontSize * 0.8,
+                              fontWeight: FontWeight.bold,
                               fontFamily: 'Switzer',
                             ),
                           ),
@@ -246,14 +246,28 @@ class _EmailVerificationState extends State<EmailVerification> {
                       horizontal: padding,
                       vertical: padding * 1.5,
                     ),
-                    child: Text(
-                      "Verify",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontFamily: 'Switzer',
-                      ),
-                      textAlign: TextAlign.center,
+                    child: Center(
+                      child:
+                          isVerifying
+                              ? SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                              : Text(
+                                "Verify",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  fontFamily: 'Switzer',
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                     ),
                   ),
                 ),
@@ -263,5 +277,11 @@ class _EmailVerificationState extends State<EmailVerification> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _otpController.removeListener(_otpListener);
+    super.dispose();
   }
 }

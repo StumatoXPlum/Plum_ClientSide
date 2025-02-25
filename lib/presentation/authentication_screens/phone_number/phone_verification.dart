@@ -5,8 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'package:task2/presentation/authentication_screens/date_of_birth/date_of_birth.dart';
-import 'package:task2/presentation/authentication_screens/phone_number/phone_auth/phone_auth.dart';
+import '../date_of_birth/date_of_birth.dart';
+import 'phone_auth/phone_auth.dart';
 
 class PhoneVerification extends StatefulWidget {
   final String phoneNumber;
@@ -31,11 +31,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
     });
   }
 
-  @override
-  void dispose() {
-    otpController.dispose();
-    super.dispose();
-  }
+ 
 
   Future<void> _storePhoneNumber(String phoneNumber) async {
     final firebaseAuth = FirebaseAuth.instance;
@@ -56,21 +52,17 @@ class _PhoneVerificationState extends State<PhoneVerification> {
       try {
         await FirebaseFirestore.instance.collection('users').doc(uid).set({
           'phoneNumber': phoneNumber,
-          'email': email, // Ensures email is stored if missing
+          'email': email,
         }, SetOptions(merge: true));
-
-        print("Phone number stored successfully!");
-
-        // Navigate to Date of Birth screen
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => DateOfBirth()),
         );
       } catch (e) {
-        print("Error storing phone number: $e");
+        print("Error: $e");
       }
     } else {
-      print("No authenticated user found!");
+      print("No user found!");
     }
   }
 
@@ -102,26 +94,28 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: size.height * 0.1),
               Text(
                 "Verify your phone number",
                 style: TextStyle(
-                  fontSize: fontSize * 1.6,
+                  fontSize: fontSize * 1.8,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Switzer',
                   color: Colors.white,
                 ),
+                textAlign: TextAlign.center,
               ),
               SizedBox(height: size.height * 0.02),
               Text(
-                "We've sent an sms with an activation code to your phone ${widget.phoneNumber}",
+                "We've sent an SMS with an activation code to your phone ${widget.phoneNumber}",
                 style: TextStyle(
                   fontSize: fontSize * 1,
                   color: Colors.white70,
                   fontFamily: 'Switzer',
                 ),
+                textAlign: TextAlign.center,
               ),
 
               SizedBox(height: size.height * 0.1),
@@ -157,7 +151,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                       TextSpan(
                         text: "I didn't receive the code ",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: fontSize * 0.8,
                           color: Colors.white70,
                           fontFamily: 'Switzer',
                         ),
@@ -192,9 +186,8 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                             "Resend",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: fontSize * 0.7,
+                              fontSize: fontSize * 0.8,
                               fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
                               fontFamily: 'Switzer',
                             ),
                           ),

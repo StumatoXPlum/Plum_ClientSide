@@ -41,6 +41,7 @@ class AuthService {
 
     if (!doc.exists) {
       await _firestore.collection('users').doc(user.uid).set({
+        'name': user.displayName ?? "there",
         'email': user.email,
         'phoneNumber': "",
         'dateOfBirth': "",
