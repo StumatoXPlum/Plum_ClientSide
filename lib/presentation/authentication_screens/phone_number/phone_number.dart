@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:task2/core/custom_snackbar.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/country_picker.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/phone_auth/phone_auth.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/phone_verification.dart';
@@ -60,43 +61,39 @@ class _PhoneNumberState extends State<PhoneNumber> {
     }
   }
 
- Future<void> fetchUserName() async {
-  final firebase_auth.User? firebaseUser =
-      firebase_auth.FirebaseAuth.instance.currentUser;
-  final supabase.User? supabaseUser =
-      supabase.Supabase.instance.client.auth.currentUser;
+  Future<void> fetchUserName() async {
+    final firebase_auth.User? firebaseUser =
+        firebase_auth.FirebaseAuth.instance.currentUser;
+    final supabase.User? supabaseUser =
+        supabase.Supabase.instance.client.auth.currentUser;
 
-  if (firebaseUser == null && supabaseUser == null) {
-    print("No authenticated user found.");
-    return;
-  }
+    if (firebaseUser == null && supabaseUser == null) {
+      print("No authenticated user found.");
+      return;
+    }
 
-  String uid = firebaseUser?.uid ?? supabaseUser!.id;
+    String uid = firebaseUser?.uid ?? supabaseUser!.id;
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
-  print("Fetching user data for UID: $uid");
+    if (userDoc.exists && userDoc.data() != null) {
+      print("User data found in Firestore: ${userDoc.data()}");
+      setState(() {
+        userName = userDoc.data()!['name'] ?? "there";
+      });
+    } else {
+      print("User not found in Firestore, trying fallback.");
 
-  final userDoc =
-      await FirebaseFirestore.instance.collection('users').doc(uid).get();
-
-  if (userDoc.exists && userDoc.data() != null) {
-    print("User data found in Firestore: ${userDoc.data()}");
-    setState(() {
-      userName = userDoc.data()!['name'] ?? "there";
-    });
-  } else {
-    print("User not found in Firestore, trying fallback.");
-
-    if (firebaseUser != null) {
-      String email = firebaseUser.email ?? "";
-      if (email.isNotEmpty) {
-        setState(() {
-          userName = email.split('@').first;
-        });
+      if (firebaseUser != null) {
+        String email = firebaseUser.email ?? "";
+        if (email.isNotEmpty) {
+          setState(() {
+            userName = email.split('@').first;
+          });
+        }
       }
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +228,11 @@ class _PhoneNumberState extends State<PhoneNumber> {
                       ),
                     );
                   } else {
-                    print('Error sending OTP');
+                    showCustomSnackbar(
+                      context,
+                      "Error, Try Again",
+                      Colors.red.shade600,
+                    );
                   }
 
                   setState(() {

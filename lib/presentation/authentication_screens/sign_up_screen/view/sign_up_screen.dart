@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/presentation/authentication_screens/email/email_verification.dart';
-import 'package:task2/presentation/authentication_screens/phone_number/phone_number.dart';
-import 'package:task2/presentation/authentication_screens/sign_up_screen/auth_service/auth_service.dart';
-import 'package:task2/presentation/authentication_screens/sign_up_screen/cubit/auth_cubit.dart';
+import 'package:task2/core/custom_snackbar.dart';
+import '../../email/email_verification.dart';
+import '../../phone_number/phone_number.dart';
+import '../auth_service/auth_service.dart';
+import '../cubit/auth_cubit.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -46,48 +47,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
       }
     });
-  }
-
-  void showCustomSnackbar(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        Future.delayed(const Duration(seconds: 2), () {
-          if (Navigator.of(context).canPop()) {
-            Navigator.of(context).pop();
-          }
-        });
-
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 30, left: 20, right: 20),
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade600,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  message,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'Switzer',
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -189,18 +148,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           const SizedBox(height: 12),
           SignInButton(
-            label: "Continue with Google",
+            label: isLoading ? "Signing in..." : "Continue with Google",
             imageUrl: "assets/sign_up_assets/google.svg",
             onTap: () async {
-              final user = await _authService.signInWithGoogle();
-              if (user != null) {
-                context.read<AuthCubit>().setUserEmail(user.email ?? "");
-                Navigator.push(
+              if (isLoading) return;
+              setState(() {
+                isLoading = true;
+              });
+
+              try {
+                final user = await _authService.signInWithGoogle();
+
+                if (user != null) {
+                  context.read<AuthCubit>().setUserEmail(user.email ?? "");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PhoneNumber()),
+                  );
+                } else {
+                  showCustomSnackbar(
+                    context,
+                    "Sign-in failed. Please try again.",
+                    Colors.red.shade600,
+                  );
+                }
+              } catch (e) {
+                showCustomSnackbar(
                   context,
-                  MaterialPageRoute(builder: (context) => PhoneNumber()),
+                  "An error occurred. Please try again.",
+                  Colors.red.shade600,
                 );
+              } finally {
+                setState(() {
+                  isLoading = false;
+                });
               }
             },
+            isLoading: isLoading,
           ),
 
           const SizedBox(height: 12),
@@ -209,7 +193,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             label: "Continue with Apple",
             imageUrl: "assets/sign_up_assets/apple.svg",
             onTap: () {
-              showCustomSnackbar(context, "Coming soon");
+              showCustomSnackbar(context, "Coming soon", Colors.green.shade600);
             },
           ),
         ],
@@ -254,10 +238,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           SizedBox(height: 12),
           GestureDetector(
             onTap: () async {
-              if (isLoading) return; // Prevent multiple taps
+              // if (isLoading) return;
               String email = _emailController.text.trim();
               if (email.isEmpty || !email.contains('@')) {
-                showCustomSnackbar(context, "Enter a valid email");
+                showCustomSnackbar(
+                  context,
+                  "Enter a valid email",
+                  Colors.green.shade600,
+                );
                 return;
               }
               setState(() => isLoading = true);
@@ -273,7 +261,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 );
               } catch (e) {
-                showCustomSnackbar(context, "Failed to send OTP. Try again.");
+                showCustomSnackbar(
+                  context,
+                  "Failed to send OTP. Try again.",
+                  Colors.red.shade600,
+                );
               }
               setState(() => isLoading = false);
             },
@@ -329,11 +321,13 @@ class SignInButton extends StatelessWidget {
   final String label;
   final String imageUrl;
   final VoidCallback onTap;
+  final bool isLoading;
   const SignInButton({
     super.key,
     required this.label,
     required this.imageUrl,
     required this.onTap,
+    this.isLoading = false,
   });
 
   @override
@@ -353,28 +347,37 @@ class SignInButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(size.width * 0.015),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 4,
-              offset: Offset(0, 2),
-            ),
-          ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(imageUrl, height: iconSize, width: iconSize),
-            SizedBox(width: size.width * 0.02),
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+        child:
+            isLoading
+                ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: iconSize,
+                      width: iconSize,
+                      child: const CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ],
+                )
+                : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      imageUrl,
+                      height: iconSize,
+                      width: iconSize,
+                    ),
+                    SizedBox(width: size.width * 0.02),
+                    Text(
+                      label,
+                      style: GoogleFonts.inter(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
       ),
     );
   }

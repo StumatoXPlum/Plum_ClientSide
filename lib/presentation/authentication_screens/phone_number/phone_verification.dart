@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:task2/core/custom_snackbar.dart';
 import '../date_of_birth/date_of_birth.dart';
 import 'phone_auth/phone_auth.dart';
 
@@ -30,8 +31,6 @@ class _PhoneVerificationState extends State<PhoneVerification> {
       });
     });
   }
-
- 
 
   Future<void> _storePhoneNumber(String phoneNumber) async {
     final firebaseAuth = FirebaseAuth.instance;
@@ -165,20 +164,16 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                               widget.phoneNumber,
                             );
                             if (success) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("New OTP has been sent!"),
-                                  backgroundColor: Colors.green,
-                                ),
+                              showCustomSnackbar(
+                                context,
+                                "New OTP has been sent",
+                                Colors.green.shade600,
                               );
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    "Failed to resend OTP. Try again.",
-                                  ),
-                                  backgroundColor: Colors.red,
-                                ),
+                              showCustomSnackbar(
+                                context,
+                                "Failed to resend OTP try again!",
+                                Colors.red.shade600,
                               );
                             }
                           },
@@ -216,12 +211,10 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                         MaterialPageRoute(builder: (context) => DateOfBirth()),
                       );
                     } else {
-                      print('Invalid OTP');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Invalid OTP. Please try again."),
-                          backgroundColor: Colors.red,
-                        ),
+                      showCustomSnackbar(
+                        context,
+                        "Invalid OTP, Please try again!",
+                        Colors.red.shade600,
                       );
                     }
                     setState(() {

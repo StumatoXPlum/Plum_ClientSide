@@ -25,16 +25,14 @@ class _EmailVerificationState extends State<EmailVerification> {
 
   void _otpListener() {
     if (!mounted) {
-      print("Widget is disposed, but listener is still running!");
       return;
     }
-    print("OTP Listener is updating state...");
     setState(() {
       isOtpEntered = _otpController.text.length == 6;
     });
   }
 
-  void showCustomSnackbar(BuildContext context, String message) {
+  void showCustomSnackbar(BuildContext context, String message, Color color) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -57,7 +55,7 @@ class _EmailVerificationState extends State<EmailVerification> {
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade600,
+                  color: color,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -77,10 +75,10 @@ class _EmailVerificationState extends State<EmailVerification> {
   }
 
   Future<void> verifyOtp() async {
-    if (isVerifying) return; // Prevent multiple taps
+    if (isVerifying) return;
     String otp = _otpController.text.trim();
     if (otp.isEmpty) {
-      showCustomSnackbar(context, "Enter OTP");
+      showCustomSnackbar(context, "Enter OTP", Colors.green.shade600);
       return;
     }
 
@@ -98,10 +96,14 @@ class _EmailVerificationState extends State<EmailVerification> {
           MaterialPageRoute(builder: (context) => EnterNameScreen()),
         );
       } else {
-        showCustomSnackbar(context, "Invalid OTP. Try again.");
+        showCustomSnackbar(context, "Error, Try Again", Colors.red.shade600);
       }
     } catch (e) {
-      showCustomSnackbar(context, "OTP verification failed.");
+      showCustomSnackbar(
+        context,
+        "Invalid OTP. Try again.",
+        Colors.red.shade600,
+      );
     }
     setState(() => isVerifying = false);
   }
@@ -208,11 +210,13 @@ class _EmailVerificationState extends State<EmailVerification> {
                               showCustomSnackbar(
                                 context,
                                 "OTP resent to ${widget.email}",
+                                Colors.green.shade600,
                               );
                             } catch (e) {
                               showCustomSnackbar(
                                 context,
                                 "Failed to resend OTP. try again.",
+                                Colors.red.shade600,
                               );
                             }
                           },
