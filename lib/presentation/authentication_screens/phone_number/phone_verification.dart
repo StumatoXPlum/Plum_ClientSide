@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/core/custom_snackbar.dart';
 import '../date_of_birth/date_of_birth.dart';
@@ -118,28 +118,42 @@ class _PhoneVerificationState extends State<PhoneVerification> {
               ),
 
               SizedBox(height: size.height * 0.1),
-              PinCodeTextField(
-                cursorColor: Colors.white,
-                appContext: context,
-                length: 6,
-                keyboardType: TextInputType.number,
+              Pinput(
                 controller: otpController,
-                autoFocus: true,
-                textStyle: TextStyle(fontSize: 18, color: Colors.white),
-                pinTheme: PinTheme(
-                  shape: PinCodeFieldShape.box,
-                  borderRadius: BorderRadius.circular(12.0),
-                  fieldHeight: 60,
-                  fieldWidth: 50,
-                  activeFillColor: Color(0xff090D14),
-                  selectedFillColor: Color(0xff090D14),
-                  inactiveFillColor: Color(0xff090D14),
-                  activeColor: Color(0xff3579DD),
-                  selectedColor: Color(0xff3579DD),
-                  inactiveColor: Color(0xff3579DD),
+                length: 6,
+                defaultPinTheme: PinTheme(
+                  width: 50,
+                  height: 60,
+                  textStyle: TextStyle(
+                    fontSize: fontSize,
+                    color: Colors.white,
+                    fontFamily: 'Switzer',
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff090D14),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xff3579DD)),
+                  ),
                 ),
-                onChanged: (value) {},
-                enableActiveFill: true,
+                focusedPinTheme: PinTheme(
+                  width: 50,
+                  height: 60,
+                  textStyle: TextStyle(
+                    fontSize: fontSize,
+                    color: Colors.white,
+                    fontFamily: 'Switzer',
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff090D14),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blueAccent),
+                  ),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    isOtpEntered = value.length == 6;
+                  });
+                },
               ),
               SizedBox(height: size.height * 0.05),
               Align(

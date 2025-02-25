@@ -55,6 +55,7 @@ dependencies:
   geolocator: ^13.0.2
   geocoding: ^3.0.0
   supabase_flutter: ^2.8.4
+  pinput: ^5.0.1
 
 dev_dependencies:
   flutter_test:

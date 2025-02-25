@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/presentation/authentication_screens/name_screen/enter_name_screen.dart';
 
@@ -14,7 +14,7 @@ class EmailVerification extends StatefulWidget {
 
 class _EmailVerificationState extends State<EmailVerification> {
   final TextEditingController _otpController = TextEditingController();
-  final FocusNode _otpFocusNode = FocusNode();
+
   bool isOtpEntered = false;
   bool isVerifying = false;
 
@@ -22,9 +22,6 @@ class _EmailVerificationState extends State<EmailVerification> {
   void initState() {
     super.initState();
     _otpController.addListener(_otpListener);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(_otpFocusNode);
-    });
   }
 
   void _otpListener() {
@@ -163,33 +160,42 @@ class _EmailVerificationState extends State<EmailVerification> {
               ),
 
               SizedBox(height: size.height * 0.1),
-              PinCodeTextField(
-                cursorColor: Colors.white,
-                appContext: context,
-                focusNode: _otpFocusNode,
-                length: 6,
-                keyboardType: TextInputType.number,
+              Pinput(
                 controller: _otpController,
-                autoFocus: false,
-                textStyle: TextStyle(
-                  fontSize: fontSize,
-                  color: Colors.white,
-                  fontFamily: 'Switzer',
+                length: 6,
+                defaultPinTheme: PinTheme(
+                  width: 50,
+                  height: 60,
+                  textStyle: TextStyle(
+                    fontSize: fontSize,
+                    color: Colors.white,
+                    fontFamily: 'Switzer',
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff090D14),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xff3579DD)),
+                  ),
                 ),
-                pinTheme: PinTheme(
-                  shape: PinCodeFieldShape.box,
-                  borderRadius: BorderRadius.circular(12.0),
-                  fieldHeight: 60,
-                  fieldWidth: 50,
-                  activeFillColor: Color(0xff090D14),
-                  selectedFillColor: Color(0xff090D14),
-                  inactiveFillColor: Color(0xff090D14),
-                  activeColor: Color(0xff3579DD),
-                  selectedColor: Color(0xff3579DD),
-                  inactiveColor: Color(0xff3579DD),
+                focusedPinTheme: PinTheme(
+                  width: 50,
+                  height: 60,
+                  textStyle: TextStyle(
+                    fontSize: fontSize,
+                    color: Colors.white,
+                    fontFamily: 'Switzer',
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff090D14),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blueAccent),
+                  ),
                 ),
-                onChanged: (value) {},
-                enableActiveFill: true,
+                onChanged: (value) {
+                  setState(() {
+                    isOtpEntered = value.length == 6;
+                  });
+                },
               ),
               SizedBox(height: size.height * 0.05),
               Align(

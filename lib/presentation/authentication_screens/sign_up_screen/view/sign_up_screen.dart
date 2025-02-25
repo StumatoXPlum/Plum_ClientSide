@@ -89,7 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           padding: EdgeInsets.only(
                             bottom:
                                 bottomInset > 0
-                                    ? bottomInset * 0.4
+                                    ? bottomInset * 0.5
                                     : size.height * 0.1,
                           ),
                           child: Column(
