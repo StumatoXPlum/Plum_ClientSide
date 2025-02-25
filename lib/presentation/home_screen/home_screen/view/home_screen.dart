@@ -1,9 +1,11 @@
 import 'dart:ui';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/core/custom_snackbar.dart';
 import 'package:task2/presentation/home_screen/home_screen/cubit/earned_points_cubit.dart';
 import '../../../cart/view/cart_screen.dart';
 import '../../recommendation/view/recommendation_screen.dart';
@@ -141,7 +143,9 @@ class HomeScreen extends StatelessWidget {
               height: size.height * 0.12,
               child: Swiper(
                 itemCount: 6,
-                itemBuilder: (context, index) => const CouponContainer(),
+                itemBuilder:
+                    (context, index) =>
+                        const CouponContainer(promoCode: "W34EAFIK"),
                 axisDirection: AxisDirection.down,
                 scrollDirection: Axis.vertical,
                 itemHeight: 70,
@@ -233,13 +237,16 @@ class HomeScreen extends StatelessWidget {
 }
 
 class CouponContainer extends StatelessWidget {
-  const CouponContainer({super.key});
+  final String promoCode;
+
+  const CouponContainer({super.key, required this.promoCode});
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
     double fontSize = size.width * 0.04;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: padding * 2),
       child: Container(
@@ -276,7 +283,7 @@ class CouponContainer extends StatelessWidget {
                   ),
                   SizedBox(height: size.height * 0.001),
                   Text(
-                    "Apply W34EAFIK for discount",
+                    "Apply $promoCode for discount",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: fontSize * 0.75,
@@ -286,10 +293,19 @@ class CouponContainer extends StatelessWidget {
                 ],
               ),
             ),
-
-            SvgPicture.asset(
-              "assets/home_assets/arrow.svg",
-              width: size.width * 0.07,
+            GestureDetector(
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: promoCode));
+                showCustomSnackbar(
+                  context,
+                  "Coupon code copied",
+                  Colors.green.shade600,
+                );
+              },
+              child: SvgPicture.asset(
+                "assets/home_assets/arrow.svg",
+                width: size.width * 0.07,
+              ),
             ),
           ],
         ),
