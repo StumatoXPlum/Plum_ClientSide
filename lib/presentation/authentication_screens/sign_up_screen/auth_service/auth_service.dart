@@ -9,6 +9,10 @@ class AuthService {
   final firebase_auth.FirebaseFirestore _firestore =
       firebase_auth.FirebaseFirestore.instance;
 
+  static String getRandomAvatarUrl(String userId) {
+    return "https://api.dicebear.com/7.x/pixel-art/png?seed=$userId";
+  }
+
   Future<User?> signInWithGoogle() async {
     try {
       await _googleSignIn.signOut();
@@ -43,11 +47,13 @@ class AuthService {
         await _firestore.collection('users').doc(user.uid).get();
 
     if (!doc.exists) {
+      String avatarUrl = getRandomAvatarUrl(user.uid);
       await _firestore.collection('users').doc(user.uid).set({
         'name': user.displayName ?? "there",
         'email': user.email,
         'phoneNumber': "",
         'dateOfBirth': "",
+        'avatarUrl': avatarUrl,
       });
     }
   }

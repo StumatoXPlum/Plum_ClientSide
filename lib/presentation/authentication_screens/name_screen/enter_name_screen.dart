@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/presentation/authentication_screens/phone_number/phone_number.dart';
+import 'package:task2/presentation/authentication_screens/sign_up_screen/auth_service/auth_service.dart';
 
 class EnterNameScreen extends StatefulWidget {
   const EnterNameScreen({super.key});
@@ -47,9 +48,13 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
 
       String uid = firebaseUser?.uid ?? supabaseUser!.id;
       String email = firebaseUser?.email ?? supabaseUser!.email ?? "";
+
+      String avatarUrl = AuthService.getRandomAvatarUrl(uid);
+
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
         'name': name,
         'email': email,
+        'avatarUrl': avatarUrl,
       }, SetOptions(merge: true));
 
       Navigator.push(

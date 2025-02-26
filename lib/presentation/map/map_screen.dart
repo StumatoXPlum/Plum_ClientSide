@@ -50,25 +50,26 @@ class _MapScreenState extends State<MapScreen> {
     _getCurrentLocation();
   }
 
- Future<void> _getCurrentLocation() async {
-  Position position = await Geolocator.getCurrentPosition(
-    desiredAccuracy: LocationAccuracy.high,
-  );
+  Future<void> _getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
 
-  setState(() {
-    _currentLocation = LatLng(position.latitude, position.longitude);
-    _locationText = "${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}";
-  });
+    setState(() {
+      _currentLocation = LatLng(position.latitude, position.longitude);
+      _locationText =
+          "${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}";
+    });
 
-  _mapController.move(_currentLocation!, 15.0);
-}
+    _mapController.move(_currentLocation!, 15.0);
+  }
 
-void _goBack() {
-  Navigator.pop(context, {
-    'locationText': _locationText,
-    'currentLocation': _currentLocation,
-  });
-}
+  void _goBack() {
+    Navigator.pop(context, {
+      'locationText': _locationText,
+      'currentLocation': _currentLocation,
+    });
+  }
 
   void _showLocationDialog() {
     showDialog(

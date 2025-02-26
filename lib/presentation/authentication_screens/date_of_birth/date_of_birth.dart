@@ -137,7 +137,9 @@ class _DateOfBirthState extends State<DateOfBirth> {
                                 (item) => ListTile(
                                   title: Text(
                                     item.toString(),
-                                    style: GoogleFonts.urbanist(color: Colors.black),
+                                    style: GoogleFonts.urbanist(
+                                      color: Colors.black,
+                                    ),
                                   ),
                                   onTap: () {
                                     onSelect(item);
@@ -277,7 +279,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
                     style: GoogleFonts.urbanist(
                       fontSize: fontSize,
                       color: Colors.white,
-                      fontWeight: FontWeight.bold
+                      fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
                   ),

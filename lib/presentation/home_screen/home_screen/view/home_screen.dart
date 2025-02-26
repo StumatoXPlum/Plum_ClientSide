@@ -1,13 +1,16 @@
 import 'dart:ui';
 import 'package:card_swiper/card_swiper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:task2/core/custom_snackbar.dart';
-import 'package:task2/presentation/home_screen/home_screen/cubit/earned_points_cubit.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import '../../../../core/custom_snackbar.dart';
+import '../../../authentication_screens/sign_up_screen/auth_service/auth_service.dart';
+import '../cubit/earned_points_cubit.dart';
 import '../../../cart/view/cart_screen.dart';
 import '../../recommendation/view/recommendation_screen.dart';
 import '../../home_detail_screen/view/home_detail_screen.dart';
@@ -32,7 +35,50 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final String _locationText = "Tap to set location";
-  LatLng? _currentLocation;
+  String? _yourLocation;
+  String avatarUrl = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAvatar();
+  }
+
+  Future<void> fetchAvatar() async {
+    final firebase_auth.FirebaseAuth firebaseAuth =
+        firebase_auth.FirebaseAuth.instance;
+    final supabase.SupabaseClient supabaseClient =
+        supabase.Supabase.instance.client;
+
+    firebase_auth.User? firebaseUser = firebaseAuth.currentUser;
+    final supabase.User? supabaseUser = supabaseClient.auth.currentUser;
+
+    if (firebaseUser == null && supabaseUser == null) {
+      return;
+    }
+
+    String userId = firebaseUser?.uid ?? supabaseUser!.id;
+
+    try {
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .get();
+
+      if (userDoc.exists) {
+        setState(() {
+          avatarUrl =
+              userDoc['avatarUrl'] ?? AuthService.getRandomAvatarUrl(userId);
+        });
+      } else {
+        print("usr not exist");
+      }
+    } catch (e) {
+      print("error fetching avatar: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -93,9 +139,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               );
                             },
-                            child: Image.asset(
-                              "assets/home_assets/pfp.png",
-                              height: size.width * 0.12,
+                            child: CircleAvatar(
+                              backgroundImage:
+                                  avatarUrl.isNotEmpty
+                                      ? NetworkImage(avatarUrl)
+                                      : AssetImage(
+                                        'assets/home_assets/pfp.png',
+                                      ),
                             ),
                           ),
                         ],
@@ -189,14 +239,21 @@ class _HomeScreenState extends State<HomeScreen> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
               child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  final selectedLocation = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const PickLocationScreen(),
+                      builder: (context) => PickLocationScreen(),
                     ),
                   );
+
+                  if (selectedLocation != null && selectedLocation is String) {
+                    setState(() {
+                      _yourLocation = selectedLocation;
+                    });
+                  }
                 },
+
                 child: Container(
                   padding: EdgeInsets.all(padding),
                   decoration: BoxDecoration(
@@ -222,34 +279,41 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       SizedBox(width: size.width * 0.03),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Your Location",
-                            style: GoogleFonts.urbanist(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: fontSize * 0.9,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Your Location",
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: fontSize * 0.9,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: size.height * 0.001),
-                          Text(
-                            _locationText,
-                            style: GoogleFonts.urbanist(
-                              color:
-                                  _currentLocation != null
-                                      ? Colors.white60
-                                      : Colors.white60,
+                            SizedBox(height: size.height * 0.001),
+                            Text(
+                              _yourLocation ?? _locationText,
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white60,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      const Spacer(),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        color: Color(0xff3579DD),
-                        size: 16,
+                      // const Spacer(),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 15),
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: Color(0xff3579DD),
+                            size: 16,
+                          ),
+                        ),
                       ),
                     ],
                   ),

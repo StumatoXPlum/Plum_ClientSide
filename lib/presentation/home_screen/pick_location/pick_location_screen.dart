@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:task2/presentation/map/map_screen.dart';
 
 class PickLocationScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
   bool _isFetching = false;
 
   Future<void> _getCurrentLocation() async {
-    setState(() => _isFetching = true); 
+    setState(() => _isFetching = true);
 
     try {
       Position position = await Geolocator.getCurrentPosition(
@@ -41,8 +42,12 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
         _currentAddress = "Failed to get location";
       });
     } finally {
-      setState(() => _isFetching = false); 
+      setState(() => _isFetching = false);
     }
+  }
+
+  void _goBack() {
+    Navigator.pop(context, _currentAddress);
   }
 
   @override
@@ -62,7 +67,7 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
               Align(
                 alignment: Alignment.topLeft,
                 child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: _goBack,
                   child: SvgPicture.asset("assets/sign_up_assets/back.svg"),
                 ),
               ),
@@ -81,7 +86,6 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                 style: GoogleFonts.urbanist(
                   color: Colors.white70,
                   fontSize: fontSize * 0.8,
-                  
                 ),
               ),
               SizedBox(height: size.height * 0.03),
@@ -126,14 +130,41 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: padding),
                       child: InkWell(
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => MapScreen(),
                             ),
                           );
+
+                          if (result != null &&
+                              result is Map<String, dynamic>) {
+                            LatLng? location = result['currentLocation'];
+
+                            if (location != null) {
+                              try {
+                                List<Placemark> placemarks =
+                                    await placemarkFromCoordinates(
+                                      location.latitude,
+                                      location.longitude,
+                                    );
+
+                                Placemark place = placemarks.first;
+                                setState(() {
+                                  _currentAddress =
+                                      "${place.name}, ${place.locality}, ${place.administrativeArea}, ${place.country}";
+                                });
+                              } catch (e) {
+                                print("Error fetching address: $e");
+                                setState(() {
+                                  _currentAddress = "Failed to fetch address";
+                                });
+                              }
+                            }
+                          }
                         },
+
                         child: Row(
                           children: [
                             Icon(Icons.add, color: Colors.white),

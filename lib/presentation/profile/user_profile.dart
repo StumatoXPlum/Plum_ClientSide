@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/presentation/authentication_screens/date_of_birth/date_of_birth.dart';
+import 'package:task2/presentation/authentication_screens/sign_up_screen/auth_service/auth_service.dart';
 import 'package:task2/presentation/authentication_screens/sign_up_screen/view/sign_up_screen.dart';
 
 class UserProfile extends StatefulWidget {
@@ -20,6 +21,7 @@ class UserProfileState extends State<UserProfile> {
   String phoneNumber = "Not Available";
   String dateOfBirth = "Not set yet";
   bool isGoogleSignIn = false;
+  String avatarUrl = "";
 
   @override
   void initState() {
@@ -44,30 +46,50 @@ class UserProfileState extends State<UserProfile> {
     } else if (supabaseUser != null) {
       isGoogleSignIn = false;
       email = supabaseUser.email ?? "Not Available";
-      name = "Not Available";
       userId = supabaseUser.id;
     } else {
       return;
     }
 
-    DocumentSnapshot userDoc =
-        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    try {
+      DocumentSnapshot userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .get();
 
-    if (userDoc.exists) {
-      setState(() {
-        phoneNumber = userDoc['phoneNumber'] ?? "Not Available";
-        dateOfBirth =
-            userDoc['dateOfBirth'] != null &&
-                    userDoc['dateOfBirth'].toString().isNotEmpty
-                ? userDoc['dateOfBirth']
-                : "Not set yet";
+      if (userDoc.exists) {
+        print("got firestor Data: ${userDoc.data()}");
 
-        if (isGoogleSignIn) {
-          name = userDoc['name'] ?? email.split('@').first;
-        } else {
-          name = userDoc['name'] ?? "Not Available";
-        }
-      });
+        setState(() {
+          phoneNumber =
+              userDoc.data().toString().contains('phoneNumber')
+                  ? userDoc['phoneNumber']
+                  : "Not Available";
+
+          dateOfBirth =
+              userDoc.data().toString().contains('dateOfBirth') &&
+                      userDoc['dateOfBirth'].toString().isNotEmpty
+                  ? userDoc['dateOfBirth']
+                  : "Not set yet";
+
+          avatarUrl =
+              userDoc.data().toString().contains('avatarUrl')
+                  ? userDoc['avatarUrl']
+                  : AuthService.getRandomAvatarUrl(userId);
+
+          name =
+              userDoc.data().toString().contains('name')
+                  ? userDoc['name']
+                  : (isGoogleSignIn ? email.split('@').first : "Not Available");
+
+          print("got Name: $name");
+        });
+      } else {
+        print("User does not exist");
+      }
+    } catch (e) {
+      print("Error fething user: $e");
     }
   }
 
@@ -115,10 +137,7 @@ class UserProfileState extends State<UserProfile> {
       children: [
         Text(
           label,
-          style: GoogleFonts.urbanist(
-            fontSize: 16,
-            color: Colors.white,
-          ),
+          style: GoogleFonts.urbanist(fontSize: 16, color: Colors.white),
         ),
         const SizedBox(height: 8),
         GestureDetector(
@@ -166,11 +185,22 @@ class UserProfileState extends State<UserProfile> {
                   ),
                 ),
                 Center(
-                  child: Image.asset(
-                    'assets/home_assets/pfp.png',
-                    height: size.height * 0.15,
-                    width: size.width * 0.3,
-                    fit: BoxFit.contain,
+                  child: Container(
+                    padding: EdgeInsets.all(padding * 1.5),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Color(0xff3579DD), width: 4),
+                    ),
+                    child: ClipOval(
+                      child: Image.network(
+                        avatarUrl.isNotEmpty
+                            ? avatarUrl
+                            : AuthService.getRandomAvatarUrl(email),
+                        height: size.height * 0.15,
+                        width: size.width * 0.3,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(height: size.height * 0.02),
@@ -220,7 +250,8 @@ class UserProfileState extends State<UserProfile> {
                         style: GoogleFonts.urbanist(
                           fontSize: fontSize,
                           color: Color(0xff3579DD),
-                          fontWeight: FontWeight.w500,),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
