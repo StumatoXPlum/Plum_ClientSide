@@ -343,7 +343,8 @@ class RecommendationsWidget extends StatelessWidget {
                 "Recommended for you",
                 style: GoogleFonts.urbanist(
                   color: Colors.white,
-                  fontSize: fontSize,
+                  fontSize: fontSize * 1.1,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const Spacer(),
@@ -445,11 +446,11 @@ class RecommendationsWidget extends StatelessWidget {
                                       Text(
                                         items[index].rating,
                                         style: GoogleFonts.urbanist(
-                                          color: Colors.white,
+                                          color: Colors.white70,
                                           fontSize: fontSize * 0.75,
                                         ),
                                       ),
-                                      SizedBox(width: size.width * 0.02),
+                                      SizedBox(width: size.width * 0.01),
                                       Text(
                                         "(${items[index].reviews})",
                                         style: GoogleFonts.urbanist(
@@ -458,7 +459,7 @@ class RecommendationsWidget extends StatelessWidget {
                                           fontSize: fontSize * 0.7,
                                         ),
                                       ),
-                                      SizedBox(width: size.width * 0.02),
+                                      SizedBox(width: size.width * 0.01),
                                       Text(
                                         "${items[index].distance} away",
                                         style: GoogleFonts.urbanist(
@@ -525,7 +526,7 @@ Widget superStar(Size size) {
           "Superstar Stuff",
           style: GoogleFonts.urbanist(
             color: Colors.white,
-
+            fontWeight: FontWeight.bold,
             fontSize: size.width * 0.03,
           ),
         ),

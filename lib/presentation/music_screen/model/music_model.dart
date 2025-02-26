@@ -57,6 +57,18 @@ final List<Playlist> dummyPlaylists = [
         artist: "Kanye West",
         duration: "4:52",
       ),
+      Song(
+        imagePath: "assets/music_assets/p1.png",
+        title: "True Love",
+        artist: "Kanye West",
+        duration: "4:52",
+      ),
+      Song(
+        imagePath: "assets/music_assets/p1.png",
+        title: "True Love",
+        artist: "Kanye West",
+        duration: "4:52",
+      ),
     ],
   ),
   Playlist(
