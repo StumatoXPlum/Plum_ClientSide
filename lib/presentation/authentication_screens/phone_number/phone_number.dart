@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'package:task2/core/custom_snackbar.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/country_picker.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/phone_auth/phone_auth.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/phone_verification.dart';
@@ -217,29 +216,24 @@ class _PhoneNumberState extends State<PhoneNumber> {
                     phoneNumber,
                   );
 
-                  if (success) {
-                    print('OTP Sent');
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) =>
-                                PhoneVerification(phoneNumber: phoneNumber),
-                      ),
-                    );
-                  } else {
-                    showCustomSnackbar(
-                      context,
-                      "Error, Try Again",
-                      Colors.red.shade600,
-                    );
-                  }
+                  // Navigate first
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => PhoneVerification(
+                            phoneNumber: phoneNumber,
+                            isMockOtp: !success,
+                          ),
+                    ),
+                  );
 
                   setState(() {
                     isLoading = false;
                   });
                 }
               },
+
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(padding * 1.5),

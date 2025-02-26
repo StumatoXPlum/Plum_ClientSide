@@ -11,7 +11,12 @@ import 'phone_auth/phone_auth.dart';
 
 class PhoneVerification extends StatefulWidget {
   final String phoneNumber;
-  const PhoneVerification({super.key, required this.phoneNumber});
+  final bool isMockOtp;
+  const PhoneVerification({
+    super.key,
+    required this.phoneNumber,
+    this.isMockOtp = false,
+  });
 
   @override
   State<PhoneVerification> createState() => _PhoneVerificationState();
@@ -30,6 +35,20 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         isOtpEntered = otpController.text.isNotEmpty;
       });
     });
+
+    if (widget.isMockOtp) {
+      Future.delayed(Duration(milliseconds: 300), () {
+        showCustomSnackbar(
+          context,
+          "We're having some issues. Try this temporary OTP: 123456",
+          Colors.orange,
+        );
+      });
+
+      Future.delayed(Duration(seconds: 10), () {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      });
+    }
   }
 
   Future<void> _storePhoneNumber(String phoneNumber) async {
