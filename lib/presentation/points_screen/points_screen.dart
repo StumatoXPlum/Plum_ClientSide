@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:task2/core/bottom_navigation_bar.dart';
 import 'package:task2/presentation/cart/cubit/cart_cubit.dart';
@@ -24,17 +25,16 @@ class PointsScreen extends StatelessWidget {
             Lottie.asset("assets/animations/3.json"),
             Text(
               "You earned 20 points",
-              style: TextStyle(
+              style: GoogleFonts.urbanist(
                 color: Colors.white,
                 fontSize: fontSize,
-                fontFamily: 'Switzer',
                 fontWeight: FontWeight.w400,
               ),
             ),
             SizedBox(height: size.height * 0.01),
             Text(
               "You can collect points and then sue them to get discounts and exclusive offers",
-              style: TextStyle(color: Colors.white70, fontSize: fontSize * 0.7),
+              style: GoogleFonts.urbanist(color: Colors.white70, fontSize: fontSize * 0.7),
               textAlign: TextAlign.center,
             ),
             Spacer(),
@@ -113,11 +113,10 @@ class BottomButtons extends StatelessWidget {
         child: Center(
           child: Text(
             label,
-            style: TextStyle(
+            style: GoogleFonts.urbanist(
               color: textColor,
               fontSize: fontSize * 0.9,
               fontWeight: FontWeight.w500,
-              fontFamily: 'Switzer',
             ),
           ),
         ),

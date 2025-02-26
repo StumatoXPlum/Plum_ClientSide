@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/cubit/cart_buttons.dart';
 
 class QuantityControl extends StatefulWidget {
@@ -55,7 +56,7 @@ class QuantityControlState extends State<QuantityControl> {
                     SizedBox(width: 12),
                     Text(
                       '$quantity',
-                      style: TextStyle(
+                      style: GoogleFonts.urbanist(
                         color: Colors.white,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -114,7 +115,7 @@ class QuantityControlState extends State<QuantityControl> {
                       SizedBox(width: 8),
                       Text(
                         "Add",
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           color: Color(0xff3579DD),
                           fontSize: 14,
                         ),

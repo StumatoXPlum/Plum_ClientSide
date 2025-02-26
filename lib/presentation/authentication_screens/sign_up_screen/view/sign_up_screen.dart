@@ -211,9 +211,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         children: [
           Text(
             "Please enter your email ",
-            style: TextStyle(
+            style: GoogleFonts.urbanist(
               color: Colors.white,
-              fontFamily: 'Switzer',
+              fontWeight: FontWeight.bold,
               fontSize: size.width * 0.035,
             ),
           ),
@@ -233,7 +233,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 borderSide: BorderSide(color: Color(0xff3579DD)),
               ),
             ),
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.urbanist(color: Colors.white),
             cursorColor: Colors.white,
           ),
           SizedBox(height: 12),
@@ -255,6 +255,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   email: email,
                   emailRedirectTo: null,
                   shouldCreateUser: true,
+                
                 );
                 Navigator.push(
                   context,
@@ -296,10 +297,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         )
                         : Text(
                           "Continue",
-                          style: TextStyle(
+                          style: GoogleFonts.urbanist(
                             fontSize: 18,
                             color: Colors.white,
-                            fontFamily: 'Switzer',
+                            fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -373,7 +374,7 @@ class SignInButton extends StatelessWidget {
                     SizedBox(width: size.width * 0.02),
                     Text(
                       label,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.urbanist(
                         fontSize: fontSize,
                         fontWeight: FontWeight.w500,
                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});
@@ -59,20 +60,18 @@ class WalletScreen extends StatelessWidget {
                       SizedBox(height: size.height * 0.03),
                       Text(
                         "Available Balance",
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           color: Colors.white70,
                           fontSize: fontSize * 0.7,
-                          fontFamily: 'Switzer',
                         ),
                       ),
                       SizedBox(height: size.height * 0.01),
                       Text(
                         "AED 183.43",
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           color: Colors.white,
                           fontSize: fontSize * 1.8,
                           fontWeight: FontWeight.bold,
-                          fontFamily: 'Switzer',
                         ),
                       ),
                       SizedBox(height: size.height * 0.03),
@@ -103,10 +102,9 @@ class WalletScreen extends StatelessWidget {
                 SizedBox(height: size.height * 0.03),
                 Text(
                   "Last Transactions",
-                  style: TextStyle(
+                  style: GoogleFonts.urbanist(
                     color: Colors.white,
                     fontSize: fontSize * 1.2,
-                    fontFamily: 'Switzer',
                   ),
                 ),
               ],
@@ -145,10 +143,9 @@ class CustomButtons extends StatelessWidget {
       child: FittedBox(
         child: Text(
           label,
-          style: TextStyle(
+          style: GoogleFonts.urbanist(
             color: textColor,
             fontSize: fontSize,
-            fontFamily: 'Switzer',
           ),
         ),
       ),

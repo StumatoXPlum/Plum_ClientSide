@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ReceiptScreen extends StatelessWidget {
   const ReceiptScreen({super.key});
@@ -49,10 +50,9 @@ class ReceiptScreen extends StatelessWidget {
                             SizedBox(height: size.height * 0.06),
                             Text(
                               "Order completed",
-                              style: TextStyle(
+                              style: GoogleFonts.urbanist(
                                 color: Colors.white,
                                 fontSize: fontSize * 1.2,
-                                fontFamily: 'Switzer',
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -60,10 +60,9 @@ class ReceiptScreen extends StatelessWidget {
                             Text(
                               "Sit back and await your delicious delivery. Thank you for choosing us to serve up your culinary cravings. Enjoy your meal",
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: GoogleFonts.urbanist(
                                 color: Colors.white70,
                                 fontSize: fontSize * 0.8,
-                                fontFamily: 'Switzer',
                               ),
                             ),
                             SizedBox(height: size.height * 0.03),
@@ -73,10 +72,9 @@ class ReceiptScreen extends StatelessWidget {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 "Order Summary",
-                                style: TextStyle(
+                                style: GoogleFonts.urbanist(
                                   color: Colors.white,
                                   fontSize: fontSize,
-                                  fontFamily: 'Switzer',
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -111,10 +109,9 @@ class ReceiptScreen extends StatelessWidget {
                               onPressed: () {},
                               child: Text(
                                 "Download Receipt",
-                                style: TextStyle(
+                                style: GoogleFonts.urbanist(
                                   color: Colors.white,
                                   fontSize: fontSize * 0.9,
-                                  fontFamily: 'Switzer',
                                 ),
                               ),
                             ),
@@ -160,10 +157,9 @@ Widget _orderSummaryRow(String title, String value, {bool isBold = false}) {
         Text(title, style: const TextStyle(color: Colors.white70)),
         Text(
           value,
-          style: TextStyle(
+          style: GoogleFonts.urbanist(
             color: Colors.white,
             fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-            fontFamily: 'Switzer',
           ),
         ),
       ],

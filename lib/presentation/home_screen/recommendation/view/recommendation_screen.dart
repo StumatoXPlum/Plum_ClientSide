@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/home_screen/home_detail_screen/view/home_detail_screen.dart';
 import 'package:task2/presentation/home_screen/home_screen/model/recommendation_model.dart';
 
 class RecommendationScreen extends StatelessWidget {
@@ -28,7 +30,16 @@ class RecommendationScreen extends StatelessWidget {
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       return InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) =>
+                                      HomeDetailScreen(item: items[index]),
+                            ),
+                          );
+                        },
                         child: Container(
                           margin: EdgeInsets.symmetric(vertical: padding),
                           decoration: BoxDecoration(
@@ -53,10 +64,9 @@ class RecommendationScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       items[index].title,
-                                      style: TextStyle(
+                                      style: GoogleFonts.urbanist(
                                         color: Colors.white,
                                         fontSize: fontSize,
-                                        fontFamily: 'Switzer',
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -71,16 +81,15 @@ class RecommendationScreen extends StatelessWidget {
                                         SizedBox(width: size.width * 0.01),
                                         Text(
                                           items[index].rating,
-                                          style: TextStyle(
+                                          style: GoogleFonts.urbanist(
                                             color: Colors.white70,
-                                            fontFamily: 'Switzer',
                                             fontSize: fontSize * 0.8,
                                           ),
                                         ),
                                         SizedBox(width: size.width * 0.01),
                                         Text(
                                           "(${items[index].reviews})",
-                                          style: TextStyle(
+                                          style: GoogleFonts.urbanist(
                                             color: Colors.white70,
                                             fontSize: fontSize * 0.8,
                                           ),
@@ -88,10 +97,9 @@ class RecommendationScreen extends StatelessWidget {
                                         SizedBox(width: size.width * 0.01),
                                         Text(
                                           "${items[index].distance} away",
-                                          style: TextStyle(
+                                          style: GoogleFonts.urbanist(
                                             color: Colors.white70,
                                             fontSize: fontSize * 0.8,
-                                            fontFamily: 'Switzer',
                                           ),
                                         ),
                                       ],
@@ -138,20 +146,18 @@ class HeaderTwo extends StatelessWidget {
           SizedBox(height: size.height * 0.02),
           Text(
             "Recommended for you",
-            style: TextStyle(
+            style: GoogleFonts.urbanist(
               color: Colors.white,
               fontSize: fontSize,
-              fontFamily: 'Switzer',
               fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(height: size.height * 0.02),
           Text(
             "Our recommendations depend on your search results.",
-            style: TextStyle(
+            style: GoogleFonts.urbanist(
               color: Colors.white70,
               fontSize: fontSize * 0.75,
-              fontFamily: 'Switzer',
             ),
           ),
         ],

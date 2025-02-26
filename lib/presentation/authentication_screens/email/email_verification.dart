@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/presentation/authentication_screens/name_screen/enter_name_screen.dart';
@@ -61,10 +62,9 @@ class _EmailVerificationState extends State<EmailVerification> {
                 ),
                 child: Text(
                   message,
-                  style: const TextStyle(
+                  style: GoogleFonts.urbanist(
                     color: Colors.white,
                     fontSize: 16,
-                    fontFamily: 'Switzer',
                   ),
                 ),
               ),
@@ -142,23 +142,20 @@ class _EmailVerificationState extends State<EmailVerification> {
               SizedBox(height: size.height * 0.1),
               Text(
                 "Please check your email",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   fontSize: fontSize * 1.6,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Switzer',
                   color: Colors.white,
                 ),
               ),
               SizedBox(height: size.height * 0.02),
               Text(
                 "We've sent a code to ${widget.email}",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   fontSize: fontSize * 1,
                   color: Colors.white70,
-                  fontFamily: 'Switzer',
                 ),
               ),
-
               SizedBox(height: size.height * 0.1),
               Pinput(
                 controller: _otpController,
@@ -166,10 +163,9 @@ class _EmailVerificationState extends State<EmailVerification> {
                 defaultPinTheme: PinTheme(
                   width: 50,
                   height: 60,
-                  textStyle: TextStyle(
+                  textStyle: GoogleFonts.urbanist(
                     fontSize: fontSize,
                     color: Colors.white,
-                    fontFamily: 'Switzer',
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xff090D14),
@@ -180,10 +176,9 @@ class _EmailVerificationState extends State<EmailVerification> {
                 focusedPinTheme: PinTheme(
                   width: 50,
                   height: 60,
-                  textStyle: TextStyle(
+                  textStyle: GoogleFonts.urbanist(
                     fontSize: fontSize,
                     color: Colors.white,
-                    fontFamily: 'Switzer',
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xff090D14),
@@ -205,10 +200,9 @@ class _EmailVerificationState extends State<EmailVerification> {
                     children: [
                       TextSpan(
                         text: "I didn't receive the code ",
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           fontSize: fontSize * 0.8,
                           color: Colors.white70,
-                          fontFamily: 'Switzer',
                         ),
                       ),
                       WidgetSpan(
@@ -238,11 +232,10 @@ class _EmailVerificationState extends State<EmailVerification> {
 
                           child: Text(
                             "Resend",
-                            style: TextStyle(
+                            style: GoogleFonts.urbanist(
                               color: Colors.white,
                               fontSize: fontSize * 0.8,
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Switzer',
                             ),
                           ),
                         ),
@@ -280,10 +273,10 @@ class _EmailVerificationState extends State<EmailVerification> {
                               )
                               : Text(
                                 "Verify",
-                                style: TextStyle(
-                                  fontSize: 18,
+                                style: GoogleFonts.urbanist(
+                                  fontSize: fontSize * 0.9,
+                                  fontWeight: FontWeight.bold,
                                   color: Colors.white,
-                                  fontFamily: 'Switzer',
                                 ),
                                 textAlign: TextAlign.center,
                               ),

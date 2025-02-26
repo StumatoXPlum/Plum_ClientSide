@@ -137,7 +137,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
                                 (item) => ListTile(
                                   title: Text(
                                     item.toString(),
-                                    style: const TextStyle(color: Colors.black),
+                                    style: GoogleFonts.urbanist(color: Colors.black),
                                   ),
                                   onTap: () {
                                     onSelect(item);
@@ -198,20 +198,18 @@ class _DateOfBirthState extends State<DateOfBirth> {
               SizedBox(height: size.height * 0.1),
               Text(
                 "DOB",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   fontSize: fontSize * 1.6,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Switzer',
                   color: Colors.white,
                 ),
               ),
               SizedBox(height: size.height * 0.02),
               Text(
                 "Share your DOB with us to get special offers",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   fontSize: fontSize * 1,
                   color: Colors.white70,
-                  fontFamily: 'Switzer',
                 ),
               ),
               SizedBox(height: size.height * 0.08),
@@ -276,9 +274,10 @@ class _DateOfBirthState extends State<DateOfBirth> {
                   ),
                   child: Text(
                     "Verify",
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.urbanist(
                       fontSize: fontSize,
                       color: Colors.white,
+                      fontWeight: FontWeight.bold
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -299,10 +298,9 @@ class _DateOfBirthState extends State<DateOfBirth> {
                     },
                     child: Text(
                       "Skip for now",
-                      style: TextStyle(
+                      style: GoogleFonts.urbanist(
                         fontSize: fontSize * 0.8,
                         color: Colors.white70,
-                        fontFamily: 'Switzer',
                       ),
                     ),
                   ),
@@ -338,7 +336,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
             children: [
               Text(
                 selectedValue != null ? selectedValue.toString() : hint,
-                style: GoogleFonts.inter(color: Colors.white70),
+                style: GoogleFonts.urbanist(color: Colors.white70),
               ),
               Icon(Icons.keyboard_arrow_down, color: Colors.white),
             ],

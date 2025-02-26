@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/cart/model/cart_model.dart';
 import 'package:task2/presentation/history_screen/cubit/order_history_cubit.dart';
 import 'package:task2/presentation/receipt/receipt_screen.dart';
@@ -33,19 +34,17 @@ class HistoryScreen extends StatelessWidget {
                     ),
                     Text(
                       "No History",
-                      style: TextStyle(
+                      style: GoogleFonts.urbanist(
                         color: Colors.white,
                         fontSize: fontSize * 1.6,
-                        fontFamily: 'Switzer',
                       ),
                     ),
                     SizedBox(height: size.height * 0.01),
                     Text(
                       "No purchases have been made by you at the moment",
-                      style: TextStyle(
+                      style: GoogleFonts.urbanist(
                         color: Colors.white70,
                         fontSize: fontSize * 0.7,
-                        fontFamily: 'Switzer',
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -60,7 +59,7 @@ class HistoryScreen extends StatelessWidget {
                     padding: EdgeInsets.only(top: padding * 3, bottom: padding),
                     child: Text(
                       "Checkout",
-                      style: TextStyle(
+                      style: GoogleFonts.urbanist(
                         color: Colors.white,
                         fontSize: fontSize,
                         fontWeight: FontWeight.bold,
@@ -112,18 +111,16 @@ class HistoryScreen extends StatelessWidget {
                                     children: [
                                       Text(
                                         item.name,
-                                        style: TextStyle(
+                                        style: GoogleFonts.urbanist(
                                           color: Colors.white,
-                                          fontFamily: 'Switzer',
                                           fontSize: fontSize * 0.8,
                                         ),
                                       ),
                                       SizedBox(height: 4),
                                       Text(
                                         "Qty: ${item.quantity}",
-                                        style: TextStyle(
+                                        style: GoogleFonts.urbanist(
                                           color: Colors.white70,
-                                          fontFamily: 'Switzer',
                                           fontSize: fontSize * 0.6,
                                         ),
                                       ),
@@ -131,10 +128,9 @@ class HistoryScreen extends StatelessWidget {
                                   ),
                                   trailing: Text(
                                     "AED ${item.price}",
-                                    style: TextStyle(
+                                    style: GoogleFonts.urbanist(
                                       fontSize: fontSize * 0.9,
                                       color: Colors.white,
-                                      fontFamily: 'Switzer',
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -159,7 +155,7 @@ class HistoryScreen extends StatelessWidget {
                                   ),
                                   child: Text(
                                     "UPCOMING ",
-                                    style: TextStyle(
+                                    style: GoogleFonts.urbanist(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
                                       fontSize: fontSize * 0.7,
@@ -187,7 +183,7 @@ class HistoryScreen extends StatelessWidget {
                                     ),
                                     child: Text(
                                       "view receipt",
-                                      style: TextStyle(
+                                      style: GoogleFonts.urbanist(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         fontSize: fontSize * 0.7,

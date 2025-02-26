@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/cubit/booking_cubit.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/model/booking_model.dart';
@@ -36,10 +37,9 @@ Widget _buildMonthNavigator(BuildContext context, BookingState state) {
         ),
         Text(
           DateFormat('MMMM yyyy').format(state.displayedMonth),
-          style: TextStyle(
+          style: GoogleFonts.urbanist(
             color: Colors.white,
             fontSize: fontSize,
-            fontFamily: 'Switzer',
           ),
         ),
         IconButton(
@@ -82,19 +82,17 @@ Widget _buildDateScroller(BuildContext context, BookingState state) {
                 children: [
                   Text(
                     DateFormat('EEE').format(date),
-                    style: TextStyle(
+                    style: GoogleFonts.urbanist(
                       color: isSelected ? Colors.white : Colors.grey,
                       fontSize: fontSize,
-                      fontFamily: 'Switzer',
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     DateFormat('dd').format(date),
-                    style: TextStyle(
+                    style: GoogleFonts.urbanist(
                       color: isSelected ? Colors.white : Colors.grey,
                       fontSize: fontSize,
-                      fontFamily: 'Switzer',
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -147,10 +145,9 @@ Widget _buildTimeList(BuildContext context, BookingState state) {
             child: Center(
               child: Text(
                 time,
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   color: isSelected ? Colors.white : Colors.grey,
                   fontSize: fontSize,
-                  fontFamily: 'Switzer',
                 ),
               ),
             ),

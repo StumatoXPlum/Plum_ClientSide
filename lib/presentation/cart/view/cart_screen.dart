@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/cart/cubit/cart_cubit.dart';
 import 'package:task2/presentation/cart/model/cart_model.dart';
 import 'package:task2/presentation/history_screen/cubit/order_history_cubit.dart';
@@ -42,9 +43,8 @@ class ShoppingCartScreen extends StatelessWidget {
                         SizedBox(height: size.height * 0.03),
                         Text(
                           "Shopping Cart",
-                          style: TextStyle(
+                          style: GoogleFonts.urbanist(
                             color: Colors.white,
-                            fontFamily: 'Switzer',
                             fontSize: fontSize * 1.2,
                           ),
                         ),
@@ -63,28 +63,25 @@ class ShoppingCartScreen extends StatelessWidget {
                             SizedBox(height: size.height * 0.01),
                             Text(
                               "Cart empty",
-                              style: TextStyle(
+                              style: GoogleFonts.urbanist(
                                 color: Colors.white,
                                 fontSize: fontSize,
-                                fontFamily: 'Switzer',
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             SizedBox(height: size.height * 0.01),
                             Text(
                               "Your cart is empty.",
-                              style: TextStyle(
+                              style: GoogleFonts.urbanist(
                                 color: Colors.white70,
                                 fontSize: fontSize * 0.75,
-                                fontFamily: 'Switzer',
                               ),
                             ),
                             Text(
                               "Start adding items to enjoy shopping!",
-                              style: TextStyle(
+                              style: GoogleFonts.urbanist(
                                 color: Colors.white70,
                                 fontSize: fontSize * 0.75,
-                                fontFamily: 'Switzer',
                               ),
                             ),
                           ],
@@ -113,7 +110,7 @@ class ShoppingCartScreen extends StatelessWidget {
                             SizedBox(width: size.width * 0.02),
                             Text(
                               "Product more than 2 days are automatically lost",
-                              style: TextStyle(
+                              style: GoogleFonts.urbanist(
                                 color: Color(0xffE09C35),
                                 fontSize: fontSize * 0.65,
                               ),
@@ -134,10 +131,9 @@ class ShoppingCartScreen extends StatelessWidget {
                     ),
                     Text(
                       "Order Summary",
-                      style: TextStyle(
+                      style: GoogleFonts.urbanist(
                         color: Colors.white,
                         fontSize: fontSize,
-                        fontFamily: 'Switzer',
                       ),
                     ),
                     SizedBox(height: size.height * 0.02),
@@ -168,10 +164,9 @@ class ShoppingCartScreen extends StatelessWidget {
                             SizedBox(width: size.width * 0.02),
                             Text(
                               "Add promos before you order",
-                              style: TextStyle(
+                              style: GoogleFonts.urbanist(
                                 color: Color(0xff3579DD),
                                 fontSize: fontSize * 0.65,
-                                fontFamily: 'Switzer',
                               ),
                             ),
                             Spacer(),
@@ -196,17 +191,16 @@ class ShoppingCartScreen extends StatelessWidget {
                             children: [
                               Text(
                                 "items",
-                                style: TextStyle(
+                                style: GoogleFonts.urbanist(
                                   color: Colors.grey,
                                   fontSize: fontSize,
-                                  fontFamily: 'Switzer',
                                 ),
                               ),
                               Text(
                                 "AED ${totalPrice.toStringAsFixed(2)}",
-                                style: TextStyle(
+                                style: GoogleFonts.urbanist(
                                   color: Colors.white,
-                                  fontFamily: 'Switzer',
+                                 
                                   fontSize: fontSize,
                                 ),
                               ),
@@ -240,10 +234,9 @@ class ShoppingCartScreen extends StatelessWidget {
                             child: Center(
                               child: Text(
                                 "Proceed to Pay",
-                                style: TextStyle(
+                                style: GoogleFonts.urbanist(
                                   fontSize: fontSize,
                                   color: Colors.white,
-                                  fontFamily: 'Switzer',
                                 ),
                               ),
                             ),

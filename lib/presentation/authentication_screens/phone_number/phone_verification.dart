@@ -117,10 +117,9 @@ class _PhoneVerificationState extends State<PhoneVerification> {
               SizedBox(height: size.height * 0.1),
               Text(
                 "Verify your phone number",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   fontSize: fontSize * 1.8,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Switzer',
                   color: Colors.white,
                 ),
                 textAlign: TextAlign.center,
@@ -128,10 +127,9 @@ class _PhoneVerificationState extends State<PhoneVerification> {
               SizedBox(height: size.height * 0.02),
               Text(
                 "We've sent an SMS with an activation code to your phone ${widget.phoneNumber}",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   fontSize: fontSize * 1,
                   color: Colors.white70,
-                  fontFamily: 'Switzer',
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -143,10 +141,9 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                 defaultPinTheme: PinTheme(
                   width: 50,
                   height: 60,
-                  textStyle: TextStyle(
+                  textStyle: GoogleFonts.urbanist(
                     fontSize: fontSize,
                     color: Colors.white,
-                    fontFamily: 'Switzer',
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xff090D14),
@@ -157,10 +154,9 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                 focusedPinTheme: PinTheme(
                   width: 50,
                   height: 60,
-                  textStyle: TextStyle(
+                  textStyle: GoogleFonts.urbanist(
                     fontSize: fontSize,
                     color: Colors.white,
-                    fontFamily: 'Switzer',
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xff090D14),
@@ -182,10 +178,9 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     children: [
                       TextSpan(
                         text: "I didn't receive the code ",
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           fontSize: fontSize * 0.8,
                           color: Colors.white70,
-                          fontFamily: 'Switzer',
                         ),
                       ),
                       WidgetSpan(
@@ -212,11 +207,10 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                           },
                           child: Text(
                             "Resend",
-                            style: TextStyle(
+                            style: GoogleFonts.urbanist(
                               color: Colors.white,
                               fontSize: fontSize * 0.8,
                               fontWeight: FontWeight.bold,
-                              fontFamily: 'Switzer',
                             ),
                           ),
                         ),
@@ -276,9 +270,10 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                           )
                           : Text(
                             "Verify",
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.urbanist(
                               fontSize: fontSize,
                               color: Colors.white,
+                              fontWeight: FontWeight.bold
                             ),
                             textAlign: TextAlign.center,
                           ),

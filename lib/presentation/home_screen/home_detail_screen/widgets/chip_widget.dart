@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/cubit/booking_cubit.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/model/booking_model.dart';
 
 Widget buildNavigationChips(BuildContext context) {
   final Size size = MediaQuery.of(context).size;
-  // double padding = size.width * 0.04;
   double spacing = size.width * 0.04;
 
   return BlocBuilder<BookingCubit, BookingState>(
@@ -66,7 +66,7 @@ Widget _buildChip(
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: GoogleFonts.urbanist(
           color: isSelected ? Color(0xff3579DD) : Colors.white,
           fontSize: fontSize,
         ),

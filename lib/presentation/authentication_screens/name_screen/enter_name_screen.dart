@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/presentation/authentication_screens/phone_number/phone_number.dart';
 
@@ -14,7 +15,7 @@ class EnterNameScreen extends StatefulWidget {
 class _EnterNameScreenState extends State<EnterNameScreen> {
   final TextEditingController _nameController = TextEditingController();
   bool isNameEntered = false;
-  bool isLoading = false; 
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -28,7 +29,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
     if (name.isEmpty) return;
 
     setState(() {
-      isLoading = true; 
+      isLoading = true;
     });
 
     try {
@@ -88,19 +89,17 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
               SizedBox(height: size.height * 0.04),
               Text(
                 "Hi There",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   fontSize: fontSize * 2,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Switzer',
                 ),
               ),
               Text(
                 "Please enter your name",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   fontSize: fontSize,
                   color: Colors.white70,
-                  fontFamily: 'Switzer',
                 ),
               ),
               SizedBox(height: size.height * 0.04),
@@ -115,10 +114,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
                 decoration: InputDecoration(
                   filled: true,
                   hintText: "Enter your name",
-                  hintStyle: TextStyle(
-                    fontFamily: 'Switzer',
-                    color: Colors.white70,
-                  ),
+                  hintStyle: GoogleFonts.urbanist(color: Colors.white70),
                   fillColor: Colors.transparent,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -159,10 +155,10 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
                             )
                             : Text(
                               "Add Name",
-                              style: TextStyle(
+                              style: GoogleFonts.urbanist(
                                 fontSize: 18,
                                 color: Colors.white,
-                                fontFamily: 'Switzer',
+                                fontWeight: FontWeight.bold,
                               ),
                               textAlign: TextAlign.center,
                             ),

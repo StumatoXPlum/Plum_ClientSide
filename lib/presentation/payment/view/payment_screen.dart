@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/apple_pay_animation/apple_pay.dart';
 import 'package:task2/presentation/payment/cubit/payment_cubit.dart';
 import 'package:task2/presentation/wallet/wallet_screen.dart';
@@ -34,10 +35,9 @@ class PaymentScreen extends StatelessWidget {
                   SizedBox(height: size.height * 0.03),
                   Text(
                     "Payment Method",
-                    style: TextStyle(
+                    style: GoogleFonts.urbanist(
                       fontSize: fontSize * 1.2,
                       color: Colors.white,
-                      fontFamily: 'Switzer',
                     ),
                   ),
                   SizedBox(height: size.height * 0.05),
@@ -83,17 +83,15 @@ class PaymentScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   "Wallet",
-                                  style: TextStyle(
+                                  style: GoogleFonts.urbanist(
                                     color: Colors.white,
-                                    fontFamily: 'Switzer',
                                   ),
                                 ),
                                 SizedBox(height: size.height * 0.01),
                                 Text(
                                   "Available balance : AED 183.43",
-                                  style: TextStyle(
+                                  style: GoogleFonts.urbanist(
                                     color: Colors.white60,
-                                    fontFamily: 'Switzer',
                                   ),
                                 ),
                               ],
@@ -112,10 +110,9 @@ class PaymentScreen extends StatelessWidget {
                   SizedBox(height: size.height * 0.03),
                   Text(
                     "Other Method",
-                    style: TextStyle(
+                    style: GoogleFonts.urbanist(
                       fontSize: fontSize * 1,
                       color: Colors.white,
-                      fontFamily: 'Switzer',
                     ),
                   ),
                   SizedBox(height: size.height * 0.02),
@@ -162,10 +159,9 @@ class PaymentScreen extends StatelessWidget {
                     child: Center(
                       child: Text(
                         "Proceed Payment",
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           fontSize: fontSize,
                           color: Colors.white,
-                          fontFamily: 'Switzer',
                         ),
                       ),
                     ),
@@ -224,9 +220,8 @@ class PaymentMethod extends StatelessWidget {
                     children: [
                       Text(
                         label,
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           color: Colors.white,
-                          fontFamily: 'Switzer',
                           fontSize: fontSize * 0.9,
                         ),
                       ),
@@ -271,10 +266,9 @@ Widget buildDebitCard(BuildContext context) {
           SizedBox(width: size.width * 0.03),
           Text(
             'Add Debit Card',
-            style: TextStyle(
+            style: GoogleFonts.urbanist(
               color: Colors.white,
               fontSize: fontSize * 0.9,
-              fontFamily: 'Switzer',
             ),
           ),
         ],
@@ -304,7 +298,7 @@ class PaymentSuccessDialog extends StatelessWidget {
             SizedBox(height: size.height * 0.02),
             Text(
               "Checkout Success!",
-              style: TextStyle(
+              style: GoogleFonts.urbanist(
                 fontSize: fontSize,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -313,7 +307,7 @@ class PaymentSuccessDialog extends StatelessWidget {
             SizedBox(height: size.height * 0.02),
             Text(
               "Your order is confirmed and on its way. Get set to savor your chosen delights!",
-              style: TextStyle(fontSize: fontSize * 0.7, color: Colors.white70),
+              style: GoogleFonts.urbanist(fontSize: fontSize * 0.7, color: Colors.white70),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: size.height * 0.02),

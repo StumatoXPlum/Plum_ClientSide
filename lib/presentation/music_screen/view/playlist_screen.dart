@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/music_screen/model/music_model.dart';
 
 class PlaylistScreen extends StatelessWidget {
@@ -75,7 +76,7 @@ class PlaylistScreen extends StatelessWidget {
                             children: [
                               Text(
                                 playlist.name,
-                                style: TextStyle(
+                                style: GoogleFonts.urbanist(
                                   color: Colors.white,
                                   fontSize: fontSize * 1.2,
                                   fontWeight: FontWeight.bold,
@@ -85,7 +86,7 @@ class PlaylistScreen extends StatelessWidget {
                               SizedBox(height: padding * 0.8),
                               Text(
                                 playlist.description,
-                                style: TextStyle(
+                                style: GoogleFonts.urbanist(
                                   color: Colors.white70,
                                   fontSize: fontSize * 0.8,
                                 ),
@@ -124,18 +125,18 @@ class PlaylistScreen extends StatelessWidget {
                     leading: Image.asset(song.imagePath),
                     title: Text(
                       song.title,
-                      style: TextStyle(
+                      style: GoogleFonts.urbanist(
                         color: Colors.white,
                         fontSize: fontSize * 0.8,
                       ),
                     ),
                     subtitle: Text(
                       song.artist,
-                      style: TextStyle(color: Colors.white54),
+                      style: GoogleFonts.urbanist(color: Colors.white54),
                     ),
                     trailing: Text(
                       song.duration,
-                      style: TextStyle(color: Colors.white54),
+                      style: GoogleFonts.urbanist(color: Colors.white54),
                     ),
                   );
                 },

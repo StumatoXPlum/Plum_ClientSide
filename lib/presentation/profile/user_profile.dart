@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/presentation/authentication_screens/date_of_birth/date_of_birth.dart';
 import 'package:task2/presentation/authentication_screens/sign_up_screen/view/sign_up_screen.dart';
@@ -114,10 +115,9 @@ class UserProfileState extends State<UserProfile> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: GoogleFonts.urbanist(
             fontSize: 16,
             color: Colors.white,
-            fontFamily: 'Switzer',
           ),
         ),
         const SizedBox(height: 8),
@@ -176,10 +176,9 @@ class UserProfileState extends State<UserProfile> {
                 SizedBox(height: size.height * 0.02),
                 Text(
                   name,
-                  style: TextStyle(
+                  style: GoogleFonts.urbanist(
                     color: Colors.white,
                     fontSize: fontSize,
-                    fontFamily: 'Switzer',
                   ),
                 ),
                 SizedBox(height: size.height * 0.03),
@@ -218,11 +217,10 @@ class UserProfileState extends State<UserProfile> {
                     child: Center(
                       child: Text(
                         "Log Out",
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           fontSize: fontSize,
                           color: Color(0xff3579DD),
-                          fontFamily: 'Switzer',
-                        ),
+                          fontWeight: FontWeight.w500,),
                       ),
                     ),
                   ),

@@ -103,19 +103,20 @@ class HomeScreen extends StatelessWidget {
                           SizedBox(height: size.height * 0.02),
                           Text(
                             "My Rewards Points",
-                            style: TextStyle(
+                            style: GoogleFonts.urbanist(
                               color: Colors.white,
                               fontSize: fontSize,
-                              fontFamily: 'Switzer',
+                              fontWeight: FontWeight.bold,
+                              
                             ),
                           ),
                           SizedBox(height: size.height * 0.02),
                           Text(
                             "Earned Points",
-                            style: TextStyle(
+                            style: GoogleFonts.urbanist(
                               color: Colors.white,
                               fontSize: fontSize * 0.7,
-                              fontFamily: 'Switzer',
+                             
                             ),
                           ),
                           SizedBox(height: size.height * 0.03),
@@ -123,10 +124,10 @@ class HomeScreen extends StatelessWidget {
                             builder: (context, state) {
                               return Text(
                                 "$state",
-                                style: TextStyle(
+                                style: GoogleFonts.urbanist(
                                   color: Colors.white,
                                   fontSize: fontSize * 3,
-                                  fontFamily: 'Switzer',
+                                 
                                   fontWeight: FontWeight.bold,
                                 ),
                               );
@@ -191,7 +192,6 @@ class HomeScreen extends StatelessWidget {
                         ),
                         child: SvgPicture.asset(
                           "assets/home_assets/pin.svg",
-
                           fit: BoxFit.scaleDown,
                         ),
                       ),
@@ -201,17 +201,16 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             "Your Location",
-                            style: TextStyle(
+                            style: GoogleFonts.urbanist(
                               color: Colors.white,
-                              fontFamily: 'Switzer',
                             ),
                           ),
                           SizedBox(height: size.height * 0.01),
                           Text(
                             "Some random road no 28",
-                            style: TextStyle(
+                            style: GoogleFonts.urbanist(
                               color: Colors.white60,
-                              fontFamily: 'Switzer',
+                              
                             ),
                           ),
                         ],
@@ -274,20 +273,18 @@ class CouponContainer extends StatelessWidget {
                 children: [
                   Text(
                     "Coupons",
-                    style: TextStyle(
+                    style: GoogleFonts.urbanist(
                       color: Colors.black,
                       fontSize: fontSize,
-                      fontFamily: 'Switzer',
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: size.height * 0.001),
                   Text(
                     "Apply $promoCode for discount",
-                    style: TextStyle(
+                    style: GoogleFonts.urbanist(
                       color: Colors.black,
                       fontSize: fontSize * 0.75,
-                      fontFamily: 'Switzer',
                     ),
                   ),
                 ],
@@ -333,9 +330,8 @@ class RecommendationsWidget extends StatelessWidget {
             children: [
               Text(
                 "Recommended for you",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   color: Colors.white,
-                  fontFamily: 'Switzer',
                   fontSize: fontSize,
                 ),
               ),
@@ -351,10 +347,9 @@ class RecommendationsWidget extends StatelessWidget {
                 },
                 child: Text(
                   "See All",
-                  style: TextStyle(
+                  style: GoogleFonts.urbanist(
                     color: const Color(0xff3579DD),
                     fontWeight: FontWeight.bold,
-                    fontFamily: 'Switzer',
                     fontSize: fontSize * 0.9,
                   ),
                 ),
@@ -421,9 +416,8 @@ class RecommendationsWidget extends StatelessWidget {
                                 children: [
                                   Text(
                                     items[index].title,
-                                    style: TextStyle(
+                                    style: GoogleFonts.urbanist(
                                       color: Colors.white,
-                                      fontFamily: 'Switzer',
                                       fontWeight: FontWeight.bold,
                                       fontSize: fontSize * 0.85,
                                     ),
@@ -439,7 +433,7 @@ class RecommendationsWidget extends StatelessWidget {
                                       SizedBox(width: size.width * 0.02),
                                       Text(
                                         items[index].rating,
-                                        style: GoogleFonts.prompt(
+                                        style: GoogleFonts.urbanist(
                                           color: Colors.white,
                                           fontSize: fontSize * 0.75,
                                         ),
@@ -447,18 +441,18 @@ class RecommendationsWidget extends StatelessWidget {
                                       SizedBox(width: size.width * 0.02),
                                       Text(
                                         "(${items[index].reviews})",
-                                        style: TextStyle(
+                                        style: GoogleFonts.urbanist(
                                           color: Colors.white70,
-                                          fontFamily: 'Switzer',
+                               
                                           fontSize: fontSize * 0.7,
                                         ),
                                       ),
                                       SizedBox(width: size.width * 0.02),
                                       Text(
                                         "${items[index].distance} away",
-                                        style: TextStyle(
+                                        style: GoogleFonts.urbanist(
                                           color: Colors.white70,
-                                          fontFamily: 'Switzer',
+                                         
                                           fontSize: fontSize * 0.7,
                                         ),
                                       ),
@@ -472,9 +466,9 @@ class RecommendationsWidget extends StatelessWidget {
                                 SizedBox(height: size.height * 0.005),
                                 Text(
                                   'AED ${items[index].price}',
-                                  style: TextStyle(
+                                  style: GoogleFonts.urbanist(
                                     color: Colors.white,
-                                    fontFamily: 'Switzer',
+                                   
                                     fontWeight: FontWeight.bold,
                                     fontSize: fontSize * 1.1,
                                   ),
@@ -518,9 +512,9 @@ Widget superStar(Size size) {
         SizedBox(width: size.width * 0.01),
         Text(
           "Superstar Stuff",
-          style: TextStyle(
+          style: GoogleFonts.urbanist(
             color: Colors.white,
-            fontFamily: 'Switzer',
+           
             fontSize: size.width * 0.03,
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/cart/cubit/cart_cubit.dart';
 import 'package:task2/presentation/cart/model/cart_model.dart';
 import 'package:task2/presentation/cart/view/cart_screen.dart';
@@ -22,10 +23,9 @@ Widget buildDrinkView(BuildContext context) {
           children: [
             Text(
               'Available Drinks',
-              style: TextStyle(
+              style: GoogleFonts.urbanist(
                 color: Colors.white,
                 fontSize: fontSize,
-                fontFamily: 'Switzer',
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -64,7 +64,6 @@ Widget buildDrinkView(BuildContext context) {
                     horizontal: size.width * 0.05,
                   ),
                   child: Row(
-                    // spacing: 5,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildActionButton(
@@ -239,19 +238,17 @@ Widget _buildDrinkItem(BuildContext context, DrinkModel drinks) {
           children: [
             Text(
               drinks.title,
-              style: TextStyle(
+              style: GoogleFonts.urbanist(
                 color: Colors.white,
                 fontSize: fontSize,
-                fontFamily: 'Switzer',
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               drinks.price,
-              style: TextStyle(
+              style: GoogleFonts.urbanist(
                 color: Colors.grey,
                 fontSize: fontSize,
-                fontFamily: 'Switzer',
               ),
             ),
           ],
@@ -279,7 +276,7 @@ Widget _buildActionButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
       onPressed: onTap,
-      child: Text(label, style: TextStyle(color: textColor, fontSize: 16)),
+      child: Text(label, style: GoogleFonts.urbanist(color: textColor, fontSize: 16)),
     ),
   );
 }

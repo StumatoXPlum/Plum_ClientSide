@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/map/map_screen.dart';
 
 class PickLocationScreen extends StatefulWidget {
@@ -68,20 +69,19 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
               SizedBox(height: size.height * 0.05),
               Text(
                 "Pick Location",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   color: Colors.white,
                   fontSize: fontSize * 1.4,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Switzer',
                 ),
               ),
               SizedBox(height: size.height * 0.01),
               Text(
                 "Our recommendation depends on your search result",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   color: Colors.white70,
                   fontSize: fontSize * 0.8,
-                  fontFamily: 'Switzer',
+                  
                 ),
               ),
               SizedBox(height: size.height * 0.03),
@@ -101,9 +101,8 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: "Search food",
-                          hintStyle: TextStyle(
+                          hintStyle: GoogleFonts.urbanist(
                             color: Colors.white54,
-                            fontFamily: 'Switzer',
                             fontSize: fontSize * 0.8,
                           ),
                           border: InputBorder.none,
@@ -141,10 +140,9 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                             SizedBox(width: size.width * 0.03),
                             Text(
                               "Add address",
-                              style: TextStyle(
+                              style: GoogleFonts.urbanist(
                                 color: Colors.white,
                                 fontSize: fontSize * 0.9,
-                                fontFamily: 'Switzer',
                               ),
                             ),
                             Spacer(),
@@ -183,10 +181,9 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                                 children: [
                                   Text(
                                     "Use your current location",
-                                    style: TextStyle(
+                                    style: GoogleFonts.urbanist(
                                       color: Colors.white,
                                       fontSize: fontSize * 0.9,
-                                      fontFamily: 'Switzer',
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -194,19 +191,17 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                                   _isFetching
                                       ? Text(
                                         "Fetching location...",
-                                        style: TextStyle(
+                                        style: GoogleFonts.urbanist(
                                           color: Colors.white54,
                                           fontSize: fontSize * 0.75,
-                                          fontFamily: 'Switzer',
                                         ),
                                       )
                                       : Text(
                                         _currentAddress ??
                                             "Tap to fetch location",
-                                        style: TextStyle(
+                                        style: GoogleFonts.urbanist(
                                           color: Colors.white54,
                                           fontSize: fontSize * 0.75,
-                                          fontFamily: 'Switzer',
                                         ),
                                       ),
                                 ],

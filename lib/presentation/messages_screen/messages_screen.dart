@@ -9,7 +9,6 @@ class MessagesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
-    // double iconSize = size.width * 0.05;
     double fontSize = size.width * 0.05;
 
     return Scaffold(
@@ -39,14 +38,14 @@ class MessagesScreen extends StatelessWidget {
               children: [
                 Text(
                   "AKS Night",
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.urbanist(
                     fontSize: fontSize * 0.8,
                     color: Colors.white,
                   ),
                 ),
                 Text(
                   "(+44) 23 2443 42424",
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.urbanist(
                     fontSize: fontSize * 0.6,
                     color: Colors.white70,
                   ),
@@ -93,7 +92,7 @@ class MessagesScreen extends StatelessWidget {
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: "Type a message...",
-                    hintStyle: GoogleFonts.inter(color: Colors.white60),
+                    hintStyle: GoogleFonts.urbanist(color: Colors.white60),
                     filled: true,
                     fillColor: Colors.grey.shade800,
                     border: OutlineInputBorder(
@@ -141,7 +140,7 @@ class MessagesScreen extends StatelessWidget {
           message,
           softWrap: true,
           overflow: TextOverflow.visible,
-          style: TextStyle(
+          style: GoogleFonts.urbanist(
             color: isSender ? Colors.white : Colors.black,
             fontSize: 16,
           ),

@@ -84,20 +84,20 @@ class ChooseCountryScreenState extends State<ChooseCountryScreen> {
                 SizedBox(height: size.height * 0.03),
                 Text(
                   "Choose Country",
-                  style: TextStyle(
+                  style: GoogleFonts.urbanist(
                     fontSize: fontSize * 1.6,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    fontFamily: 'Switzer',
+               
                   ),
                 ),
                 SizedBox(height: size.height * 0.02),
                 Text(
                   "Don't worry! It happens. Please enter the email associated with your account.",
-                  style: TextStyle(
+                  style: GoogleFonts.urbanist(
                     fontSize: fontSize * 0.9,
                     color: Colors.grey,
-                    fontFamily: 'Switzer',
+               
                   ),
                 ),
                 SizedBox(height: size.height * 0.04),
@@ -105,7 +105,7 @@ class ChooseCountryScreenState extends State<ChooseCountryScreen> {
                   onChanged: _filterCountries,
                   decoration: InputDecoration(
                     hintText: "Search",
-                    hintStyle: GoogleFonts.inter(color: Colors.grey),
+                    hintStyle: GoogleFonts.urbanist(color: Colors.grey),
                     prefixIcon: const Icon(Icons.search, color: Colors.white),
                     filled: true,
                     fillColor: Colors.grey[900],
@@ -154,7 +154,7 @@ class ChooseCountryScreenState extends State<ChooseCountryScreen> {
                       ),
                       title: Text(
                         "${country.name} (+${country.phoneCode})",
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.urbanist(
                           color: Colors.white70,
                           fontSize: fontSize,
                         ),
@@ -199,9 +199,10 @@ class ChooseCountryScreenState extends State<ChooseCountryScreen> {
               ),
               child: Text(
                 "Continue",
-                style: GoogleFonts.inter(
+                style: GoogleFonts.urbanist(
                   fontSize: fontSize,
                   color: Colors.white,
+                  fontWeight: FontWeight.bold
                 ),
                 textAlign: TextAlign.center,
               ),

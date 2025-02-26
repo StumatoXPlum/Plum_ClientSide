@@ -126,17 +126,16 @@ class _PhoneNumberState extends State<PhoneNumber> {
             SizedBox(height: size.height * 0.03),
             Text(
               "Hi $userName!",
-              style: TextStyle(
+              style: GoogleFonts.urbanist(
                 color: Colors.white,
                 fontSize: fontSize * 1.6,
-                fontFamily: 'Switzer',
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: size.height * 0.01),
             Text(
               "Please enter your phone number",
-              style: GoogleFonts.inter(
+              style: GoogleFonts.urbanist(
                 color: Colors.white70,
                 fontSize: fontSize * 1,
               ),
@@ -165,9 +164,9 @@ class _PhoneNumberState extends State<PhoneNumber> {
                         SizedBox(width: size.width * 0.04),
                         Text(
                           "+${selectedCountry.phoneCode}",
-                          style: const TextStyle(
+                          style: GoogleFonts.urbanist(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: fontSize * 0.9,
                           ),
                         ),
                         SizedBox(width: size.width * 0.02),
@@ -186,10 +185,10 @@ class _PhoneNumberState extends State<PhoneNumber> {
                     cursorColor: Colors.white70,
                     controller: phoneController,
                     keyboardType: TextInputType.phone,
-                    style: GoogleFonts.inter(color: Colors.white),
+                    style: GoogleFonts.urbanist(color: Colors.white),
                     decoration: InputDecoration(
                       hintText: "Enter phone number",
-                      hintStyle: GoogleFonts.inter(color: Colors.grey),
+                      hintStyle: GoogleFonts.urbanist(color: Colors.grey),
                       filled: true,
                       fillColor: Colors.grey[900],
                       border: OutlineInputBorder(
@@ -215,8 +214,6 @@ class _PhoneNumberState extends State<PhoneNumber> {
                   bool success = await TwilioVerifyService().sendOtp(
                     phoneNumber,
                   );
-
-                  // Navigate first
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -258,9 +255,10 @@ class _PhoneNumberState extends State<PhoneNumber> {
                         )
                         : Text(
                           "Send OTP",
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.urbanist(
                             fontSize: fontSize,
                             color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
                           textAlign: TextAlign.center,
                         ),

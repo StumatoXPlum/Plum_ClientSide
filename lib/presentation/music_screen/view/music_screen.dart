@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/music_screen/model/music_model.dart';
 import 'package:task2/presentation/music_screen/view/playlist_screen.dart';
 
@@ -31,7 +32,7 @@ class MusicScreen extends StatelessWidget {
                 SizedBox(height: size.height * 0.02),
                 Text(
                   "Share your Music",
-                  style: TextStyle(
+                  style: GoogleFonts.urbanist(
                     color: Colors.white,
                     fontSize: fontSize * 1.2,
                     fontWeight: FontWeight.bold,
@@ -39,7 +40,7 @@ class MusicScreen extends StatelessWidget {
                 ),
                 Text(
                   "What do you feel like today?",
-                  style: TextStyle(
+                  style: GoogleFonts.urbanist(
                     color: Colors.white54,
                     fontSize: fontSize * 0.8,
                   ),
@@ -58,7 +59,7 @@ class MusicScreen extends StatelessWidget {
                       SizedBox(width: padding),
                       Expanded(
                         child: TextField(
-                          style: const TextStyle(color: Colors.white),
+                          style: GoogleFonts.urbanist(color: Colors.white),
                           decoration: InputDecoration(
                             hintText: "Search song, playlist, artist...",
                             hintStyle: TextStyle(
@@ -121,7 +122,7 @@ class MusicScreen extends StatelessWidget {
                                       SizedBox(height: size.height * 0.01),
                                       Text(
                                         playlist.name,
-                                        style: TextStyle(
+                                        style: GoogleFonts.urbanist(
                                           color: Colors.white,
                                           fontSize: fontSize * 0.9,
                                           fontWeight: FontWeight.bold,
@@ -131,7 +132,7 @@ class MusicScreen extends StatelessWidget {
                                       ),
                                       Text(
                                         playlist.description,
-                                        style: TextStyle(
+                                        style: GoogleFonts.urbanist(
                                           color: Colors.white54,
                                           fontSize: fontSize * 0.7,
                                         ),
@@ -147,7 +148,7 @@ class MusicScreen extends StatelessWidget {
                         ),
                         Text(
                           "Your favourites",
-                          style: TextStyle(
+                          style: GoogleFonts.urbanist(
                             color: Colors.white,
                             fontSize: fontSize,
                           ),
@@ -164,18 +165,18 @@ class MusicScreen extends StatelessWidget {
                                   leading: Image.asset(song.imagePath),
                                   title: Text(
                                     song.title,
-                                    style: TextStyle(
+                                    style: GoogleFonts.urbanist(
                                       color: Colors.white,
                                       fontSize: fontSize * 0.8,
                                     ),
                                   ),
                                   subtitle: Text(
                                     song.artist,
-                                    style: TextStyle(color: Colors.white54),
+                                    style: GoogleFonts.urbanist(color: Colors.white54),
                                   ),
                                   trailing: Text(
                                     song.duration,
-                                    style: TextStyle(color: Colors.white54),
+                                    style: GoogleFonts.urbanist(color: Colors.white54),
                                   ),
                                 );
                               },
@@ -187,7 +188,7 @@ class MusicScreen extends StatelessWidget {
                                 ),
                                 child: Text(
                                   "No favourite songs yet!",
-                                  style: TextStyle(
+                                  style: GoogleFonts.urbanist(
                                     color: Colors.white54,
                                     fontSize: fontSize * 0.9,
                                   ),

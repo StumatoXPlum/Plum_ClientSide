@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../cart/view/cart_screen.dart';
 import '../cubit/booking_cubit.dart';
 import '../model/booking_model.dart';
@@ -86,20 +87,18 @@ class HomeDetailContent extends StatelessWidget {
                     children: [
                       Text(
                         item.title,
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           fontSize: size.width * 0.05,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          fontFamily: 'Switzer',
                         ),
                       ),
                       SizedBox(height: size.height * 0.01),
                       Text(
                         '${item.distance} away',
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           fontSize: size.width * 0.045,
                           color: Colors.white70,
-                          fontFamily: 'Switzer',
                         ),
                       ),
                     ],
@@ -125,10 +124,9 @@ class HomeDetailContent extends StatelessWidget {
                       ),
                       child: Text(
                         "Message",
-                        style: TextStyle(
+                        style: GoogleFonts.urbanist(
                           fontSize: fontSize * 0.7,
                           color: Color(0xff3579DD),
-                          fontFamily: 'Switzer',
                         ),
                       ),
                     ),
@@ -142,10 +140,9 @@ class HomeDetailContent extends StatelessWidget {
               padding: EdgeInsets.only(left: padding * 1.6),
               child: Text(
                 "Book a table",
-                style: TextStyle(
+                style: GoogleFonts.urbanist(
                   fontSize: fontSize,
                   color: Colors.white,
-                  fontFamily: 'Switzer',
                 ),
               ),
             ),
