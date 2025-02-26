@@ -7,7 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/core/bottom_navigation_bar.dart';
 
 class DateOfBirth extends StatefulWidget {
-  const DateOfBirth({super.key});
+  final bool isFromProfile;
+  const DateOfBirth({super.key, this.isFromProfile = false});
 
   @override
   State<DateOfBirth> createState() => _DateOfBirthState();
@@ -251,7 +252,16 @@ class _DateOfBirthState extends State<DateOfBirth> {
                   String dob = "$selectedDay $selectedMonth $selectedYear";
                   await _storeDateOfBirth(dob);
 
-                  Navigator.pop(context, dob);
+                  if (widget.isFromProfile) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BottomNavScreen(),
+                      ),
+                    );
+                  }
                 },
 
                 child: Container(
@@ -274,28 +284,30 @@ class _DateOfBirthState extends State<DateOfBirth> {
                   ),
                 ),
               ),
-              SizedBox(height: size.height * 0.02),
-              Align(
-                alignment: Alignment.center,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BottomNavScreen(),
+              if (!widget.isFromProfile) ...[
+                SizedBox(height: size.height * 0.02),
+                Align(
+                  alignment: Alignment.center,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BottomNavScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Skip for now",
+                      style: TextStyle(
+                        fontSize: fontSize * 0.8,
+                        color: Colors.white70,
+                        fontFamily: 'Switzer',
                       ),
-                    );
-                  },
-                  child: Text(
-                    "Skip for now",
-                    style: TextStyle(
-                      fontSize: fontSize * 0.8,
-                      color: Colors.white70,
-                      fontFamily: 'Switzer',
                     ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

@@ -160,7 +160,6 @@ Widget buildPackagesView(BuildContext context) {
                                         '',
                                       ),
                                     ),
-
                                     quantity: quantity,
                                     image: package.imageUrl,
                                   ),
@@ -176,7 +175,7 @@ Widget buildPackagesView(BuildContext context) {
                           });
 
                           if (itemAdded) {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ShoppingCartScreen(),

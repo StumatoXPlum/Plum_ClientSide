@@ -173,7 +173,7 @@ Widget buildDrinkView(BuildContext context) {
                           });
 
                           if (itemAdded) {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ShoppingCartScreen(),

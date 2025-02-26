@@ -230,7 +230,7 @@ class ShoppingCartScreen extends StatelessWidget {
                                   context.read<OrderHistoryCubit>();
 
                               orderHistoryCubit.addOrder(cartCubit.state);
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => PaymentScreen(),

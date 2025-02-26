@@ -17,7 +17,7 @@ class UserProfileState extends State<UserProfile> {
   String name = "Loading...";
   String email = "Not Available";
   String phoneNumber = "Not Available";
-  String dateOfBirth = "Not set yer";
+  String dateOfBirth = "Not set yet";
   bool isGoogleSignIn = false;
 
   @override
@@ -59,7 +59,7 @@ class UserProfileState extends State<UserProfile> {
             userDoc['dateOfBirth'] != null &&
                     userDoc['dateOfBirth'].toString().isNotEmpty
                 ? userDoc['dateOfBirth']
-                : "Not set yet"; 
+                : "Not set yet";
 
         if (isGoogleSignIn) {
           name = userDoc['name'] ?? email.split('@').first;
@@ -94,20 +94,13 @@ class UserProfileState extends State<UserProfile> {
     }
   }
 
- Future<void> navigateToDateOfBirthScreen() async {
-  final selectedDate = await Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const DateOfBirth()),
-  );
-
-  if (selectedDate != null) {
-    setState(() {
-      dateOfBirth = selectedDate;
-    });
+  Future<void> navigateToDateOfBirthScreen() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DateOfBirth(isFromProfile: true)),
+    );
     fetchUserData();
   }
-}
-
 
   Widget buildTextField(
     String label,
@@ -190,9 +183,19 @@ class UserProfileState extends State<UserProfile> {
                   ),
                 ),
                 SizedBox(height: size.height * 0.03),
-                buildTextField("Your Email", email, Icons.mail_outline),
+                buildTextField(
+                  "Your Email",
+                  email,
+                  Icons.mail_outline,
+                  isReadOnly: true,
+                ),
                 SizedBox(height: size.height * 0.02),
-                buildTextField("Phone Number", phoneNumber, Icons.phone),
+                buildTextField(
+                  "Phone Number",
+                  phoneNumber,
+                  Icons.phone,
+                  isReadOnly: true,
+                ),
                 SizedBox(height: size.height * 0.02),
                 buildTextField(
                   "Date of Birth",
