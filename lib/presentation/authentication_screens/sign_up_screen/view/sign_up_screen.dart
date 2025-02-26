@@ -251,7 +251,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
               }
               setState(() => isContinuing = true);
               try {
-                await Supabase.instance.client.auth.signInWithOtp(email: email);
+                await Supabase.instance.client.auth.signInWithOtp(
+                  email: email,
+                  emailRedirectTo: null,
+                  shouldCreateUser: true,
+                );
                 Navigator.push(
                   context,
                   MaterialPageRoute(
