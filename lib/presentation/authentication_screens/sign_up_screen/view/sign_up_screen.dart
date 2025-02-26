@@ -255,7 +255,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   email: email,
                   emailRedirectTo: null,
                   shouldCreateUser: true,
-                
+                  data: {
+                    'create_user': true,
+                    'email_confirm': true,
+                    'gotrue_meta_security': {'method': 'otp'},
+                  },
                 );
                 Navigator.push(
                   context,
@@ -376,7 +380,7 @@ class SignInButton extends StatelessWidget {
                       label,
                       style: GoogleFonts.urbanist(
                         fontSize: fontSize,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],

@@ -106,7 +106,7 @@ class _EmailVerificationState extends State<EmailVerification> {
         Colors.red.shade600,
       );
     }
-    setState(() => isVerifying = false);
+    setState(() => isVerifying = false);  
   }
 
   @override

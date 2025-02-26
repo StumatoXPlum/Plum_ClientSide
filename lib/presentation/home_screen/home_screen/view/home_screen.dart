@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:task2/core/custom_snackbar.dart';
 import 'package:task2/presentation/home_screen/home_screen/cubit/earned_points_cubit.dart';
 import '../../../cart/view/cart_screen.dart';
@@ -14,7 +15,7 @@ import '../model/recommendation_model.dart';
 import '../../pick_location/pick_location_screen.dart';
 import '../../../profile/user_profile.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final bool showSnackbar;
   final DateTime? selectedDate;
   final String? selectedTime;
@@ -25,6 +26,13 @@ class HomeScreen extends StatelessWidget {
     this.selectedTime,
   });
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final String _locationText = "Tap to set location";
+  LatLng? _currentLocation;
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -105,21 +113,19 @@ class HomeScreen extends StatelessWidget {
                             "My Rewards Points",
                             style: GoogleFonts.urbanist(
                               color: Colors.white,
-                              fontSize: fontSize,
+                              fontSize: fontSize * 1.4,
                               fontWeight: FontWeight.bold,
-                              
                             ),
                           ),
-                          SizedBox(height: size.height * 0.02),
+                          SizedBox(height: size.height * 0.001),
                           Text(
                             "Earned Points",
                             style: GoogleFonts.urbanist(
                               color: Colors.white,
-                              fontSize: fontSize * 0.7,
-                             
+                              fontSize: fontSize * 0.9,
                             ),
                           ),
-                          SizedBox(height: size.height * 0.03),
+                          SizedBox(height: size.height * 0.02),
                           BlocBuilder<EarnedPointsCubit, int>(
                             builder: (context, state) {
                               return Text(
@@ -127,7 +133,7 @@ class HomeScreen extends StatelessWidget {
                                 style: GoogleFonts.urbanist(
                                   color: Colors.white,
                                   fontSize: fontSize * 3,
-                                 
+
                                   fontWeight: FontWeight.bold,
                                 ),
                               );
@@ -203,14 +209,18 @@ class HomeScreen extends StatelessWidget {
                             "Your Location",
                             style: GoogleFonts.urbanist(
                               color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: fontSize * 0.9,
                             ),
                           ),
-                          SizedBox(height: size.height * 0.01),
+                          SizedBox(height: size.height * 0.001),
                           Text(
-                            "Some random road no 28",
+                            _locationText,
                             style: GoogleFonts.urbanist(
-                              color: Colors.white60,
-                              
+                              color:
+                                  _currentLocation != null
+                                      ? Colors.white60
+                                      : Colors.white60,
                             ),
                           ),
                         ],
@@ -275,7 +285,7 @@ class CouponContainer extends StatelessWidget {
                     "Coupons",
                     style: GoogleFonts.urbanist(
                       color: Colors.black,
-                      fontSize: fontSize,
+                      fontSize: fontSize * 1.2,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -284,7 +294,8 @@ class CouponContainer extends StatelessWidget {
                     "Apply $promoCode for discount",
                     style: GoogleFonts.urbanist(
                       color: Colors.black,
-                      fontSize: fontSize * 0.75,
+                      fontSize: fontSize * 1,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -443,7 +454,7 @@ class RecommendationsWidget extends StatelessWidget {
                                         "(${items[index].reviews})",
                                         style: GoogleFonts.urbanist(
                                           color: Colors.white70,
-                               
+
                                           fontSize: fontSize * 0.7,
                                         ),
                                       ),
@@ -452,7 +463,7 @@ class RecommendationsWidget extends StatelessWidget {
                                         "${items[index].distance} away",
                                         style: GoogleFonts.urbanist(
                                           color: Colors.white70,
-                                         
+
                                           fontSize: fontSize * 0.7,
                                         ),
                                       ),
@@ -468,7 +479,7 @@ class RecommendationsWidget extends StatelessWidget {
                                   'AED ${items[index].price}',
                                   style: GoogleFonts.urbanist(
                                     color: Colors.white,
-                                   
+
                                     fontWeight: FontWeight.bold,
                                     fontSize: fontSize * 1.1,
                                   ),
@@ -514,7 +525,7 @@ Widget superStar(Size size) {
           "Superstar Stuff",
           style: GoogleFonts.urbanist(
             color: Colors.white,
-           
+
             fontSize: size.width * 0.03,
           ),
         ),

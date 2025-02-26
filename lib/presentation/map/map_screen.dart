@@ -14,6 +14,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   LatLng? _currentLocation;
   late final MapController _mapController;
+  String _locationText = "Location not available";
 
   @override
   void initState() {
@@ -49,17 +50,25 @@ class _MapScreenState extends State<MapScreen> {
     _getCurrentLocation();
   }
 
-  Future<void> _getCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
+ Future<void> _getCurrentLocation() async {
+  Position position = await Geolocator.getCurrentPosition(
+    desiredAccuracy: LocationAccuracy.high,
+  );
 
-    setState(() {
-      _currentLocation = LatLng(position.latitude, position.longitude);
-    });
+  setState(() {
+    _currentLocation = LatLng(position.latitude, position.longitude);
+    _locationText = "${position.latitude.toStringAsFixed(4)}, ${position.longitude.toStringAsFixed(4)}";
+  });
 
-    _mapController.move(_currentLocation!, 15.0);
-  }
+  _mapController.move(_currentLocation!, 15.0);
+}
+
+void _goBack() {
+  Navigator.pop(context, {
+    'locationText': _locationText,
+    'currentLocation': _currentLocation,
+  });
+}
 
   void _showLocationDialog() {
     showDialog(
@@ -137,7 +146,7 @@ class _MapScreenState extends State<MapScreen> {
             top: 40,
             left: 15,
             child: GestureDetector(
-              onTap: () => Navigator.pop(context),
+              onTap: _goBack,
               child: SvgPicture.asset(
                 "assets/sign_up_assets/back.svg",
                 width: 50,

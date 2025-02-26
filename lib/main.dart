@@ -20,6 +20,10 @@ void main() async {
   await Supabase.initialize(
     anonKey: AppSecrets.anonKey,
     url: AppSecrets.supabaseUrl,
+    authOptions: FlutterAuthClientOptions(
+      authFlowType: AuthFlowType.pkce,
+      autoRefreshToken: true,
+    ),
   );
   runApp(
     MultiBlocProvider(
