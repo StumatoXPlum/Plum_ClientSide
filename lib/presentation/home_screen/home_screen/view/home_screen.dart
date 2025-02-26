@@ -46,14 +46,15 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             SafeArea(
               child: SizedBox(
-                height: size.height * 0.4,
+                height: size.height * 0.45,
                 width: double.infinity,
                 child: Stack(
                   children: [
-                    Positioned.fill(
+                    Positioned(
+                      top: -5,
                       child: SvgPicture.asset(
                         'assets/home_assets/blur.svg',
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                       ),
                     ),
                     Positioned.fill(
@@ -64,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Positioned(
                       right: padding,
-                      top: padding,
+                      top: padding * 0.1,
                       child: Row(
                         children: [
                           GestureDetector(
@@ -100,69 +101,88 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
-                    Positioned.fill(
+                    Positioned(
+                      top: size.height * 0.05,
+                      left: 0,
+                      right: 0,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Image.asset(
                             "assets/home_assets/bulb.png",
-                            height: size.width * 0.15,
+                            height:
+                                size.width * (size.height < 600 ? 0.12 : 0.15),
                           ),
-                          SizedBox(height: size.height * 0.02),
+                          SizedBox(
+                            height:
+                                size.height < 600
+                                    ? size.height * 0.005
+                                    : size.height * 0.01,
+                          ),
                           Text(
                             "My Rewards Points",
                             style: GoogleFonts.urbanist(
                               color: Colors.white,
-                              fontSize: fontSize * 1.4,
+                              fontSize:
+                                  fontSize * (size.height < 600 ? 1.2 : 1.4),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: size.height * 0.001),
+                          SizedBox(
+                            height:
+                                size.height < 600
+                                    ? size.height * 0.001
+                                    : size.height * 0.005,
+                          ),
                           Text(
                             "Earned Points",
                             style: GoogleFonts.urbanist(
                               color: Colors.white,
-                              fontSize: fontSize * 0.9,
+                              fontSize:
+                                  fontSize * (size.height < 600 ? 0.8 : 0.9),
                             ),
                           ),
-                          SizedBox(height: size.height * 0.02),
+                          SizedBox(height: size.height * 0.01),
                           BlocBuilder<EarnedPointsCubit, int>(
                             builder: (context, state) {
                               return Text(
                                 "$state",
                                 style: GoogleFonts.urbanist(
                                   color: Colors.white,
-                                  fontSize: fontSize * 3,
-
+                                  fontSize:
+                                      fontSize * (size.height < 600 ? 2.5 : 3),
                                   fontWeight: FontWeight.bold,
                                 ),
                               );
                             },
+                          ),
+                          SizedBox(height: size.height * 0.02),
+                          SizedBox(
+                            height: size.height * 0.12,
+                            width: size.width,
+                            child: Swiper(
+                              itemCount: 6,
+                              itemBuilder:
+                                  (context, index) => const CouponContainer(
+                                    promoCode: "W34EAFIK",
+                                  ),
+                              axisDirection: AxisDirection.down,
+                              scrollDirection: Axis.vertical,
+                              itemHeight:
+                                  size.height *
+                                  (size.height < 600 ? 0.07 : 0.09),
+                              itemWidth: size.width * 1,
+                              loop: true,
+                              autoplay: true,
+                              duration: 1000,
+                              layout: SwiperLayout.STACK,
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ),
-            SizedBox(
-              height: size.height * 0.12,
-              child: Swiper(
-                itemCount: 6,
-                itemBuilder:
-                    (context, index) =>
-                        const CouponContainer(promoCode: "W34EAFIK"),
-                axisDirection: AxisDirection.down,
-                scrollDirection: Axis.vertical,
-                itemHeight: 70,
-                itemWidth: double.infinity,
-                loop: true,
-                autoplay: true,
-                duration: 1000,
-                viewportFraction: 0.3,
-                scale: 0.85,
-                layout: SwiperLayout.STACK,
               ),
             ),
             SizedBox(height: size.height * 0.02),
@@ -236,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            SizedBox(height: size.height * 0.02),
+            SizedBox(height: size.height * 0.01),
             RecommendationsWidget(),
           ],
         ),
@@ -259,9 +279,9 @@ class CouponContainer extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: padding * 2),
       child: Container(
-        height: size.height * 0.1,
+        height: size.height * 0.15,
         padding: EdgeInsets.symmetric(
-          vertical: padding,
+          vertical: padding * 0.01,
           horizontal: padding * 1.5,
         ),
         decoration: BoxDecoration(
@@ -289,7 +309,7 @@ class CouponContainer extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: size.height * 0.001),
+                  // SizedBox(height: size.height * 0.001),
                   Text(
                     "Apply $promoCode for discount",
                     style: GoogleFonts.urbanist(
