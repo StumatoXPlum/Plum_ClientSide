@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/cart/cubit/cart_cubit.dart';
+import 'package:task2/presentation/cart/model/cart_model.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/cubit/booking_cubit.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/cubit/cart_buttons.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/model/affordable_package_model.dart';
@@ -72,6 +73,25 @@ Widget buildPackagesView(BuildContext context) {
                         color: Colors.transparent,
                         textColor: Color(0xff3579DD),
                         onTap: () {
+                          final cartCubit = context.read<CartCubit>();
+                          final cartButtonCubit =
+                              context.read<CartButtonCubit>();
+                          final selectedItems = cartButtonCubit.state.entries
+                              .where((entry) => entry.value > 0);
+                          for (var entry in selectedItems) {
+                            final package = affordablePackages.firstWhere(
+                              (pkg) => pkg.title == entry.key,
+                            );
+                            final cartItem = CartItem(
+                              name: package.title,
+                              price: double.parse(
+                                package.price.replaceAll(RegExp(r'[^\d.]'), ''),
+                              ), 
+                              quantity: entry.value,
+                              image: package.imageUrl, description: package.description,
+                            );
+                            cartCubit.addToCart(cartItem, context);
+                          }
                           context.read<BookingCubit>().changeView(
                             BookingView.drink,
                           );
@@ -87,7 +107,6 @@ Widget buildPackagesView(BuildContext context) {
                         onTap: () {
                           final cartCubit = context.read<CartCubit>();
                           cartCubit.clearCart(context);
-
                           cartState.forEach((packageName, quantity) {
                             if (quantity > 0) {
                               ScaffoldMessenger.of(context).showSnackBar(

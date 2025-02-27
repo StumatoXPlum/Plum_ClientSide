@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ void main() async {
         BlocProvider(create: (context) => CartButtonCubit()),
         BlocProvider(create: (context) => EarnedPointsCubit()),
       ],
-      child: const MyApp(),
+      child: DevicePreview(builder: (context) => const MyApp()),
     ),
   );
 }
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: DevicePreview.locale(context),
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       home: _getInitialScreen(),

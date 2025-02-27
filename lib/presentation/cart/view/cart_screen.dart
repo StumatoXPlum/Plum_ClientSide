@@ -24,75 +24,76 @@ class ShoppingCartScreen extends StatelessWidget {
           bool isCartEmpty = cartItems.isEmpty;
 
           return SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(padding),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: SvgPicture.asset(
-                            'assets/sign_up_assets/back.svg',
-                          ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(padding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: SvgPicture.asset(
+                          'assets/sign_up_assets/back.svg',
                         ),
-                        SizedBox(height: size.height * 0.03),
-                        Text(
+                      ),
+                      SizedBox(height: size.height * 0.03),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: padding),
+                        child: Text(
                           "Shopping Cart",
                           style: GoogleFonts.urbanist(
                             color: Colors.white,
                             fontSize: fontSize * 1.2,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: size.height * 0.02),
-                  if (isCartEmpty) ...[
-                    Expanded(
-                      child: Center(
-                        child: Column(
-                          children: [
-                            SvgPicture.asset(
-                              "assets/empty_state/empty_cart.svg",
+                ),
+                SizedBox(height: size.height * 0.02),
+                if (isCartEmpty) ...[
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        children: [
+                          SvgPicture.asset("assets/empty_state/empty_cart.svg"),
+                          SizedBox(height: size.height * 0.01),
+                          Text(
+                            "Cart empty",
+                            style: GoogleFonts.urbanist(
+                              color: Colors.white,
+                              fontSize: fontSize,
+                              fontWeight: FontWeight.bold,
                             ),
-                            SizedBox(height: size.height * 0.01),
-                            Text(
-                              "Cart empty",
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white,
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          ),
+                          SizedBox(height: size.height * 0.01),
+                          Text(
+                            "Your cart is empty.",
+                            style: GoogleFonts.urbanist(
+                              color: Colors.white70,
+                              fontSize: fontSize * 0.75,
                             ),
-                            SizedBox(height: size.height * 0.01),
-                            Text(
-                              "Your cart is empty.",
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white70,
-                                fontSize: fontSize * 0.75,
-                              ),
+                          ),
+                          Text(
+                            "Start adding items to enjoy shopping!",
+                            style: GoogleFonts.urbanist(
+                              color: Colors.white70,
+                              fontSize: fontSize * 0.75,
                             ),
-                            Text(
-                              "Start adding items to enjoy shopping!",
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white70,
-                                fontSize: fontSize * 0.75,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ] else ...[
-                    Center(
+                  ),
+                ] else ...[
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
                       child: Container(
                         padding: EdgeInsets.symmetric(
-                          vertical: padding,
+                          vertical: padding * 0.5,
                           horizontal: padding,
                         ),
                         decoration: BoxDecoration(
@@ -104,9 +105,12 @@ class ShoppingCartScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(24),
                         ),
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.info, color: Color(0xffE09C35)),
+                            Icon(
+                              Icons.info,
+                              color: Color(0xffE09C35),
+                              size: 18,
+                            ),
                             SizedBox(width: size.width * 0.02),
                             Text(
                               "Product more than 2 days are automatically lost",
@@ -119,25 +123,32 @@ class ShoppingCartScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: size.height * 0.02),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: cartItems.length,
-                        itemBuilder: (context, index) {
-                          final item = cartItems[index];
-                          return CartItemTile(item: item);
-                        },
-                      ),
+                  ),
+                  SizedBox(height: size.height * 0.02),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: cartItems.length,
+                      itemBuilder: (context, index) {
+                        final item = cartItems[index];
+                        return CartItemTile(item: item);
+                      },
                     ),
-                    Text(
+                  ),
+                  SizedBox(height: size.height * 0.02),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                    child: Text(
                       "Order Summary",
                       style: GoogleFonts.urbanist(
                         color: Colors.white,
                         fontSize: fontSize,
                       ),
                     ),
-                    SizedBox(height: size.height * 0.02),
-                    Center(
+                  ),
+                  SizedBox(height: size.height * 0.02),
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
                       child: Container(
                         padding: EdgeInsets.symmetric(
                           vertical: padding,
@@ -145,10 +156,7 @@ class ShoppingCartScreen extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: Color(0xff161C25),
-                          border: Border.all(
-                            color: Color(0xff3579DD),
-                            width: 0.4,
-                          ),
+
                           borderRadius: BorderRadius.circular(24),
                         ),
                         child: Row(
@@ -165,8 +173,8 @@ class ShoppingCartScreen extends StatelessWidget {
                             Text(
                               "Add promos before you order",
                               style: GoogleFonts.urbanist(
-                                color: Color(0xff3579DD),
-                                fontSize: fontSize * 0.65,
+                                color: Colors.white,
+                                fontSize: fontSize * 0.7,
                               ),
                             ),
                             Spacer(),
@@ -179,8 +187,11 @@ class ShoppingCartScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: size.height * 0.02),
-                    Container(
+                  ),
+                  SizedBox(height: size.height * 0.02),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                    child: Container(
                       padding: EdgeInsets.all(padding),
                       color: const Color(0xff090D14),
                       child: Column(
@@ -200,53 +211,51 @@ class ShoppingCartScreen extends StatelessWidget {
                                 "AED ${totalPrice.toStringAsFixed(2)}",
                                 style: GoogleFonts.urbanist(
                                   color: Colors.white,
-                                 
+
                                   fontSize: fontSize,
                                 ),
                               ),
                             ],
                           ),
-                          Divider(color: Colors.grey, thickness: 0.1),
-                          SizedBox(height: size.height * 0.01),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xff3579DD),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                vertical: padding * 1,
-                              ),
-                            ),
-                            onPressed: () {
-                              final cartCubit = context.read<CartCubit>();
-                              final orderHistoryCubit =
-                                  context.read<OrderHistoryCubit>();
-
-                              orderHistoryCubit.addOrder(cartCubit.state);
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentScreen(),
-                                ),
-                              );
-                            },
-                            child: Center(
-                              child: Text(
-                                "Proceed to Pay",
-                                style: GoogleFonts.urbanist(
-                                  fontSize: fontSize,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),
-                  ],
+                  ),
+                  Divider(color: Colors.grey, thickness: 0.1),
+                  SizedBox(height: size.height * 0.01),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xff3579DD),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: padding * 1),
+                    ),
+                    onPressed: () {
+                      final cartCubit = context.read<CartCubit>();
+                      final orderHistoryCubit =
+                          context.read<OrderHistoryCubit>();
+
+                      orderHistoryCubit.addOrder(cartCubit.state);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentScreen(),
+                        ),
+                      );
+                    },
+                    child: Center(
+                      child: Text(
+                        "Proceed to Pay",
+                        style: GoogleFonts.urbanist(
+                          fontSize: fontSize,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
-              ),
+              ],
             ),
           );
         },
@@ -264,11 +273,12 @@ class CartItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
-    double fontSize = size.width * 0.05;
+    double fontSize = size.width * 0.045;
+
     return Container(
       margin: EdgeInsets.symmetric(
         vertical: padding * 0.1,
-        horizontal: padding * 1.6,
+        horizontal: padding,
       ),
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -276,6 +286,7 @@ class CartItemTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
@@ -286,110 +297,124 @@ class CartItemTile extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          SizedBox(width: size.width * 0.05),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                item.name,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Switzer',
+          SizedBox(width: size.width * 0.04),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.name,
+                  style: GoogleFonts.urbanist(
+                    color: Colors.white,
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              SizedBox(height: size.height * 0.001),
-              Text(
-                item.description,
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: fontSize * 0.6,
-                  fontFamily: 'Switzer',
-                ),
-              ),
-              SizedBox(height: size.height * 0.02),
-              Text(
-                "AED ${item.price}",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: fontSize,
-                  fontFamily: 'Switzer',
-                ),
-              ),
-            ],
-          ),
-          Spacer(),
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: padding * 0.1,
-                  vertical: padding * 0.1,
-                ),
-                decoration: BoxDecoration(
-                  color: Color(0xff161C25),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        context.read<CartCubit>().updateQuantity(
-                          item.name,
-                          item.quantity - 1,
-                          context,
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.remove,
-                          color: Color(0xff3579DD),
-                          size: 20,
-                        ),
-                      ),
+                SizedBox(height: size.height * 0.004),
+                SizedBox(
+                  width: size.width * 0.5,
+                  child: Text(
+                    item.description,
+                    style: GoogleFonts.urbanist(
+                      color: Colors.grey,
+                      fontSize: fontSize * 0.75,
                     ),
-                    SizedBox(width: size.width * 0.02),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ),
+                SizedBox(height: size.height * 0.01),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     Text(
-                      "${item.quantity}",
-                      style: TextStyle(
+                      "AED ${item.price}",
+                      style: GoogleFonts.urbanist(
                         color: Colors.white,
-                        fontSize: fontSize,
-                        fontFamily: 'Switzer',
+                        fontSize: fontSize * 0.85,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(width: size.width * 0.02),
-                    GestureDetector(
-                      onTap: () {
-                        context.read<CartCubit>().updateQuantity(
-                          item.name,
-                          item.quantity + 1,
-                          context,
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.add,
-                          color: Color(0xff3579DD),
-                          size: 20,
-                        ),
+                    Flexible(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: padding * 0.3,
+                              vertical: padding * 0.2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xff161C25),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    context.read<CartCubit>().updateQuantity(
+                                      item.name,
+                                      item.quantity - 1,
+                                      context,
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(3),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.black,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.remove,
+                                      color: Color(0xff3579DD),
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: size.width * 0.02),
+                                Text(
+                                  "${item.quantity}",
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.white,
+                                    fontSize: fontSize,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: size.width * 0.02),
+                                GestureDetector(
+                                  onTap: () {
+                                    context.read<CartCubit>().updateQuantity(
+                                      item.name,
+                                      item.quantity + 1,
+                                      context,
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(3),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.black,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.add,
+                                      color: Color(0xff3579DD),
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

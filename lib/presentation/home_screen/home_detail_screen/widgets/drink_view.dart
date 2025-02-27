@@ -85,13 +85,14 @@ Widget buildDrinkView(BuildContext context) {
                                       imageUrl: '',
                                       title: '',
                                       price: '0',
+                                      description: '',
                                     ),
                               );
                               if (item.title.isNotEmpty) {
                                 cartCubit.addToCart(
                                   CartItem(
                                     name: item.title,
-                                    description: "Drink",
+                                    description: item.description,
                                     price: double.parse(
                                       item.price.replaceAll(
                                         RegExp(r'[^\d.]'),
@@ -148,6 +149,7 @@ Widget buildDrinkView(BuildContext context) {
                                       imageUrl: '',
                                       title: '',
                                       price: '0',
+                                      description: '',
                                     ),
                               );
 
@@ -155,7 +157,7 @@ Widget buildDrinkView(BuildContext context) {
                                 cartCubit.addToCart(
                                   CartItem(
                                     name: drink.title,
-                                    description: "Drink",
+                                    description: drink.description,
                                     price: double.parse(
                                       drink.price.replaceAll(
                                         RegExp(r'[^\d.]'),
@@ -188,7 +190,9 @@ Widget buildDrinkView(BuildContext context) {
                               SnackBar(
                                 content: Text(
                                   "Please select at least one drink before buying!",
-                                  style: GoogleFonts.urbanist(color: Colors.white),
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 duration: Duration(seconds: 2),
                                 behavior: SnackBarBehavior.floating,
@@ -282,7 +286,10 @@ Widget _buildActionButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
       onPressed: onTap,
-      child: Text(label, style: GoogleFonts.urbanist(color: textColor, fontSize: 16)),
+      child: Text(
+        label,
+        style: GoogleFonts.urbanist(color: textColor, fontSize: 16),
+      ),
     ),
   );
 }

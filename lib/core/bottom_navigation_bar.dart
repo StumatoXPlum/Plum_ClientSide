@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:task2/presentation/history_screen/history_screen.dart';
 import 'package:task2/presentation/music_screen/view/music_screen.dart';
@@ -9,16 +10,16 @@ class BottomNavScreen extends StatefulWidget {
   final int initialIndex;
   final bool showSnackbar;
   final DateTime? selectedDate;
-    final String? selectedStartTime;
-   final String? selectedEndTime;
+  final String? selectedStartTime;
+  final String? selectedEndTime;
 
   const BottomNavScreen({
     super.key,
     this.initialIndex = 0,
     this.showSnackbar = false,
     this.selectedDate,
-     this.selectedStartTime,
-    this.selectedEndTime
+    this.selectedStartTime,
+    this.selectedEndTime,
   });
 
   @override
@@ -44,63 +45,72 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       HomeScreen(
         showSnackbar: widget.showSnackbar,
         selectedDate: widget.selectedDate,
-           selectedStartTime: widget.selectedStartTime,
-         selectedEndTime: widget.selectedEndTime,
+        selectedStartTime: widget.selectedStartTime,
+        selectedEndTime: widget.selectedEndTime,
       ),
       const HistoryScreen(),
       MusicScreen(),
     ];
-    String getDaySuffix(int day) {
-      if (day >= 11 && day <= 13) {
-        return "th";
-      }
-      switch (day % 10) {
-        case 1:
-          return "st";
-        case 2:
-          return "nd";
-        case 3:
-          return "rd";
-        default:
-          return "th";
-      }
-    }
 
-    String getFormattedDate(DateTime date) {
-      String day = DateFormat("d").format(date);
-      String suffix = getDaySuffix(int.parse(day));
-      String formattedDate = DateFormat("a d'${suffix}' MMM").format(date);
-      return formattedDate;
-    }
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final Size size = MediaQuery.of(context).size;
-      double fontSize = size.width * 0.05;
+    Future.delayed(Duration.zero, () {
       if (widget.showSnackbar &&
           _selectedIndex == 0 &&
           widget.selectedDate != null &&
-          widget.selectedStartTime != null && widget.selectedEndTime !=null) {
-        final formattedDate = getFormattedDate(widget.selectedDate!);
-        final message =
-            "You have a booking at ${widget.selectedStartTime} $formattedDate ";
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: const Color(0xff3579DD),
-            content: Row(
-              children: [
-                SvgPicture.asset(
-                  "assets/home_assets/barcode.svg",
-                  height: size.height * 0.03,
-                ),
-                SizedBox(width: size.width * 0.02),
-                Text(message, style: TextStyle(fontSize: fontSize * 0.7)),
-              ],
-            ),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+          widget.selectedStartTime != null &&
+          widget.selectedEndTime != null) {
+        _showSnackbar();
       }
     });
+  }
+
+  void _showSnackbar() {
+    final String message = getFormattedDateTime(widget.selectedDate!);
+    final Size size = MediaQuery.of(context).size;
+    double fontSize = size.width * 0.04;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: const Color(0xff3579DD),
+        content: Row(
+          children: [
+            SvgPicture.asset(
+              "assets/home_assets/barcode.svg",
+              height: size.height * 0.03,
+            ),
+            SizedBox(width: size.width * 0.01),
+            Text(
+              message,
+              style: GoogleFonts.urbanist(
+                fontSize: fontSize * 0.7,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  String getFormattedDateTime(DateTime dateTime) {
+    String formattedTime = DateFormat("h:mm a").format(dateTime);
+    String dayWithSuffix = "${dateTime.day}${getDaySuffix(dateTime.day)}";
+    String formattedDate = DateFormat("MMM").format(dateTime);
+    return "You have a booking at $formattedTime $dayWithSuffix $formattedDate";
+  }
+
+  String getDaySuffix(int day) {
+    if (day >= 11 && day <= 13) return "th";
+    switch (day % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
   }
 
   void _onItemTapped(int index) {
