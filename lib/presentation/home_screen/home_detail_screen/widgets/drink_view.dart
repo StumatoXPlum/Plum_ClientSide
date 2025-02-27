@@ -113,7 +113,12 @@ Widget buildDrinkView(BuildContext context) {
                           if (itemAdded) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text("Items added to cart!"),
+                                content: Text(
+                                  "Items added to cart!",
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.white,
+                                  ),
+                                ),
                                 duration: Duration(seconds: 2),
                                 behavior: SnackBarBehavior.floating,
                                 backgroundColor: Colors.green,
@@ -172,7 +177,7 @@ Widget buildDrinkView(BuildContext context) {
                           });
 
                           if (itemAdded) {
-                            Navigator.pushReplacement(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ShoppingCartScreen(),
@@ -183,6 +188,7 @@ Widget buildDrinkView(BuildContext context) {
                               SnackBar(
                                 content: Text(
                                   "Please select at least one drink before buying!",
+                                  style: GoogleFonts.urbanist(color: Colors.white),
                                 ),
                                 duration: Duration(seconds: 2),
                                 behavior: SnackBarBehavior.floating,

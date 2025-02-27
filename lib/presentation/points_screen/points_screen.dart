@@ -34,7 +34,10 @@ class PointsScreen extends StatelessWidget {
             SizedBox(height: size.height * 0.01),
             Text(
               "You can collect points and then sue them to get discounts and exclusive offers",
-              style: GoogleFonts.urbanist(color: Colors.white70, fontSize: fontSize * 0.7),
+              style: GoogleFonts.urbanist(
+                color: Colors.white70,
+                fontSize: fontSize * 0.7,
+              ),
               textAlign: TextAlign.center,
             ),
             Spacer(),
@@ -57,7 +60,8 @@ class PointsScreen extends StatelessWidget {
               onTap: () {
                 final bookingCubit = context.read<BookingCubit>();
                 final selectedDate = bookingCubit.state.selectedDate;
-                final selectedTime = bookingCubit.state.selectedTime;
+                final selectedStartTime = bookingCubit.state.selectedStartTime;
+                final selectedEndTime = bookingCubit.state.selectedEndTime;
                 context.read<EarnedPointsCubit>().incrementPoints();
                 context.read<CartCubit>().clearCart(context);
                 Navigator.pushAndRemoveUntil(
@@ -68,7 +72,8 @@ class PointsScreen extends StatelessWidget {
                           initialIndex: 0,
                           showSnackbar: true,
                           selectedDate: selectedDate,
-                          selectedTime: selectedTime,
+                          selectedStartTime: selectedStartTime.toString(),
+                          selectedEndTime: selectedEndTime.toString(),
                         ),
                   ),
                   (route) => false,

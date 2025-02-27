@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/cart/cubit/cart_cubit.dart';
-import 'package:task2/presentation/cart/model/cart_model.dart';
-import 'package:task2/presentation/cart/view/cart_screen.dart';
+import 'package:task2/presentation/home_screen/home_detail_screen/cubit/booking_cubit.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/cubit/cart_buttons.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/model/affordable_package_model.dart';
+import 'package:task2/presentation/home_screen/home_detail_screen/model/booking_model.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/widgets/quantity_control.dart';
 
 Widget buildPackagesView(BuildContext context) {
@@ -15,6 +15,8 @@ Widget buildPackagesView(BuildContext context) {
 
   return BlocBuilder<CartButtonCubit, Map<String, int>>(
     builder: (context, cartState) {
+      print("Cart State: $cartState");
+
       return Stack(
         children: [
           Padding(
@@ -66,131 +68,43 @@ Widget buildPackagesView(BuildContext context) {
                     children: [
                       _buildActionButton(
                         context,
-                        label: "Add to Cart",
+                        label: "Next",
                         color: Colors.transparent,
                         textColor: Color(0xff3579DD),
                         onTap: () {
-                          final cartCubit = context.read<CartCubit>();
-                          bool itemAdded = false;
-                          cartState.forEach((packageName, quantity) {
-                            if (quantity > 0) {
-                              final package = affordablePackages.firstWhere(
-                                (p) =>
-                                    p.title.trim().toLowerCase() ==
-                                    packageName.trim().toLowerCase(),
-                                orElse:
-                                    () => AffordablePackageModel(
-                                      title: '',
-                                      price: '0',
-                                      imageUrl: '',
-                                    ),
-                              );
-                              if (package.title.isNotEmpty) {
-                                cartCubit.addToCart(
-                                  CartItem(
-                                    name: package.title,
-                                    description: "Package",
-                                    price: double.parse(
-                                      package.price.replaceAll(
-                                        RegExp(r'[^\d.]'),
-                                        '',
-                                      ),
-                                    ),
-                                    quantity: quantity,
-                                    image: package.imageUrl,
-                                  ),
-                                  context,
-                                );
-                                itemAdded = true;
-                              } else {
-                                print(
-                                  "Error: Package '$packageName' not found in affordablePackages",
-                                );
-                              }
-                            }
-                          });
-
-                          if (itemAdded) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Items added to cart!"),
-                                duration: Duration(seconds: 2),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          }
+                          context.read<BookingCubit>().changeView(
+                            BookingView.drink,
+                          );
                         },
                       ),
 
                       SizedBox(width: 10),
                       _buildActionButton(
                         context,
-                        label: "Buy Now",
+                        label: "Clear",
                         color: Color(0xff3579DD),
                         textColor: Colors.white,
                         onTap: () {
                           final cartCubit = context.read<CartCubit>();
-                          bool itemAdded = false;
+                          cartCubit.clearCart(context);
 
                           cartState.forEach((packageName, quantity) {
                             if (quantity > 0) {
-                              final package = affordablePackages.firstWhere(
-                                (p) =>
-                                    p.title.trim().toLowerCase() ==
-                                    packageName.trim().toLowerCase(),
-                                orElse:
-                                    () => AffordablePackageModel(
-                                      title: '',
-                                      price: '0',
-                                      imageUrl: '',
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    "Cart is Cleared",
+                                    style: GoogleFonts.urbanist(
+                                      color: Colors.white,
                                     ),
-                              );
-
-                              if (package.title.isNotEmpty) {
-                                cartCubit.addToCart(
-                                  CartItem(
-                                    name: package.title,
-                                    description: "Package",
-                                    price: double.parse(
-                                      package.price.replaceAll(
-                                        RegExp(r'[^\d.]'),
-                                        '',
-                                      ),
-                                    ),
-                                    quantity: quantity,
-                                    image: package.imageUrl,
                                   ),
-                                  context,
-                                );
-                                itemAdded = true;
-                              } else {
-                                print(
-                                  "Error: Package '$packageName' not found in affordablePackages",
-                                );
-                              }
+                                  duration: Duration(seconds: 2),
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
                             }
                           });
-
-                          if (itemAdded) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ShoppingCartScreen(),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "Please select at least one item before buying!",
-                                ),
-                                duration: Duration(seconds: 2),
-                                behavior: SnackBarBehavior.floating,
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
                         },
                       ),
                     ],
@@ -284,7 +198,10 @@ Widget _buildActionButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
       onPressed: onTap,
-      child: Text(label, style: GoogleFonts.urbanist(color: textColor, fontSize: 16)),
+      child: Text(
+        label,
+        style: GoogleFonts.urbanist(color: textColor, fontSize: 16),
+      ),
     ),
   );
 }

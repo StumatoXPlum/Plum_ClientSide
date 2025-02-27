@@ -9,14 +9,16 @@ class BottomNavScreen extends StatefulWidget {
   final int initialIndex;
   final bool showSnackbar;
   final DateTime? selectedDate;
-  final String? selectedTime;
+    final String? selectedStartTime;
+   final String? selectedEndTime;
 
   const BottomNavScreen({
     super.key,
     this.initialIndex = 0,
     this.showSnackbar = false,
     this.selectedDate,
-    this.selectedTime,
+     this.selectedStartTime,
+    this.selectedEndTime
   });
 
   @override
@@ -42,7 +44,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       HomeScreen(
         showSnackbar: widget.showSnackbar,
         selectedDate: widget.selectedDate,
-        selectedTime: widget.selectedTime,
+           selectedStartTime: widget.selectedStartTime,
+         selectedEndTime: widget.selectedEndTime,
       ),
       const HistoryScreen(),
       MusicScreen(),
@@ -76,10 +79,10 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       if (widget.showSnackbar &&
           _selectedIndex == 0 &&
           widget.selectedDate != null &&
-          widget.selectedTime != null) {
+          widget.selectedStartTime != null && widget.selectedEndTime !=null) {
         final formattedDate = getFormattedDate(widget.selectedDate!);
         final message =
-            "You have a booking at ${widget.selectedTime} $formattedDate ";
+            "You have a booking at ${widget.selectedStartTime} $formattedDate ";
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: const Color(0xff3579DD),

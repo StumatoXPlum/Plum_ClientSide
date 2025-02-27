@@ -21,12 +21,14 @@ import '../../../profile/user_profile.dart';
 class HomeScreen extends StatefulWidget {
   final bool showSnackbar;
   final DateTime? selectedDate;
-  final String? selectedTime;
+   final String? selectedStartTime;
+  final String? selectedEndTime;
   const HomeScreen({
     super.key,
     this.showSnackbar = false,
     this.selectedDate,
-    this.selectedTime,
+      this.selectedStartTime,
+    this.selectedEndTime
   });
 
   @override
@@ -373,7 +375,6 @@ class CouponContainer extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  // SizedBox(height: size.height * 0.001),
                   Text(
                     "Apply $promoCode for discount",
                     style: GoogleFonts.urbanist(
