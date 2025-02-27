@@ -16,7 +16,7 @@ Widget buildDrinkView(BuildContext context) {
         padding: EdgeInsets.all(padding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min, 
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Available Drinks',
@@ -31,9 +31,8 @@ Widget buildDrinkView(BuildContext context) {
             Flexible(
               fit: FlexFit.loose,
               child: ListView.builder(
-                shrinkWrap: true, 
-                physics:
-                    NeverScrollableScrollPhysics(), 
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.only(bottom: 60),
                 itemCount: drinks.length,
                 itemBuilder: (context, index) {
@@ -85,15 +84,17 @@ Widget _buildDrinkItem(BuildContext context, DrinkModel drinks) {
               drinks.title,
               style: GoogleFonts.urbanist(
                 color: Colors.white,
-                fontSize: fontSize,
+                fontSize: fontSize * 1,
                 fontWeight: FontWeight.bold,
               ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
             ),
             Text(
               drinks.price,
               style: GoogleFonts.urbanist(
                 color: Colors.grey,
-                fontSize: fontSize,
+                fontSize: fontSize * 0.8,
               ),
             ),
           ],

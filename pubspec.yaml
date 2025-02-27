@@ -84,6 +84,8 @@ flutter:
     - assets/sign_up_assets/
     - assets/messages_assets/
     - assets/home_assets/
+    - assets/package/
+    - assets/drinks/
     - assets/payment_assets/
     - assets/receipt_assets/
     - assets/empty_state/

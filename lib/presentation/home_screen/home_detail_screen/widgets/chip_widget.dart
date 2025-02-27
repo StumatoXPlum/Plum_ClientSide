@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/cubit/booking_cubit.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/model/booking_model.dart';
+import '../cubit/booking_cubit.dart';
+import '../model/booking_model.dart';
 
 Widget buildNavigationChips(BuildContext context) {
   final Size size = MediaQuery.of(context).size;
@@ -61,7 +61,7 @@ Widget _buildChip(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isSelected ? Color(0xff3579DD) : Colors.white70,
-          width: 0.5,
+          width: isSelected ? 1 : 0.5,
         ),
       ),
       child: Text(
@@ -74,8 +74,3 @@ Widget _buildChip(
     ),
   );
 }
-
-
-
-
-

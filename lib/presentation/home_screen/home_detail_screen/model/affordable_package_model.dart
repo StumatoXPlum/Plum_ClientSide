@@ -14,14 +14,38 @@ class AffordablePackageModel {
 
 List<AffordablePackageModel> affordablePackages = [
   AffordablePackageModel(
-    imageUrl: 'assets/home_assets/package.png',
+    imageUrl: 'assets/package/p6.png',
     title: 'Bachelor',
     price: 'AED 1299',
     description: 'Spicy with black pepper sauce',
   ),
   AffordablePackageModel(
-    imageUrl: 'assets/home_assets/package.png',
+    imageUrl: 'assets/package/p5.png',
     title: 'Family',
+    price: 'AED 2499',
+    description: 'Spicy with black pepper sauce',
+  ),
+  AffordablePackageModel(
+    imageUrl: 'assets/package/p4.png',
+    title: 'Classic',
+    price: 'AED 2499',
+    description: 'Spicy with black pepper sauce',
+  ),
+  AffordablePackageModel(
+    imageUrl: 'assets/package/p2.png',
+    title: 'Executive',
+    price: 'AED 2499',
+    description: 'Spicy with black pepper sauce',
+  ),
+  AffordablePackageModel(
+    imageUrl: 'assets/package/p1.png',
+    title: 'Friends',
+    price: 'AED 2499',
+    description: 'Spicy with black pepper sauce',
+  ),
+  AffordablePackageModel(
+    imageUrl: 'assets/package/p3.png',
+    title: 'Premium',
     price: 'AED 2499',
     description: 'Spicy with black pepper sauce',
   ),

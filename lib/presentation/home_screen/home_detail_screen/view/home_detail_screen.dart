@@ -154,7 +154,7 @@ class HomeDetailContent extends StatelessWidget {
                         vertical: padding * 0.8,
                       ),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xff3579DD)),
+                        border: Border.all(color: Color(0xff3579DD), width: 1),
                         borderRadius: BorderRadius.circular(42),
                       ),
                       child: Text(
@@ -177,6 +177,7 @@ class HomeDetailContent extends StatelessWidget {
                 style: GoogleFonts.urbanist(
                   fontSize: fontSize,
                   color: Colors.white,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

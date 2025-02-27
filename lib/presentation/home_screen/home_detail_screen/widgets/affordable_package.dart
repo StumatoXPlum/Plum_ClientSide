@@ -92,15 +92,17 @@ class PackageItem extends StatelessWidget {
                 package.title,
                 style: GoogleFonts.urbanist(
                   color: Colors.white,
-                  fontSize: fontSize,
+                  fontSize: fontSize * 1,
                   fontWeight: FontWeight.bold,
                 ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
               ),
               Text(
                 package.price,
                 style: GoogleFonts.urbanist(
                   color: Colors.grey,
-                  fontSize: fontSize,
+                  fontSize: fontSize * 0.8,
                 ),
               ),
             ],
