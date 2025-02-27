@@ -1,134 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/presentation/cart/cubit/cart_cubit.dart';
-import 'package:task2/presentation/cart/model/cart_model.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/cubit/booking_cubit.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/cubit/cart_buttons.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/model/affordable_package_model.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/model/booking_model.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/widgets/quantity_control.dart';
+import '../cubit/cart_buttons.dart';
+import '../model/affordable_package_model.dart';
+import 'quantity_control.dart';
 
 Widget buildPackagesView(BuildContext context) {
   final Size size = MediaQuery.of(context).size;
   double padding = size.width * 0.03;
   double fontSize = size.width * 0.05;
-
   return BlocBuilder<CartButtonCubit, Map<String, int>>(
     builder: (context, cartState) {
       print("Cart State: $cartState");
-
+      bool hasItemsInCart = cartState.values.any((quantity) => quantity > 0);
       return Stack(
         children: [
-          Padding(
-            padding: EdgeInsets.all(padding),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Available Packages',
-                  style: GoogleFonts.urbanist(
-                    color: Colors.white,
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.bold,
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(padding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Available Packages',
+                    style: GoogleFonts.urbanist(
+                      color: Colors.white,
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                SizedBox(height: size.height * 0.02),
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
+                  SizedBox(height: size.height * 0.02),
+                  ListView.builder(
                     shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(bottom: hasItemsInCart ? 80 : 0),
                     itemCount: affordablePackages.length,
                     itemBuilder: (context, index) {
                       final package = affordablePackages[index];
                       return PackageItem(package: package);
                     },
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Visibility(
-              visible: cartState.values.any((quantity) => quantity > 0),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
-                child: Container(
-                  color: Color(0xff090D14),
-                  padding: EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: size.width * 0.05,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildActionButton(
-                        context,
-                        label: "Next",
-                        color: Colors.transparent,
-                        textColor: Color(0xff3579DD),
-                        onTap: () {
-                          final cartCubit = context.read<CartCubit>();
-                          final cartButtonCubit =
-                              context.read<CartButtonCubit>();
-                          final selectedItems = cartButtonCubit.state.entries
-                              .where((entry) => entry.value > 0);
-                          for (var entry in selectedItems) {
-                            final package = affordablePackages.firstWhere(
-                              (pkg) => pkg.title == entry.key,
-                            );
-                            final cartItem = CartItem(
-                              name: package.title,
-                              price: double.parse(
-                                package.price.replaceAll(RegExp(r'[^\d.]'), ''),
-                              ), 
-                              quantity: entry.value,
-                              image: package.imageUrl, description: package.description,
-                            );
-                            cartCubit.addToCart(cartItem, context);
-                          }
-                          context.read<BookingCubit>().changeView(
-                            BookingView.drink,
-                          );
-                        },
-                      ),
-
-                      SizedBox(width: 10),
-                      _buildActionButton(
-                        context,
-                        label: "Clear",
-                        color: Color(0xff3579DD),
-                        textColor: Colors.white,
-                        onTap: () {
-                          final cartCubit = context.read<CartCubit>();
-                          cartCubit.clearCart(context);
-                          cartState.forEach((packageName, quantity) {
-                            if (quantity > 0) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    "Cart is Cleared",
-                                    style: GoogleFonts.urbanist(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  duration: Duration(seconds: 2),
-                                  behavior: SnackBarBehavior.floating,
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
             ),
           ),
@@ -199,28 +111,4 @@ class PackageItem extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget _buildActionButton(
-  BuildContext context, {
-  required String label,
-  required Color color,
-  required Color textColor,
-  required VoidCallback onTap,
-}) {
-  return Expanded(
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        side: const BorderSide(color: Color(0xff3579DD)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      ),
-      onPressed: onTap,
-      child: Text(
-        label,
-        style: GoogleFonts.urbanist(color: textColor, fontSize: 16),
-      ),
-    ),
-  );
 }

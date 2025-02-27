@@ -81,7 +81,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
             Text(
               message,
               style: GoogleFonts.urbanist(
-                fontSize: fontSize * 0.7,
+                fontSize: fontSize * 0.8,
                 fontWeight: FontWeight.bold,
               ),
             ),

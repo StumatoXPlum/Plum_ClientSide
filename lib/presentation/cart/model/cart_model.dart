@@ -3,7 +3,7 @@ class CartItem {
   final String image;
   final String description;
   final double price;
-  final int quantity; 
+  final int quantity;
 
   CartItem({
     required this.name,
@@ -13,7 +13,13 @@ class CartItem {
     this.quantity = 1,
   });
 
-  CartItem copyWith({String? name, String? image, String? description, double? price, int? quantity}) {
+  CartItem copyWith({
+    String? name,
+    String? image,
+    String? description,
+    double? price,
+    int? quantity,
+  }) {
     return CartItem(
       name: name ?? this.name,
       image: image ?? this.image,

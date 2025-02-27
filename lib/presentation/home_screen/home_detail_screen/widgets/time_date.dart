@@ -2,25 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/cubit/booking_cubit.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/model/booking_model.dart';
+import '../cubit/booking_cubit.dart';
+import '../model/booking_model.dart';
 
 Widget buildDateTimeView(BuildContext context) {
   final Size size = MediaQuery.of(context).size;
   return BlocBuilder<BookingCubit, BookingState>(
     builder: (context, state) {
-      return SingleChildScrollView(
-        physics: BouncingScrollPhysics(), 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildMonthNavigator(context, state),
-            SizedBox(height: size.height * 0.02),
-            _buildDateScroller(context, state),
-            SizedBox(height: 20),
-            buildTimeSelection(context, state),
-          ],
-        ),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildMonthNavigator(context, state),
+          SizedBox(height: size.height * 0.02),
+          _buildDateScroller(context, state),
+          SizedBox(height: 20),
+          buildTimeSelection(context, state),
+        ],
       );
     },
   );
@@ -41,10 +38,7 @@ Widget _buildMonthNavigator(BuildContext context, BookingState state) {
         ),
         Text(
           DateFormat('MMMM yyyy').format(state.displayedMonth),
-          style: GoogleFonts.urbanist(
-            color: Colors.white,
-            fontSize: fontSize,
-          ),
+          style: GoogleFonts.urbanist(color: Colors.white, fontSize: fontSize),
         ),
         IconButton(
           icon: const Icon(Icons.chevron_right, color: Colors.white),
@@ -109,8 +103,6 @@ Widget _buildDateScroller(BuildContext context, BookingState state) {
     ),
   );
 }
-
-
 
 Widget buildTimeSelection(BuildContext context, BookingState state) {
   final List<String> times = [
@@ -187,10 +179,8 @@ Widget _buildTimeGrid(
 
       Color tileColor =
           isSelected
-              ? (isStartTime
-                  ? const Color(0xff3579DD)
-                  : Colors.green) 
-              : const Color(0xFF2A2B2E); 
+              ? (isStartTime ? const Color(0xff3579DD) : Colors.green)
+              : const Color(0xFF2A2B2E);
 
       Color textColor = isSelected ? Colors.white : Colors.white70;
 
@@ -200,9 +190,7 @@ Widget _buildTimeGrid(
             context.read<BookingCubit>().selectTime(parsedTime, isStart: true);
           } else if (!isDisabled) {
             context.read<BookingCubit>().selectTime(parsedTime, isStart: false);
-            context.read<BookingCubit>().changeView(
-              BookingView.package,
-            ); 
+            context.read<BookingCubit>().changeView(BookingView.package);
           }
         },
         child: Container(
@@ -213,10 +201,7 @@ Widget _buildTimeGrid(
           child: Center(
             child: Text(
               time,
-              style: GoogleFonts.urbanist(
-                color: textColor,
-                fontSize: 16,
-              ),
+              style: GoogleFonts.urbanist(color: textColor, fontSize: 16),
             ),
           ),
         ),
@@ -224,7 +209,6 @@ Widget _buildTimeGrid(
     },
   );
 }
-
 
 DateTime _parseTime(String time, DateTime selectedDate) {
   final DateFormat formatter = DateFormat("HH:mm");

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:task2/presentation/cart/model/cart_model.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/cubit/cart_buttons.dart';
+import '../model/cart_model.dart';
+import '../../home_screen/home_detail_screen/cubit/cart_buttons.dart';
 
 class CartCubit extends Cubit<List<CartItem>> {
   CartCubit() : super([]);

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../model/affordable_package_model.dart';
+import '../model/drink_model.dart';
 import '../../../cart/view/cart_screen.dart';
 import '../cubit/booking_cubit.dart';
+import '../cubit/cart_buttons.dart';
 import '../model/booking_model.dart';
 import '../widgets/affordable_package.dart';
 import '../widgets/drink_view.dart';
@@ -11,6 +14,8 @@ import '../widgets/time_date.dart';
 import '../widgets/chip_widget.dart';
 import '../../home_screen/model/recommendation_model.dart';
 import '../../../messages_screen/messages_screen.dart';
+import '../../../cart/model/cart_model.dart';
+import '../../../cart/cubit/cart_cubit.dart';
 
 class HomeDetailScreen extends StatelessWidget {
   final RecommendationModel item;
@@ -19,13 +24,37 @@ class HomeDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeDetailContent(item: item);
+    return BlocBuilder<CartButtonCubit, Map<String, int>>(
+      builder: (context, cartState) {
+        bool hasItemsInCart = cartState.values.any((quantity) => quantity > 0);
+        return BlocBuilder<BookingCubit, BookingState>(
+          builder: (context, bookingState) {
+            return HomeDetailContent(
+              item: item,
+              hasItemsInCart: hasItemsInCart,
+              cartState: cartState,
+              currentView: bookingState.currentView,
+            );
+          },
+        );
+      },
+    );
   }
 }
 
 class HomeDetailContent extends StatelessWidget {
   final RecommendationModel item;
-  const HomeDetailContent({super.key, required this.item});
+  final bool hasItemsInCart;
+  final Map<String, int> cartState;
+  final BookingView currentView;
+
+  const HomeDetailContent({
+    super.key,
+    required this.item,
+    required this.hasItemsInCart,
+    required this.cartState,
+    required this.currentView,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +63,12 @@ class HomeDetailContent extends StatelessWidget {
     double fontSize = size.width * 0.05;
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
+      bottomNavigationBar:
+          currentView == BookingView.package
+              ? _buildPackageButtons(context)
+              : (currentView == BookingView.drink
+                  ? _buildDrinkButtons(context)
+                  : null),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,7 +169,6 @@ class HomeDetailContent extends StatelessWidget {
                 ],
               ),
             ),
-
             SizedBox(height: size.height * 0.05),
             Padding(
               padding: EdgeInsets.only(left: padding * 1.6),
@@ -147,7 +181,7 @@ class HomeDetailContent extends StatelessWidget {
               ),
             ),
             SizedBox(height: size.height * 0.01),
-            BookingWidget(),
+            BookingWidget(hasItemsInCart: hasItemsInCart),
           ],
         ),
       ),
@@ -156,16 +190,9 @@ class HomeDetailContent extends StatelessWidget {
 }
 
 class BookingWidget extends StatelessWidget {
-  const BookingWidget({super.key});
+  final bool hasItemsInCart;
 
-  @override
-  Widget build(BuildContext context) {
-    return const BookingContent(); 
-  }
-}
-
-class BookingContent extends StatelessWidget {
-  const BookingContent({super.key});
+  const BookingWidget({super.key, required this.hasItemsInCart});
 
   @override
   Widget build(BuildContext context) {
@@ -175,22 +202,215 @@ class BookingContent extends StatelessWidget {
         SizedBox(height: size.height * 0.02),
         buildNavigationChips(context),
         SizedBox(height: size.height * 0.02),
-        SizedBox(
-          height: size.height * 0.4,
-          child: BlocBuilder<BookingCubit, BookingState>(
-            builder: (context, state) {
-              switch (state.currentView) {
-                case BookingView.dateTime:
-                  return buildDateTimeView(context);
-                case BookingView.package:
-                  return buildPackagesView(context);
-                case BookingView.drink:
-                  return buildDrinkView(context);
-              }
-            },
-          ),
+        BlocBuilder<BookingCubit, BookingState>(
+          builder: (context, state) {
+            switch (state.currentView) {
+              case BookingView.dateTime:
+                return buildDateTimeView(context);
+              case BookingView.package:
+                return buildPackagesView(context);
+              case BookingView.drink:
+                return buildDrinkView(context);
+            }
+          },
         ),
       ],
     );
   }
+}
+
+Widget _buildActionButton(
+  BuildContext context, {
+  required String label,
+  required Color color,
+  required Color textColor,
+  required VoidCallback onTap,
+}) {
+  return Expanded(
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        side: const BorderSide(color: Color(0xff3579DD)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      ),
+      onPressed: onTap,
+      child: Text(
+        label,
+        style: GoogleFonts.urbanist(color: textColor, fontSize: 16),
+      ),
+    ),
+  );
+}
+
+Widget _buildPackageButtons(BuildContext context) {
+  return Container(
+    color: const Color(0xff090D14),
+    padding: EdgeInsets.symmetric(
+      vertical: 16,
+      horizontal: MediaQuery.of(context).size.width * 0.05,
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildActionButton(
+          context,
+          label: "Next",
+          color: Colors.transparent,
+          textColor: Color(0xff3579DD),
+          onTap: () {
+            final cartCubit = context.read<CartCubit>();
+            final cartButtonCubit = context.read<CartButtonCubit>();
+            final selectedPackages = cartButtonCubit.state.entries.where(
+              (entry) => entry.value > 0,
+            );
+            for (var entry in selectedPackages) {
+              final package = affordablePackages.firstWhere(
+                (pkg) => pkg.title == entry.key,
+              );
+              final cartItem = CartItem(
+                name: package.title,
+                price: double.parse(
+                  package.price.replaceAll(RegExp(r'[^\d.]'), ''),
+                ),
+                quantity: entry.value,
+                image: package.imageUrl,
+                description: package.description,
+              );
+              cartCubit.addToCart(cartItem, context);
+            }
+            context.read<BookingCubit>().changeView(BookingView.drink);
+          },
+        ),
+        SizedBox(width: 10),
+        _buildActionButton(
+          context,
+          label: "Clear",
+          color: Color(0xff3579DD),
+          textColor: Colors.white,
+          onTap: () {
+            context.read<CartCubit>().clearCart(context);
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildDrinkButtons(BuildContext context) {
+  return Container(
+    color: const Color(0xff090D14),
+    padding: EdgeInsets.symmetric(
+      vertical: 16,
+      horizontal: MediaQuery.of(context).size.width * 0.05,
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildActionButton(
+          context,
+          label: "Add to Cart",
+          color: Colors.transparent,
+          textColor: const Color(0xff3579DD),
+          onTap: () {
+            final cartCubit = context.read<CartCubit>();
+            final cartButtonCubit = context.read<CartButtonCubit>();
+            final selectedDrinks =
+                cartButtonCubit.state.entries
+                    .where((entry) => entry.value > 0)
+                    .toList();
+            if (selectedDrinks.isEmpty) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text("No drinks selected!")));
+              return;
+            }
+            for (var entry in selectedDrinks) {
+              final drink = drinks.firstWhere(
+                (d) => d.title == entry.key,
+                orElse:
+                    () => DrinkModel(
+                      title: '',
+                      price: '0',
+                      imageUrl: '',
+                      description: '',
+                    ),
+              );
+              if (drink.title.isNotEmpty) {
+                final cartItem = CartItem(
+                  name: drink.title,
+                  price: double.parse(
+                    drink.price.replaceAll(RegExp(r'[^\d.]'), ''),
+                  ),
+                  quantity: entry.value,
+                  image: drink.imageUrl,
+                  description: drink.description,
+                );
+                cartCubit.addToCart(cartItem, context);
+              }
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Colors.green.shade600,
+                content: Text(
+                  "Added to cart successfully!",
+                  style: GoogleFonts.urbanist(color: Colors.white),
+                ),
+              ),
+            );
+          },
+        ),
+        SizedBox(width: 10),
+        _buildActionButton(
+          context,
+          label: "Buy Now",
+          color: const Color(0xff3579DD),
+          textColor: Colors.white,
+          onTap: () {
+            final cartCubit = context.read<CartCubit>();
+            final cartButtonCubit = context.read<CartButtonCubit>();
+            final selectedDrinks =
+                cartButtonCubit.state.entries
+                    .where((entry) => entry.value > 0)
+                    .toList();
+            if (selectedDrinks.isEmpty) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text("No drinks selected!")));
+              return;
+            }
+            for (var entry in selectedDrinks) {
+              final drink = drinks.firstWhere(
+                (d) => d.title == entry.key,
+                orElse:
+                    () => DrinkModel(
+                      title: '',
+                      price: '0',
+                      imageUrl: '',
+                      description: '',
+                    ),
+              );
+              if (drink.title.isNotEmpty) {
+                final cartItem = CartItem(
+                  name: drink.title,
+                  price: double.parse(
+                    drink.price.replaceAll(RegExp(r'[^\d.]'), ''),
+                  ),
+                  quantity: entry.value,
+                  image: drink.imageUrl,
+                  description: drink.description,
+                );
+                cartCubit.addToCart(cartItem, context);
+              }
+            }
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ShoppingCartScreen()),
+            );
+          },
+        ),
+      ],
+    ),
+  );
 }
