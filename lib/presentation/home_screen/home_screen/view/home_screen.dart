@@ -21,14 +21,14 @@ import '../../../profile/user_profile.dart';
 class HomeScreen extends StatefulWidget {
   final bool showSnackbar;
   final DateTime? selectedDate;
-   final String? selectedStartTime;
+  final String? selectedStartTime;
   final String? selectedEndTime;
   const HomeScreen({
     super.key,
     this.showSnackbar = false,
     this.selectedDate,
-      this.selectedStartTime,
-    this.selectedEndTime
+    this.selectedStartTime,
+    this.selectedEndTime,
   });
 
   @override
@@ -407,15 +407,27 @@ class CouponContainer extends StatelessWidget {
   }
 }
 
-class RecommendationsWidget extends StatelessWidget {
+class RecommendationsWidget extends StatefulWidget {
   const RecommendationsWidget({super.key});
+
+  @override
+  State<RecommendationsWidget> createState() => _RecommendationsWidgetState();
+}
+
+class _RecommendationsWidgetState extends State<RecommendationsWidget> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.04;
     double fontSize = size.width * 0.045;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -457,129 +469,156 @@ class RecommendationsWidget extends StatelessWidget {
         SizedBox(height: size.height * 0.02),
         SizedBox(
           height: size.height * 0.3,
-          child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: padding),
-            scrollDirection: Axis.horizontal,
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomeDetailScreen(item: item),
-                    ),
-                  );
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: padding),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.asset(
-                              item.image,
-                              height: size.height * 0.2,
-                              width: size.width * 0.7,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          if (items[index].isSuperstar)
-                            Positioned(
-                              top: 10,
-                              right: 10,
-                              child: superStar(size),
-                            ),
-                        ],
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification notification) {
+              setState(() {});
+              return true;
+            },
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: EdgeInsets.symmetric(horizontal: padding),
+              scrollDirection: Axis.horizontal,
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                double parallaxOffset = 0;
+                if (_scrollController.hasClients) {
+                  final itemWidth = size.width * 0.7 + padding;
+                  final itemPosition = itemWidth * index;
+                  final distanceFromCenter =
+                      itemPosition - _scrollController.offset;
+                  parallaxOffset = distanceFromCenter * 0.1;
+                }
+                final item = items[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomeDetailScreen(item: item),
                       ),
-                    ),
-                    SizedBox(height: size.height * 0.01),
-                    SizedBox(
-                      width: size.width * 0.7,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: padding * 0.5,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(right: padding),
+                        child: Stack(
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    items[index].title,
-                                    style: GoogleFonts.urbanist(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: fontSize * 0.85,
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: SizedBox(
+                                height: size.height * 0.2,
+                                width: size.width * 0.7,
+                                child: OverflowBox(
+                                  maxWidth: size.width * 0.9,
+                                  maxHeight: size.height * 0.24,
+                                  alignment: Alignment.center,
+                                  child: Transform.translate(
+                                    offset: Offset(parallaxOffset, 0),
+                                    child: Hero(
+                                      tag: 'image${item.title}',
+                                      child: Image.asset(
+                                        item.image,
+                                        fit: BoxFit.cover,
+                                        width: size.width * 0.9,
+                                        height: size.height * 0.24,
+                                      ),
                                     ),
                                   ),
-                                  SizedBox(height: size.height * 0.005),
-                                  Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        "assets/home_assets/rating.svg",
-                                        height: size.width * 0.045,
-                                        width: size.width * 0.045,
-                                      ),
-                                      SizedBox(width: size.width * 0.02),
-                                      Text(
-                                        items[index].rating,
-                                        style: GoogleFonts.urbanist(
-                                          color: Colors.white70,
-                                          fontSize: fontSize * 0.75,
-                                        ),
-                                      ),
-                                      SizedBox(width: size.width * 0.01),
-                                      Text(
-                                        "(${items[index].reviews})",
-                                        style: GoogleFonts.urbanist(
-                                          color: Colors.white70,
-
-                                          fontSize: fontSize * 0.7,
-                                        ),
-                                      ),
-                                      SizedBox(width: size.width * 0.01),
-                                      Text(
-                                        "${items[index].distance} away",
-                                        style: GoogleFonts.urbanist(
-                                          color: Colors.white70,
-
-                                          fontSize: fontSize * 0.7,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
-                            Column(
-                              children: [
-                                SizedBox(height: size.height * 0.005),
-                                Text(
-                                  'AED ${items[index].price}',
-                                  style: GoogleFonts.urbanist(
-                                    color: Colors.white,
-
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: fontSize * 1.1,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            if (items[index].isSuperstar)
+                              Positioned(
+                                top: 10,
+                                right: 10,
+                                child: superStar(size),
+                              ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
+                      SizedBox(height: size.height * 0.01),
+                      SizedBox(
+                        width: size.width * 0.7,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: padding * 0.5,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      items[index].title,
+                                      style: GoogleFonts.urbanist(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: fontSize * 0.85,
+                                      ),
+                                    ),
+                                    SizedBox(height: size.height * 0.005),
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          "assets/home_assets/rating.svg",
+                                          height: size.width * 0.045,
+                                          width: size.width * 0.045,
+                                        ),
+                                        SizedBox(width: size.width * 0.02),
+                                        Text(
+                                          items[index].rating,
+                                          style: GoogleFonts.urbanist(
+                                            color: Colors.white70,
+                                            fontSize: fontSize * 0.75,
+                                          ),
+                                        ),
+                                        SizedBox(width: size.width * 0.01),
+                                        Text(
+                                          "(${items[index].reviews})",
+                                          style: GoogleFonts.urbanist(
+                                            color: Colors.white70,
+                                            fontSize: fontSize * 0.7,
+                                          ),
+                                        ),
+                                        SizedBox(width: size.width * 0.01),
+                                        Text(
+                                          "${items[index].distance} away",
+                                          style: GoogleFonts.urbanist(
+                                            color: Colors.white70,
+                                            fontSize: fontSize * 0.7,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Column(
+                                children: [
+                                  SizedBox(height: size.height * 0.005),
+                                  Text(
+                                    'AED ${items[index].price}',
+                                    style: GoogleFonts.urbanist(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: fontSize * 1.1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ],

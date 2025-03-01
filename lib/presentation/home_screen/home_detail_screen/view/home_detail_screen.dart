@@ -75,11 +75,14 @@ class HomeDetailContent extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Image.asset(
-                  item.image,
-                  height: size.height * 0.4,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+                Hero(
+                  tag: 'image${item.title}',
+                  child: Image.asset(
+                    item.image,
+                    height: size.height * 0.4,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 Positioned(
                   left: padding * 2,
