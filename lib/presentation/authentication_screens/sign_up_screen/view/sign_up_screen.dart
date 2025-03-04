@@ -156,12 +156,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
             imageUrl: "assets/sign_up_assets/google.svg",
             onTap: () async {
               if (isLoading) return;
-              setState(() {
-                isLoading = true;
-              });
+
+              setState(() => isLoading = true);
 
               try {
-                final user = await _authService.signInWithGoogle();
+                final user = await _authService.signInWithGoogle(context);
                 if (user == null) {
                   showCustomSnackbar(
                     context,
@@ -175,39 +174,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         .collection('users')
                         .doc(user.uid)
                         .get();
-                print("user ${user.toString()} ${doc.exists}");
-
-                if (!doc.exists) {
-                  context.read<AuthCubit>().setUserEmail(user.email ?? "");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => PhoneNumber()),
-                  );
-                } else {
-                  context.read<AuthCubit>().setUserEmail(user.email ?? "");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BottomNavScreen()),
-                  );
-                }
+                context.read<AuthCubit>().setUserEmail(user.email ?? "");
+                final userData = doc.data() as Map<String, dynamic>?;
+                bool isRegistrationComplete =
+                    doc.exists && (userData?['registrationComplete'] == true);
+                bool hasPhoneNumber =
+                    doc.exists && (userData?['phoneNumber'] ?? '').isNotEmpty;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            (!isRegistrationComplete || !hasPhoneNumber)
+                                ? PhoneNumber()
+                                : BottomNavScreen(),
+                  ),
+                );
               } catch (e) {
-                print("Sign in Error: $e");
                 showCustomSnackbar(
                   context,
                   "An error occurred. Please try again.",
                   Colors.red.shade600,
                 );
               } finally {
-                setState(() {
-                  isLoading = false;
-                });
+                setState(() => isLoading = false);
               }
             },
             isLoading: isLoading,
           ),
-
           const SizedBox(height: 12),
-
           SignInButton(
             label: isAppleLoading ? "Signing in..." : "Continue with Apple",
             imageUrl: "assets/sign_up_assets/apple.svg",
@@ -334,10 +329,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Colors.red.shade600,
                 );
               }
-
               setState(() => isContinuing = false);
             },
-
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(

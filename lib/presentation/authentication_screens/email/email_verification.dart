@@ -153,20 +153,26 @@ class _EmailVerificationState extends State<EmailVerification> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: size.height * 0.1),
-              Text(
-                "Please check your email",
-                style: GoogleFonts.urbanist(
-                  fontSize: fontSize * 1.6,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Please check your email",
+                  style: GoogleFonts.urbanist(
+                    fontSize: fontSize * 1.6,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               SizedBox(height: size.height * 0.02),
-              Text(
-                "We've sent a code to ${widget.email}",
-                style: GoogleFonts.urbanist(
-                  fontSize: fontSize * 1,
-                  color: Colors.white70,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "We've sent a code to ${widget.email}",
+                  style: GoogleFonts.urbanist(
+                    fontSize: fontSize * 1,
+                    color: Colors.white70,
+                  ),
                 ),
               ),
               SizedBox(height: size.height * 0.1),
