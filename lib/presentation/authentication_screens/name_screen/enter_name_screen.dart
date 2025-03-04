@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'package:task2/presentation/authentication_screens/phone_number/phone_number.dart';
-import 'package:task2/presentation/authentication_screens/sign_up_screen/auth_service/auth_service.dart';
+import '../phone_number/phone_number.dart';
+import '../sign_up_screen/auth_service/auth_service.dart';
 
 class EnterNameScreen extends StatefulWidget {
   const EnterNameScreen({super.key});
@@ -93,7 +93,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
             children: [
               SizedBox(height: size.height * 0.04),
               Text(
-                "Hi There",
+                "Hi!",
                 style: GoogleFonts.urbanist(
                   fontSize: fontSize * 2,
                   color: Colors.white,
@@ -159,7 +159,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
                               ),
                             )
                             : Text(
-                              "Add Name",
+                              "Continue",
                               style: GoogleFonts.urbanist(
                                 fontSize: 18,
                                 color: Colors.white,

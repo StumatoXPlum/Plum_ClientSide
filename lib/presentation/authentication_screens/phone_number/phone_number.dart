@@ -5,9 +5,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'package:task2/presentation/authentication_screens/phone_number/country_picker.dart';
-import 'package:task2/presentation/authentication_screens/phone_number/phone_auth/phone_auth.dart';
-import 'package:task2/presentation/authentication_screens/phone_number/phone_verification.dart';
+import 'country_picker.dart';
+import 'phone_auth/phone_auth.dart';
+import 'phone_verification.dart';
 
 class PhoneNumber extends StatefulWidget {
   const PhoneNumber({super.key});
@@ -125,7 +125,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
           children: [
             SizedBox(height: size.height * 0.03),
             Text(
-              "Hi $userName!",
+              "Hi! $userName",
               style: GoogleFonts.urbanist(
                 color: Colors.white,
                 fontSize: fontSize * 1.6,

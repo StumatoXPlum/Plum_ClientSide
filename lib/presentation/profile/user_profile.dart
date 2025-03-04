@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'package:task2/presentation/authentication_screens/date_of_birth/date_of_birth.dart';
-import 'package:task2/presentation/authentication_screens/sign_up_screen/auth_service/auth_service.dart';
-import 'package:task2/presentation/authentication_screens/sign_up_screen/view/sign_up_screen.dart';
+import '../authentication_screens/date_of_birth/date_of_birth.dart';
+import '../authentication_screens/sign_up_screen/auth_service/auth_service.dart';
+import '../authentication_screens/sign_up_screen/view/sign_up_screen.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({super.key});

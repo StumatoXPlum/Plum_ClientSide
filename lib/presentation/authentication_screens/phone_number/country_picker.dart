@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -88,16 +88,14 @@ class ChooseCountryScreenState extends State<ChooseCountryScreen> {
                     fontSize: fontSize * 1.6,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-               
                   ),
                 ),
                 SizedBox(height: size.height * 0.02),
                 Text(
-                  "Don't worry! It happens. Please enter the email associated with your account.",
+                  "Please provide the country code for you phone number.",
                   style: GoogleFonts.urbanist(
                     fontSize: fontSize * 0.9,
                     color: Colors.grey,
-               
                   ),
                 ),
                 SizedBox(height: size.height * 0.04),
@@ -202,7 +200,7 @@ class ChooseCountryScreenState extends State<ChooseCountryScreen> {
                 style: GoogleFonts.urbanist(
                   fontSize: fontSize,
                   color: Colors.white,
-                  fontWeight: FontWeight.bold
+                  fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),

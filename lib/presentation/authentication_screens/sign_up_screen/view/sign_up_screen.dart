@@ -1,13 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/bottom_navigation_bar.dart';
-import 'package:task2/core/custom_snackbar.dart';
+import '../../../../core/bottom_navigation_bar.dart';
+import '../../../../core/custom_snackbar.dart';
+import '../auth_service/auth_service.dart';
 import '../../email/email_verification.dart';
 import '../../phone_number/phone_number.dart';
-import '../auth_service/auth_service.dart';
 import '../cubit/auth_cubit.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -161,21 +162,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               try {
                 final user = await _authService.signInWithGoogle();
+                if (user == null) {
+                  showCustomSnackbar(
+                    context,
+                    "Sign-in failed. Please try again.",
+                    Colors.red.shade600,
+                  );
+                  return;
+                }
+                DocumentSnapshot doc =
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(user.uid)
+                        .get();
+                print("user ${user.toString()} ${doc.exists}");
 
-                if (user != null) {
+                if (!doc.exists) {
                   context.read<AuthCubit>().setUserEmail(user.email ?? "");
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => PhoneNumber()),
                   );
                 } else {
-                  showCustomSnackbar(
+                  context.read<AuthCubit>().setUserEmail(user.email ?? "");
+                  Navigator.push(
                     context,
-                    "Sign-in failed. Please try again.",
-                    Colors.red.shade600,
+                    MaterialPageRoute(builder: (context) => BottomNavScreen()),
                   );
                 }
               } catch (e) {
+                print("Sign in Error: $e");
                 showCustomSnackbar(
                   context,
                   "An error occurred. Please try again.",
@@ -271,10 +287,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
             cursorColor: Colors.white,
           ),
           SizedBox(height: 12),
+
           GestureDetector(
             onTap: () async {
               if (isContinuing) return;
               String email = _emailController.text.trim();
+
               if (email.isEmpty || !email.contains('@')) {
                 showCustomSnackbar(
                   context,
@@ -283,33 +301,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 );
                 return;
               }
+
               setState(() => isContinuing = true);
+
               try {
+                final userDoc =
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .where('email', isEqualTo: email)
+                        .limit(1)
+                        .get();
+
                 await Supabase.instance.client.auth.signInWithOtp(
                   email: email,
                   emailRedirectTo: null,
-                  shouldCreateUser: true,
-                  data: {
-                    'create_user': true,
-                    'email_confirm': true,
-                    'gotrue_meta_security': {'method': 'otp'},
-                  },
+                  shouldCreateUser: userDoc.docs.isEmpty,
                 );
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EmailVerification(email: email),
+                    builder:
+                        (context) => EmailVerification(
+                          email: email,
+                          isExistingUser: userDoc.docs.isNotEmpty,
+                        ),
                   ),
                 );
               } catch (e) {
                 showCustomSnackbar(
                   context,
-                  "Failed to send OTP. Try again.",
+                  "Failed to check user. Try again.",
                   Colors.red.shade600,
                 );
               }
+
               setState(() => isContinuing = false);
             },
+
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(

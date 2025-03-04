@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:task2/presentation/payment/view/payment_screen.dart';
-import 'package:task2/presentation/points_screen/points_screen.dart';
+import '../payment/view/payment_screen.dart';
+import '../points_screen/points_screen.dart';
 
 class ApplePayScreen extends StatefulWidget {
   const ApplePayScreen({super.key});
@@ -37,7 +37,9 @@ class ApplePayScreenState extends State<ApplePayScreen> {
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
       body: SafeArea(
-        child: Center(child: Lottie.asset("assets/animations/2.json")),
+        child: Center(
+          child: Lottie.asset("assets/animations/2.json", repeat: false),
+        ),
       ),
     );
   }

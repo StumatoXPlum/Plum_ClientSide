@@ -3,11 +3,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/presentation/authentication_screens/name_screen/enter_name_screen.dart';
+import '../../../core/bottom_navigation_bar.dart';
+import '../name_screen/enter_name_screen.dart';
 
 class EmailVerification extends StatefulWidget {
   final String email;
-  const EmailVerification({super.key, required this.email});
+  final bool isExistingUser;
+  const EmailVerification({
+    super.key,
+    required this.email,
+    required this.isExistingUser,
+  });
 
   @override
   State<EmailVerification> createState() => _EmailVerificationState();
@@ -92,10 +98,17 @@ class _EmailVerificationState extends State<EmailVerification> {
       );
 
       if (response.session != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => EnterNameScreen()),
-        );
+        if (widget.isExistingUser) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => BottomNavScreen()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => EnterNameScreen()),
+          );
+        }
       } else {
         showCustomSnackbar(context, "Error, Try Again", Colors.red.shade600);
       }
@@ -106,7 +119,7 @@ class _EmailVerificationState extends State<EmailVerification> {
         Colors.red.shade600,
       );
     }
-    setState(() => isVerifying = false);  
+    setState(() => isVerifying = false);
   }
 
   @override
@@ -137,7 +150,7 @@ class _EmailVerificationState extends State<EmailVerification> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: size.height * 0.1),
               Text(

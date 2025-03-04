@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:task2/core/constants.dart';
+import '../../../../core/constants.dart';
 
 class TwilioVerifyService {
   final String accountSid = AppSecrets.twilioAccountSID;
