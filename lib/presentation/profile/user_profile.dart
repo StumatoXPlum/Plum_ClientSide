@@ -186,7 +186,7 @@ class UserProfileState extends State<UserProfile> {
                 ),
                 Center(
                   child: Container(
-                    padding: EdgeInsets.all(padding * 1.5),
+                    padding: EdgeInsets.all(padding * 1.2),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: Color(0xff3579DD), width: 4),

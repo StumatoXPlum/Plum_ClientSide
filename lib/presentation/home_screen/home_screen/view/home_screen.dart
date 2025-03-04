@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:task2/presentation/home_screen/home_screen/model/coupon_model.dart';
 import '../../../../core/custom_snackbar.dart';
 import '../../../authentication_screens/sign_up_screen/auth_service/auth_service.dart';
 import '../cubit/earned_points_cubit.dart';
@@ -86,7 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
     double fontSize = size.width * 0.05;
-
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
       body: SingleChildScrollView(
@@ -213,10 +213,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: size.height * 0.12,
                             width: size.width,
                             child: Swiper(
-                              itemCount: 6,
+                              itemCount: 3,
                               itemBuilder:
-                                  (context, index) => const CouponContainer(
-                                    promoCode: "W34EAFIK",
+                                  (context, index) => CouponContainer(
+                                    coupon: CouponModel(
+                                      code: codes[index].code,
+                                    ),
                                   ),
                               axisDirection: AxisDirection.down,
                               scrollDirection: Axis.vertical,
@@ -332,9 +334,9 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class CouponContainer extends StatelessWidget {
-  final String promoCode;
+  final CouponModel coupon;
 
-  const CouponContainer({super.key, required this.promoCode});
+  const CouponContainer({super.key, required this.coupon});
 
   @override
   Widget build(BuildContext context) {
@@ -376,7 +378,7 @@ class CouponContainer extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "Apply $promoCode for discount",
+                    "Apply ${coupon.code} for discount",
                     style: GoogleFonts.urbanist(
                       color: Colors.black,
                       fontSize: fontSize * 1,
@@ -388,7 +390,7 @@ class CouponContainer extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                Clipboard.setData(ClipboardData(text: promoCode));
+                Clipboard.setData(ClipboardData(text: coupon.code));
                 showCustomSnackbar(
                   context,
                   "Coupon code copied",

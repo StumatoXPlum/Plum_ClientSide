@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/core/bottom_navigation_bar.dart';
 import 'package:task2/core/custom_snackbar.dart';
 import '../../email/email_verification.dart';
 import '../../phone_number/phone_number.dart';
@@ -23,6 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _showEmailField = false;
   bool isLoading = false;
   bool isContinuing = false;
+  bool isAppleLoading = false;
 
   @override
   void initState() {
@@ -191,11 +193,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
           const SizedBox(height: 12),
 
           SignInButton(
-            label: "Continue with Apple",
+            label: isAppleLoading ? "Signing in..." : "Continue with Apple",
             imageUrl: "assets/sign_up_assets/apple.svg",
-            onTap: () {
-              showCustomSnackbar(context, "Coming soon", Colors.green.shade600);
+            onTap: () async {
+              if (isAppleLoading) return;
+              setState(() {
+                isAppleLoading = true;
+              });
+
+              try {
+                final user = await _authService.signInWithApple();
+
+                if (user != null) {
+                  context.read<AuthCubit>().setUserEmail(user.email ?? "");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BottomNavScreen()),
+                  );
+                } else {
+                  showCustomSnackbar(
+                    context,
+                    "Sign-in failed. Please try again.",
+                    Colors.red.shade600,
+                  );
+                }
+              } catch (e) {
+                showCustomSnackbar(
+                  context,
+                  "An error occurred. Please try again.",
+                  Colors.red.shade600,
+                );
+              } finally {
+                setState(() {
+                  isAppleLoading = false;
+                });
+              }
             },
+            isLoading1: isAppleLoading,
           ),
         ],
       ),
@@ -329,12 +363,14 @@ class SignInButton extends StatelessWidget {
   final String imageUrl;
   final VoidCallback onTap;
   final bool isLoading;
+  final bool isLoading1;
   const SignInButton({
     super.key,
     required this.label,
     required this.imageUrl,
     required this.onTap,
     this.isLoading = false,
+    this.isLoading1 = false,
   });
 
   @override

@@ -111,7 +111,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: size.height * 0.1),
@@ -273,7 +273,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                             style: GoogleFonts.urbanist(
                               fontSize: fontSize,
                               color: Colors.white,
-                              fontWeight: FontWeight.bold
+                              fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.center,
                           ),

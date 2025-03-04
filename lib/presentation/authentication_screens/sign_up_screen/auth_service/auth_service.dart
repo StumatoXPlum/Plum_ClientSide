@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart' as firebase_auth;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabse;
 
 class AuthService {
@@ -10,7 +11,7 @@ class AuthService {
       firebase_auth.FirebaseFirestore.instance;
 
   static String getRandomAvatarUrl(String userId) {
-    return "https://api.dicebear.com/7.x/pixel-art/png?seed=$userId";
+    return "https://api.dicebear.com/7.x/notionists/png?seed=$userId";
   }
 
   Future<User?> signInWithGoogle() async {
@@ -42,6 +43,36 @@ class AuthService {
     }
   }
 
+  Future<User?> signInWithApple() async {
+    try {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final OAuthProvider oAuthProvider = OAuthProvider("apple.com");
+      final OAuthCredential credential = oAuthProvider.credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        await _saveUserToDatabase(user);
+      }
+
+      return user;
+    } catch (e) {
+      print("Apple Sign-In Error: $e");
+      return null;
+    }
+  }
+
   Future<void> _saveUserToDatabase(User user) async {
     firebase_auth.DocumentSnapshot doc =
         await _firestore.collection('users').doc(user.uid).get();
@@ -49,6 +80,7 @@ class AuthService {
     if (!doc.exists) {
       String avatarUrl = getRandomAvatarUrl(user.uid);
       await _firestore.collection('users').doc(user.uid).set({
+        'uid': user.uid,
         'name': user.displayName ?? "there",
         'email': user.email,
         'phoneNumber': "",
