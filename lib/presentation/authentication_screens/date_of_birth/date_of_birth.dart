@@ -34,7 +34,10 @@ class _DateOfBirthState extends State<DateOfBirth> {
     "Nov",
     "Dec",
   ];
-  List<int> years = List.generate(125, (index) => DateTime.now().year - index);
+  List<int> years = List.generate(
+    90 - 14 + 1,
+    (index) => DateTime.now().year - (14 + index),
+  );
 
   bool get isDOBSelected =>
       selectedDay != null && selectedMonth != null && selectedYear != null;
@@ -208,7 +211,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
               ),
               SizedBox(height: size.height * 0.02),
               Text(
-                "Share your DOB with us to get special offers",
+                "Celebrate With Us! 🎂 Tell us your birthdate for surprises and discounts.",
                 style: GoogleFonts.urbanist(
                   fontSize: fontSize * 1,
                   color: Colors.white70,
