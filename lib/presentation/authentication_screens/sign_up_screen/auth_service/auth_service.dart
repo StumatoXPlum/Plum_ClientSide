@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabse;
-import 'package:task2/core/bottom_navigation_bar.dart';
-import 'package:task2/presentation/authentication_screens/name_screen/enter_name_screen.dart';
+import '../../../../core/bottom_navigation_bar.dart';
+import '../../name_screen/enter_name_screen.dart';
+import '../../phone_number/phone_number.dart';
 
 class AuthService {
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
@@ -35,37 +36,45 @@ class AuthService {
       );
       final User? user = userCredential.user;
       if (user == null) return null;
+
       QuerySnapshot querySnapshot =
           await _firestore
               .collection('users')
               .where('email', isEqualTo: user.email)
               .get();
+
       if (querySnapshot.docs.isNotEmpty) {
         DocumentSnapshot existingUserDoc = querySnapshot.docs.first;
         Map<String, dynamic> userData =
             existingUserDoc.data() as Map<String, dynamic>;
+
         if (existingUserDoc.id != user.uid) {
           await _firestore.collection('users').doc(user.uid).set(userData);
         }
-        if (userData['phoneNumber'] != "" &&
-            userData['dateOfBirth'] != "" &&
-            userData.containsKey('phoneNumber') &&
-            userData.containsKey('dateOfBirth')) {
+
+        if (!userData.containsKey('phoneNumber') ||
+            userData['phoneNumber'] == "") {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => BottomNavScreen()),
+            MaterialPageRoute(builder: (context) => PhoneNumber()),
+          );
+        } else if (!userData.containsKey('dateOfBirth') ||
+            userData['dateOfBirth'] == "") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => EnterNameScreen()),
           );
         } else {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => EnterNameScreen()),
+            MaterialPageRoute(builder: (context) => BottomNavScreen()),
           );
         }
       } else {
         await _saveUserToDatabase(user);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => EnterNameScreen()),
+          MaterialPageRoute(builder: (context) => PhoneNumber()),
         );
       }
       return user;
@@ -109,7 +118,7 @@ class AuthService {
         await _firestore
             .collection('users')
             .where('email', isEqualTo: user.email)
-            .limit(1) 
+            .limit(1)
             .get();
     if (querySnapshot.docs.isNotEmpty) {
       DocumentSnapshot existingUserDoc = querySnapshot.docs.first;

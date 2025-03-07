@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../model/affordable_package_model.dart';
 import '../model/drink_model.dart';
 import '../../../cart/view/cart_screen.dart';
@@ -13,15 +14,12 @@ import '../widgets/drink_view.dart';
 import '../widgets/time_date.dart';
 import '../widgets/chip_widget.dart';
 import '../../home_screen/model/recommendation_model.dart';
-import '../../../messages_screen/messages_screen.dart';
 import '../../../cart/model/cart_model.dart';
 import '../../../cart/cubit/cart_cubit.dart';
 
 class HomeDetailScreen extends StatelessWidget {
   final RecommendationModel item;
-
   const HomeDetailScreen({super.key, required this.item});
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CartButtonCubit, Map<String, int>>(
@@ -55,6 +53,34 @@ class HomeDetailContent extends StatelessWidget {
     required this.cartState,
     required this.currentView,
   });
+
+  Future<void> openWhatsApp() async {
+    final String phoneNumber = "918421323223";
+    final String message = "Hello! I need help.";
+
+    try {
+      String whatsappUrl =
+          "whatsapp://send?phone=$phoneNumber&text=${Uri.encodeComponent(message)}";
+      await launchUrl(
+        Uri.parse(whatsappUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      print('error:$e');
+      try {
+        final Uri uri = Uri(
+          scheme: 'intent',
+          path: 'send',
+          queryParameters: {'phone': phoneNumber, 'text': message},
+          fragment: 'Intent;package=com.whatsapp;scheme=whatsapp;end',
+        );
+
+        await launchUrl(uri);
+      } catch (e) {
+        print('Faile: $e');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,14 +169,7 @@ class HomeDetailContent extends StatelessWidget {
                   ),
                   Spacer(),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MessagesScreen(),
-                        ),
-                      );
-                    },
+                    onTap: openWhatsApp,
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: padding * 1.5,

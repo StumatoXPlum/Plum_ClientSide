@@ -31,6 +31,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
       if (keyboardHeight > 0 && _showEmailField) {
         _scrollToTextField();
@@ -40,16 +41,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _scrollToTextField() {
     Future.delayed(const Duration(milliseconds: 100), () {
-      if (_scrollController.hasClients) {
-        final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-        final scrollAmount =
-            _scrollController.position.maxScrollExtent + keyboardHeight;
-        _scrollController.animateTo(
-          scrollAmount,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
+      if (!mounted || !_scrollController.hasClients) return;
+      final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+      final scrollAmount =
+          _scrollController.position.maxScrollExtent + keyboardHeight;
+      _scrollController.animateTo(
+        scrollAmount,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
     });
   }
 
@@ -138,12 +138,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (_showEmailField) _buildEmailInput(size),
-
           if (!_showEmailField)
             SignInButton(
               label: "Continue with Email",
               imageUrl: "assets/sign_up_assets/mail.svg",
               onTap: () {
+                if (!mounted) return;
                 setState(() {
                   _showEmailField = true;
                 });
@@ -155,20 +155,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
             label: isLoading ? "Signing in..." : "Continue with Google",
             imageUrl: "assets/sign_up_assets/google.svg",
             onTap: () async {
-              if (isLoading) return;
-
+              if (isLoading || !mounted) return;
               setState(() => isLoading = true);
 
               try {
                 final user = await _authService.signInWithGoogle(context);
                 if (user == null) {
-                  showCustomSnackbar(
-                    context,
-                    "Sign-in failed. Please try again.",
-                    Colors.red.shade600,
-                  );
+                  if (mounted) {
+                    showCustomSnackbar(
+                      context,
+                      "Sign-in failed. Please try again.",
+                      Colors.red.shade600,
+                    );
+                  }
                   return;
                 }
+
                 DocumentSnapshot doc =
                     await FirebaseFirestore.instance
                         .collection('users')
@@ -180,24 +182,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     doc.exists && (userData?['registrationComplete'] == true);
                 bool hasPhoneNumber =
                     doc.exists && (userData?['phoneNumber'] ?? '').isNotEmpty;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) =>
-                            (!isRegistrationComplete || !hasPhoneNumber)
-                                ? PhoneNumber()
-                                : BottomNavScreen(),
-                  ),
-                );
+
+                if (mounted) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              (!isRegistrationComplete || !hasPhoneNumber)
+                                  ? PhoneNumber()
+                                  : BottomNavScreen(),
+                    ),
+                  );
+                }
               } catch (e) {
-                showCustomSnackbar(
-                  context,
-                  "An error occurred. Please try again.",
-                  Colors.red.shade600,
-                );
+                if (mounted) {
+                  showCustomSnackbar(
+                    context,
+                    "An error occurred. Please try again.",
+                    Colors.red.shade600,
+                  );
+                }
               } finally {
-                setState(() => isLoading = false);
+                if (mounted) {
+                  setState(() => isLoading = false);
+                }
               }
             },
             isLoading: isLoading,
@@ -286,9 +295,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           GestureDetector(
             onTap: () async {
               if (isContinuing) return;
-              String email = _emailController.text.trim();
+              String email = _emailController.text.trim().toLowerCase();
 
-              if (email.isEmpty || !email.contains('@')) {
+              if (email.isEmpty ||
+                  !RegExp(
+                    r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                  ).hasMatch(email)) {
                 showCustomSnackbar(
                   context,
                   "Enter a valid email",
@@ -306,12 +318,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         .where('email', isEqualTo: email)
                         .limit(1)
                         .get();
-
+                print("User document found: ${userDoc.docs.isNotEmpty}");
                 await Supabase.instance.client.auth.signInWithOtp(
                   email: email,
                   emailRedirectTo: null,
                   shouldCreateUser: userDoc.docs.isEmpty,
                 );
+                print("OTP sent successfully");
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -323,14 +336,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 );
               } catch (e) {
+                print("Error checking user: $e");
                 showCustomSnackbar(
                   context,
                   "Failed to check user. Try again.",
                   Colors.red.shade600,
                 );
               }
+
               setState(() => isContinuing = false);
             },
+
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(

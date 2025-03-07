@@ -202,7 +202,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
             children: [
               SizedBox(height: size.height * 0.1),
               Text(
-                "DOB",
+                "Date of Birth",
                 style: GoogleFonts.urbanist(
                   fontSize: fontSize * 1.6,
                   fontWeight: FontWeight.bold,
