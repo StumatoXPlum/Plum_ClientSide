@@ -24,123 +24,121 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     double fontSize = size.width * 0.05;
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff090D14),
-        title: Padding(
-          padding: EdgeInsets.only(left: padding * 0.1),
-          child: Text(
-            'Find \nTrending Events',
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontSize: fontSize * 1.4,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: padding),
-            child: Row(
-              children: [
-                SvgPicture.asset('assets/home_assets/bell.svg'),
-                SizedBox(width: padding),
-                SvgPicture.asset('assets/home_assets/user.svg'),
-              ],
-            ),
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            TicketWidget(),
-            SizedBox(height: size.height * 0.04),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-              child: GestureDetector(
-                onTap: () async {
-                  final selectedLocation = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PickLocationScreen(),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                child: Row(
+                  children: [
+                    Text(
+                      'Find \nTrending Events',
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: fontSize * 1.4,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  );
+                    Spacer(),
+                    SvgPicture.asset('assets/home_assets/bell.svg'),
+                    SizedBox(width: padding),
+                    SvgPicture.asset('assets/home_assets/user.svg'),
+                  ],
+                ),
+              ),
 
-                  if (selectedLocation != null && selectedLocation is String) {
-                    setState(() {
-                      _yourLocation = selectedLocation;
-                    });
-                  }
-                },
-                child: Container(
-                  padding: EdgeInsets.all(padding),
-                  decoration: BoxDecoration(
-                    color: Color(0xff161C25),
-                    borderRadius: BorderRadius.circular(42),
-                    border: Border.all(color: Color(0xff202938)),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(padding),
-                        decoration: BoxDecoration(
-                          color: Color(0xff2D3748),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Color(0xff202938),
-                            width: 2,
+              SizedBox(height: size.height * 0.02),
+              TicketWidget(),
+              SizedBox(height: size.height * 0.04),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                child: GestureDetector(
+                  onTap: () async {
+                    final selectedLocation = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PickLocationScreen(),
+                      ),
+                    );
+
+                    if (selectedLocation != null &&
+                        selectedLocation is String) {
+                      setState(() {
+                        _yourLocation = selectedLocation;
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(padding),
+                    decoration: BoxDecoration(
+                      color: Color(0xff161C25),
+                      borderRadius: BorderRadius.circular(42),
+                      border: Border.all(color: Color(0xff202938)),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(padding),
+                          decoration: BoxDecoration(
+                            color: Color(0xff2D3748),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Color(0xff202938),
+                              width: 2,
+                            ),
+                          ),
+                          child: SvgPicture.asset(
+                            "assets/home_assets/pin.svg",
+                            fit: BoxFit.scaleDown,
                           ),
                         ),
-                        child: SvgPicture.asset(
-                          "assets/home_assets/pin.svg",
-                          fit: BoxFit.scaleDown,
-                        ),
-                      ),
-                      SizedBox(width: size.width * 0.03),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Your Location",
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: fontSize * 0.9,
+                        SizedBox(width: size.width * 0.03),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Your Location",
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: fontSize * 0.9,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: size.height * 0.001),
-                            Text(
-                              _yourLocation ?? _locationText,
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white60,
+                              SizedBox(height: size.height * 0.001),
+                              Text(
+                                _yourLocation ?? _locationText,
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white60,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 15),
-                          child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: Color(0xff3579DD),
-                            size: 16,
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 15),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xff3579DD),
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: size.height * 0.01),
-            EventWidget(),
-            NearEventsWidget(),
-          ],
+              SizedBox(height: size.height * 0.01),
+              EventWidget(),
+              NearEventsWidget(),
+            ],
+          ),
         ),
       ),
     );
@@ -418,48 +416,56 @@ class _NearEventsWidgetState extends State<NearEventsWidget> {
                       ),
                     ),
                     SizedBox(width: size.width * 0.03),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              '${event.title}: ',
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white,
-                                fontSize: fontSize * 0.9,
-                                fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                '${event.title}: ',
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white,
+                                  fontSize: fontSize * 0.9,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            Text(
-                              event.artist,
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white,
-                                fontSize: fontSize * 0.9,
-                                fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Text(
+                                  event.artist,
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.white,
+                                    fontSize: fontSize * 0.9,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
                               ),
+                            ],
+                          ),
+                          SizedBox(height: size.height * 0.01),
+                          Text(
+                            event.date,
+                            style: GoogleFonts.urbanist(
+                              color: Colors.white70,
+                              fontSize: fontSize * 0.7,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                        SizedBox(height: size.height * 0.01),
-                        Text(
-                          event.date,
-                          style: GoogleFonts.urbanist(
-                            color: Colors.white70,
-                            fontSize: fontSize * 0.7,
-                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        SizedBox(height: size.height * 0.003),
-                        Text(
-                          event.location,
-                          style: GoogleFonts.urbanist(
-                            color: Colors.white70,
-                            fontSize: fontSize * 0.7,
-                            fontWeight: FontWeight.bold,
+                          SizedBox(height: size.height * 0.003),
+                          Text(
+                            event.location,
+                            style: GoogleFonts.urbanist(
+                              color: Colors.white70,
+                              fontSize: fontSize * 0.7,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

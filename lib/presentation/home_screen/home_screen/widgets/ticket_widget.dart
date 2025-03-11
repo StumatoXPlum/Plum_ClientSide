@@ -23,8 +23,8 @@ class TicketView extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
-    double fontSize = size.width * 0.05;
-    double ticketHeight = size.height * 0.18;
+    double fontSize = size.width * 0.04;
+    double ticketHeight = size.height * 0.20;
 
     return SizedBox(
       width: double.infinity,
@@ -38,13 +38,16 @@ class TicketView extends StatelessWidget {
               child: RotatedBox(
                 quarterTurns: 1,
                 child: Center(
-                  child: Text(
-                    sideText,
-                    style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize * 0.8,
-                      letterSpacing: 1,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      sideText,
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: fontSize * 0.8,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ),
                 ),
@@ -53,49 +56,67 @@ class TicketView extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
-                  padding * 4,
-                  padding * 1.5,
+                  padding * 3.5,
+                  padding * 1.2,
                   padding * 1.5,
                   padding,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSize * 1,
-                      ),
-                    ),
-                    SizedBox(height: size.height * 0.001),
-                    Text(
-                      "$date | $time",
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: fontSize * 0.8,
-                      ),
-                    ),
-                    SizedBox(height: size.height * 0.01),
-                    Text(
-                      location,
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: fontSize * 0.9,
-                      ),
-                    ),
-                    SizedBox(height: size.height * 0.001),
-                    Divider(color: Colors.white70, thickness: 0.5),
-                    Spacer(),
-                    Align(
-                      alignment: Alignment.centerRight,
+                    Expanded(
+                      flex: 2,
                       child: Text(
-                        ticketType,
+                        title,
                         style: GoogleFonts.poppins(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: fontSize * 1,
+                          fontSize: fontSize * 1.2,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(height: size.height * 0.005),
+                    Expanded(
+                      child: Text(
+                        "$date | $time",
+                        style: GoogleFonts.poppins(
+                          color: Colors.white70,
+                          fontSize: fontSize * 0.8,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(height: size.height * 0.01),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        location,
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: fontSize * 0.9,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(height: size.height * 0.005),
+                    const Divider(color: Colors.white70, thickness: 0.5),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            ticketType,
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: fontSize * 1,
+                            ),
+                          ),
                         ),
                       ),
                     ),

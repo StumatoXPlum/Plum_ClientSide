@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:task2/presentation/history_screen/history_screen.dart';
-import 'package:task2/presentation/music_screen/view/music_screen.dart';
-import 'package:task2/presentation/home_screen/home_screen/view/home_screen.dart';
+import '../presentation/booking/booking_screen.dart';
+import '../presentation/home_screen/home_screen/view/new_home_screen.dart';
+import '../presentation/music_screen/view/music_screen.dart';
+import '../presentation/saved_screen/saved_screen.dart';
 
 class BottomNavScreen extends StatefulWidget {
   final int initialIndex;
@@ -32,7 +33,8 @@ class BottomNavScreenState extends State<BottomNavScreen> {
 
   final List<String> _iconPaths = [
     "assets/home_assets/home.svg",
-    "assets/home_assets/receipt.svg",
+    "assets/home_assets/saved.svg",
+    "assets/home_assets/booking.svg",
     "assets/home_assets/music.svg",
   ];
 
@@ -42,13 +44,15 @@ class BottomNavScreenState extends State<BottomNavScreen> {
     _selectedIndex = widget.initialIndex;
 
     _screens = [
-      HomeScreen(
-        showSnackbar: widget.showSnackbar,
-        selectedDate: widget.selectedDate,
-        selectedStartTime: widget.selectedStartTime,
-        selectedEndTime: widget.selectedEndTime,
-      ),
-      const HistoryScreen(),
+      // HomeScreen(
+      // showSnackbar: widget.showSnackbar,
+      // selectedDate: widget.selectedDate,
+      // selectedStartTime: widget.selectedStartTime,
+      // selectedEndTime: widget.selectedEndTime,
+      // ),
+      NewHomeScreen(),
+      SavedScreen(),
+      BookingScreen(),
       MusicScreen(),
     ];
 
@@ -129,13 +133,14 @@ class BottomNavScreenState extends State<BottomNavScreen> {
           highlightColor: Colors.transparent,
         ),
         child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           backgroundColor: const Color(0xff090D14),
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           selectedItemColor: const Color(0xff3579DD),
           unselectedItemColor: Colors.grey,
           showUnselectedLabels: true,
-          items: List.generate(3, (index) {
+          items: List.generate(4, (index) {
             return BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 _iconPaths[index],
@@ -146,7 +151,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
                 width: 24,
                 height: 24,
               ),
-              label: ['Home', 'History', 'Music'][index],
+              label: ['Home', 'Saved', 'Booking', 'Music'][index],
             );
           }),
         ),
