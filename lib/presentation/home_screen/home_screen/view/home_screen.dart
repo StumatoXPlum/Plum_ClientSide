@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
       body: SingleChildScrollView(
-        child: Column(
+        child: Column( 
           children: [
             SafeArea(
               child: SizedBox(
