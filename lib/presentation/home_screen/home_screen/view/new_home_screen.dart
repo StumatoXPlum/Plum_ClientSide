@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/home_screen/home_screen/widgets/ticket_widget.dart';
 import '../../home_detail_screen/view/new_home_detail_screen.dart';
 import '../model/event_model.dart';
 import '../model/near_events_model.dart';
@@ -31,7 +32,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
             'Find \nTrending Events',
             style: GoogleFonts.poppins(
               color: Colors.white,
-              fontSize: fontSize * 1.3,
+              fontSize: fontSize * 1.4,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -52,6 +53,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            TicketWidget(),
             SizedBox(height: size.height * 0.04),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
@@ -137,34 +139,6 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
             ),
             SizedBox(height: size.height * 0.01),
             EventWidget(),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-              child: Row(
-                children: [
-                  Text(
-                    "Events Near You",
-                    style: GoogleFonts.urbanist(
-                      color: Colors.white,
-                      fontSize: fontSize * 1.1,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      "See All",
-                      style: GoogleFonts.urbanist(
-                        color: const Color(0xff3579DD),
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSize * 0.9,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: size.height * 0.02),
             NearEventsWidget(),
           ],
         ),
@@ -206,7 +180,7 @@ class _EventWidgetState extends State<EventWidget> {
                 "Popular Events",
                 style: GoogleFonts.urbanist(
                   color: Colors.white,
-                  fontSize: fontSize * 1.1,
+                  fontSize: fontSize * 1,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -382,86 +356,118 @@ class _NearEventsWidgetState extends State<NearEventsWidget> {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.04;
     double fontSize = size.width * 0.045;
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: nearEvents.length,
-      itemBuilder: (context, index) {
-        final event = nearEvents[index];
-        return Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: padding,
-            vertical: padding * 0.4,
-          ),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              vertical: padding * 0.4,
-              horizontal: padding * 0.4,
-            ),
-            decoration: BoxDecoration(
-              color: Color(0xff042455),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Image.asset(
-                    event.image,
-                    width: size.width * 0.2,
-                    height: size.height * 0.09,
-                    fit: BoxFit.cover,
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+          child: Row(
+            children: [
+              Text(
+                "Events Near You",
+                style: GoogleFonts.urbanist(
+                  color: Colors.white,
+                  fontSize: fontSize * 1,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {},
+                child: Text(
+                  "See All",
+                  style: GoogleFonts.urbanist(
+                    color: const Color(0xff3579DD),
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize * 0.9,
                   ),
                 ),
-                SizedBox(width: size.width * 0.03),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: size.height * 0.02),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: nearEvents.length,
+          itemBuilder: (context, index) {
+            final event = nearEvents[index];
+            return Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: padding,
+                vertical: padding * 0.4,
+              ),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: padding * 0.4,
+                  horizontal: padding * 0.4,
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xff042455),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
                   children: [
-                    Row(
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Image.asset(
+                        event.image,
+                        width: size.width * 0.2,
+                        height: size.height * 0.09,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    SizedBox(width: size.width * 0.03),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          children: [
+                            Text(
+                              '${event.title}: ',
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white,
+                                fontSize: fontSize * 0.9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              event.artist,
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white,
+                                fontSize: fontSize * 0.9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: size.height * 0.01),
                         Text(
-                          '${event.title}: ',
+                          event.date,
                           style: GoogleFonts.urbanist(
-                            color: Colors.white,
-                            fontSize: fontSize * 0.9,
+                            color: Colors.white70,
+                            fontSize: fontSize * 0.7,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        SizedBox(height: size.height * 0.003),
                         Text(
-                          event.artist,
+                          event.location,
                           style: GoogleFonts.urbanist(
-                            color: Colors.white,
-                            fontSize: fontSize * 0.9,
+                            color: Colors.white70,
+                            fontSize: fontSize * 0.7,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: size.height * 0.01),
-                    Text(
-                      event.date,
-                      style: GoogleFonts.urbanist(
-                        color: Colors.white70,
-                        fontSize: fontSize * 0.7,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: size.height * 0.003),
-                    Text(
-                      event.location,
-                      style: GoogleFonts.urbanist(
-                        color: Colors.white70,
-                        fontSize: fontSize * 0.7,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                   ],
                 ),
-              ],
-            ),
-          ),
-        );
-      },
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
