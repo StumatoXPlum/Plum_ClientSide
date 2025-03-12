@@ -138,14 +138,14 @@ class BottomNavScreenState extends State<BottomNavScreen> {
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           selectedItemColor: const Color(0xff3579DD),
-          unselectedItemColor: Colors.grey,
+          unselectedItemColor: Colors.white,
           showUnselectedLabels: true,
           items: List.generate(4, (index) {
             return BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 _iconPaths[index],
                 colorFilter: ColorFilter.mode(
-                  _selectedIndex == index ? Colors.blue : Colors.grey,
+                  _selectedIndex == index ? Color(0xff3579DD) : Colors.white,
                   BlendMode.srcIn,
                 ),
                 width: 24,

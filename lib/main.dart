@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'presentation/home_screen/home_screen/view/new_home_screen.dart';
 import 'core/bottom_navigation_bar.dart';
 import 'core/constants.dart';
 import 'firebase_options.dart';
@@ -49,7 +48,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      home: BottomNavScreen(),
+      home: _getInitialScreen(),
     );
   }
 

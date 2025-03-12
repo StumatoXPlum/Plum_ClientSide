@@ -28,7 +28,7 @@ final List<EventModel> events = [
     location: 'Zero Gravity Dubai',
     price: "AED 100-200",
     description:
-        "We're celebrating our 30th edition of the California Art Fesstival in Ca this Spring so join us at the Building Park in Califorina State Univeristy form March 29-30, 2024 with Private View opening on Saturday, March 26! Show more",
+        "We're celebrating our 30th edition of the California Art Fesstival in Ca this Spring so join us at the Building Park in Califorina State Univeristy form March 29-30, 2024 with Private View opening on Saturday, March 26!",
     time: "9:00 PM - 3:00 AM",
     address:
         "Dubai Marina, Skydive Dubai Drop Zone - King Salman Bin Abdulaziz Al Saud St - Dubai - UAE",
