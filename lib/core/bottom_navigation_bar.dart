@@ -50,7 +50,12 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       // selectedStartTime: widget.selectedStartTime,
       // selectedEndTime: widget.selectedEndTime,
       // ),
-      NewHomeScreen(),
+      NewHomeScreen(
+        showSnackbar: widget.showSnackbar,
+        selectedDate: widget.selectedDate,
+        selectedStartTime: widget.selectedStartTime,
+        selectedEndTime: widget.selectedEndTime,
+      ),
       SavedScreen(),
       BookingScreen(),
       MusicScreen(),

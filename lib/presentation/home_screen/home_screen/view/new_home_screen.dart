@@ -2,13 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/home_screen/home_screen/widgets/ticket_widget.dart';
+import 'package:task2/presentation/profile/user_profile.dart';
 import '../../home_detail_screen/view/new_home_detail_screen.dart';
 import '../model/event_model.dart';
 import '../model/near_events_model.dart';
 import '../../pick_location/pick_location_screen.dart';
 
 class NewHomeScreen extends StatefulWidget {
-  const NewHomeScreen({super.key});
+  final bool showSnackbar;
+  final DateTime? selectedDate;
+  final String? selectedStartTime;
+  final String? selectedEndTime;
+  const NewHomeScreen({
+    super.key,
+    this.showSnackbar = false,
+    this.selectedDate,
+    this.selectedStartTime,
+    this.selectedEndTime,
+  });
 
   @override
   State<NewHomeScreen> createState() => _NewHomeScreenState();
@@ -43,7 +54,17 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                     Spacer(),
                     SvgPicture.asset('assets/home_assets/bell.svg'),
                     SizedBox(width: padding),
-                    SvgPicture.asset('assets/home_assets/user.svg'),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UserProfile(),
+                          ),
+                        );
+                      },
+                      child: SvgPicture.asset('assets/home_assets/user.svg'),
+                    ),
                   ],
                 ),
               ),
