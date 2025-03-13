@@ -11,5 +11,5 @@ class BookingScreen extends StatelessWidget {
         child: Text("booking screen", style: TextStyle(color: Colors.white)),
       ),
     );
-  }
+  }  
 }

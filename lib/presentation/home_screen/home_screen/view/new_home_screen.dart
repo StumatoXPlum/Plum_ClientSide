@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/home_screen/home_screen/cubit/bookmark_cubit.dart';
 import 'package:task2/presentation/home_screen/home_screen/view/event_list_screen.dart';
 import 'package:task2/presentation/home_screen/home_screen/widgets/ticket_widget.dart';
 import 'package:task2/presentation/profile/user_profile.dart';
 import '../../home_detail_screen/view/new_home_detail_screen.dart';
-import '../model/event_model.dart';
 import '../../pick_location/pick_location_screen.dart';
+import '../model/event_model.dart';
 
 class NewHomeScreen extends StatefulWidget {
   final bool showSnackbar;
@@ -295,21 +297,34 @@ class _EventWidgetState extends State<EventWidget> {
                             Positioned(
                               top: 5,
                               right: 5,
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    shape: BoxShape.circle,
+                              child:
+                                  BlocBuilder<BookmarkCubit, List<EventModel>>(
+                                    builder: (context, bookmarkedEvents) {
+                                      final isBookmarked = bookmarkedEvents
+                                          .contains(event);
+                                      return GestureDetector(
+                                        onTap: () {
+                                          context
+                                              .read<BookmarkCubit>()
+                                              .toggleBookmark(event);
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            isBookmarked
+                                                ? Icons.bookmark
+                                                : Icons.bookmark_border,
+                                            color: Colors.white,
+                                            size: fontSize,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
-                                  child: Icon(
-                                    Icons.bookmark_border,
-                                    color: Colors.white,
-                                    size: fontSize,
-                                  ),
-                                ),
-                              ),
                             ),
                             Positioned(
                               bottom: 5,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/presentation/home_screen/home_screen/model/event_model.dart';
+import '../../../payment/view/payment_screen.dart';
+import '../../home_screen/model/event_model.dart';
 
 class NewHomeDetailScreen extends StatelessWidget {
   final EventModel event;
@@ -201,7 +202,12 @@ class NewHomeDetailScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PaymentScreen()),
+                  );
+                },
                 child: Text(
                   "Book Event",
                   style: GoogleFonts.urbanist(

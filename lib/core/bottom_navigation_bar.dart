@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:task2/presentation/bookmark_screen/bookmark_screen.dart';
 import '../presentation/booking/booking_screen.dart';
 import '../presentation/home_screen/home_screen/view/new_home_screen.dart';
 import '../presentation/music_screen/view/music_screen.dart';
-import '../presentation/saved_screen/saved_screen.dart';
 
 class BottomNavScreen extends StatefulWidget {
   final int initialIndex;
@@ -56,7 +56,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         selectedStartTime: widget.selectedStartTime,
         selectedEndTime: widget.selectedEndTime,
       ),
-      SavedScreen(),
+      BookmarkScreen(),
       BookingScreen(),
       MusicScreen(),
     ];
