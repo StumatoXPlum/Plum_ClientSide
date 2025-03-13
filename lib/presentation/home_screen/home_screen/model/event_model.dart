@@ -1,5 +1,6 @@
 class EventModel {
   final String title;
+  final String artist;
   final String imageUrl;
   final String date;
   final String location;
@@ -10,6 +11,7 @@ class EventModel {
 
   const EventModel({
     required this.title,
+    required this.artist,
     required this.imageUrl,
     required this.date,
     required this.location,
@@ -20,47 +22,104 @@ class EventModel {
   });
 }
 
-final List<EventModel> events = [
+final List<EventModel> popularEvents = [
   EventModel(
-    title: 'Desi Night with Buddha & Harry',
+    title: 'Bollywood Beats Night',
+    artist: 'DJ Raj & MC Sid',
     imageUrl: 'assets/home_assets/events_assets/event1.png',
-    date: 'December, 1 2024',
-    location: 'Zero Gravity Dubai',
-    price: "AED 100-200",
+    date: 'December 10, 2024',
+    location: 'White Dubai',
+    price: "AED 150-250",
     description:
-        "We're celebrating our 30th edition of the California Art Fesstival in Ca this Spring so join us at the Building Park in Califorina State Univeristy form March 29-30, 2024 with Private View opening on Saturday, March 26!",
-    time: "9:00 PM - 3:00 AM",
-    address:
-        "Dubai Marina, Skydive Dubai Drop Zone - King Salman Bin Abdulaziz Al Saud St - Dubai - UAE",
+        "Experience an electrifying night with DJ Raj and MC Sid as they bring Bollywood beats to life at White Dubai. Get ready for an unforgettable night of music and dance!",
+    time: "10:00 PM - 4:00 AM",
+    address: "Meydan Racecourse Grandstand - Dubai - UAE",
   ),
   EventModel(
-    title: 'Desi Night with Buddha & Harry',
+    title: 'EDM Madness',
+    artist: 'DJ Tiesto & Armin Van Buuren',
     imageUrl: 'assets/home_assets/events_assets/event2.png',
-    date: 'December, 1 2024',
-    location: 'Zero Gravity Dubai',
-    price: "AED 100-200",
-    description: "Desi Night with Buddha & Harry",
-    time: "9:00 PM - 3:00 AM",
-    address: "Skydive Dubai Drop Zone - Dubai - United Arab Emirates",
+    date: 'December 15, 2024',
+    location: 'Coca-Cola Arena',
+    price: "AED 300-500",
+    description:
+        "Join two of the world's biggest EDM artists, DJ Tiesto and Armin Van Buuren, for an explosive night of non-stop electronic dance music.",
+    time: "8:00 PM - 2:00 AM",
+    address: "City Walk - Al Wasl - Dubai - UAE",
   ),
   EventModel(
-    title: 'Desi Night with Buddha & Harry',
+    title: 'Retro Bollywood Night',
+    artist: 'Udit Narayan & Alka Yagnik',
     imageUrl: 'assets/home_assets/events_assets/event3.png',
-    date: 'December, 1 2024',
-    location: 'Zero Gravity Dubai',
-    price: "AED 100-200",
-    description: "Desi Night with Buddha & Harry",
-    time: "9:00 PM - 3:00 AM",
-    address: "Skydive Dubai Drop Zone - Dubai - United Arab Emirates",
+    date: 'December 20, 2024',
+    location: 'Dubai Opera',
+    price: "AED 250-450",
+    description:
+        "Relive the golden era of Bollywood music with legendary singers Udit Narayan and Alka Yagnik performing their timeless hits live.",
+    time: "7:00 PM - 11:00 PM",
+    address: "Sheikh Mohammed bin Rashid Blvd - Downtown Dubai - UAE",
   ),
   EventModel(
-    title: 'Desi Night with Buddha & Harry',
+    title: 'Hip-Hop Takeover',
+    artist: 'Travis Scott & Lil Uzi Vert',
     imageUrl: 'assets/home_assets/events_assets/event4.png',
-    date: 'December, 1 2024',
-    location: 'Zero Gravity Dubai',
-    price: "AED 100-200",
-    description: "Desi Night with Buddha & Harry",
+    date: 'December 25, 2024',
+    location: 'Atlantis The Palm',
+    price: "AED 400-600",
+    description:
+        "The biggest hip-hop event of the year featuring global superstars Travis Scott and Lil Uzi Vert performing live at Atlantis.",
     time: "9:00 PM - 3:00 AM",
-    address: "Skydive Dubai Drop Zone - Dubai - United Arab Emirates",
+    address: "Atlantis, Crescent Rd - The Palm Jumeirah - Dubai - UAE",
+  ),
+];
+
+final List<EventModel> nearEvents = [
+  EventModel(
+    title: 'Desi Sundowner',
+    artist: 'DJ Shadow & Akcent',
+    imageUrl: 'assets/home_assets/near_events/near1.png',
+    date: 'December 5, 2024',
+    location: 'Beach by FIVE',
+    price: "AED 200-350",
+    description:
+        "Enjoy a breathtaking sunset with an incredible mix of Bollywood and international beats by DJ Shadow and Akcent at Beach by FIVE.",
+    time: "4:00 PM - 11:00 PM",
+    address: "FIVE Palm Jumeirah - Dubai - UAE",
+  ),
+  EventModel(
+    title: 'Neon Night Party',
+    artist: 'DJ Snake',
+    imageUrl: 'assets/home_assets/near_events/near2.png',
+    date: 'December 12, 2024',
+    location: 'SOHO Garden',
+    price: "AED 250-400",
+    description:
+        "Glow under the neon lights and dance to the electrifying beats of DJ Snake at SOHO Garden. Get your glow sticks ready!",
+    time: "9:00 PM - 3:00 AM",
+    address: "Meydan Grandstand - Nad Al Sheba - Dubai - UAE",
+  ),
+  EventModel(
+    title: 'Sufi Night with Kailash Kher',
+    artist: 'Kailash Kher',
+    imageUrl: 'assets/home_assets/near_events/near3.png',
+    date: 'December 18, 2024',
+    location: 'Jumeirah Beach Hotel',
+    price: "AED 180-320",
+    description:
+        "An enchanting night of soulful Sufi music with the mesmerizing voice of Kailash Kher at the Jumeirah Beach Hotel.",
+    time: "7:30 PM - 11:30 PM",
+    address: "Jumeirah Beach Hotel - Umm Suqeim - Dubai - UAE",
+  ),
+  EventModel(
+    title: 'NYE Countdown Bash',
+    artist: 'Calvin Harris & Martin Garrix',
+    imageUrl: 'assets/home_assets/near_events/near4.png',
+    date: 'December 31, 2024',
+    location: 'Burj Park Downtown',
+    price: "AED 500-1000",
+    description:
+        "Ring in the new year with a spectacular musical night featuring Calvin Harris and Martin Garrix at the iconic Burj Park!",
+    time: "9:00 PM - 2:00 AM",
+    address: "Burj Park - Downtown Dubai - UAE",
   ),
 ];

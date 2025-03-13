@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/home_screen/home_screen/model/event_model.dart';
 
 class NewHomeDetailScreen extends StatelessWidget {
-  final EventModel events;
-  const NewHomeDetailScreen({super.key, required this.events});
+  final EventModel event;
+  const NewHomeDetailScreen({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -25,22 +25,22 @@ class NewHomeDetailScreen extends StatelessWidget {
                   Stack(
                     children: [
                       Image.asset(
-                        events.imageUrl,
+                        event.imageUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: size.height * 1 / 3,
                       ),
                       Positioned(
-                        top: padding * 4,
-                        left: padding * 2,
+                        top: padding * 5,
+                        left: padding * 3,
                         child: Row(
                           children: [
-                            GestureDetector(
+                            InkWell(
                               onTap: () => Navigator.pop(context),
                               child: Icon(
                                 Icons.arrow_back_ios,
                                 color: Colors.white,
-                                size: fontSize * 1.1,
+                                size: fontSize * 1.2,
                               ),
                             ),
                             SizedBox(width: padding),
@@ -61,7 +61,7 @@ class NewHomeDetailScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
                     child: Text(
-                      events.title,
+                      '${event.title} with ${event.artist}',
                       style: GoogleFonts.urbanist(
                         color: Colors.white,
                         fontSize: fontSize * 1.2,
@@ -72,7 +72,7 @@ class NewHomeDetailScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
                     child: Text(
-                      events.price ?? "Not Available",
+                      event.price ?? "Not Available",
                       style: GoogleFonts.urbanist(
                         color: Color(0xff3579DD),
                         fontSize: fontSize * 0.9,
@@ -96,7 +96,7 @@ class NewHomeDetailScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
                     child: Text(
-                      events.description ?? "Not Available",
+                      event.description ?? "Not Available",
                       style: GoogleFonts.urbanist(
                         color: Colors.white70,
                         fontSize: fontSize * 0.8,
@@ -126,7 +126,7 @@ class NewHomeDetailScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      events.date,
+                                      event.date,
                                       style: GoogleFonts.urbanist(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -134,7 +134,7 @@ class NewHomeDetailScreen extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      events.time ?? "Not Available",
+                                      event.time ?? "Not Available",
                                       style: GoogleFonts.urbanist(
                                         color: Colors.white70,
                                       ),
@@ -157,7 +157,7 @@ class NewHomeDetailScreen extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        events.location,
+                                        event.location,
                                         style: GoogleFonts.urbanist(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -165,7 +165,7 @@ class NewHomeDetailScreen extends StatelessWidget {
                                         ),
                                       ),
                                       Text(
-                                        events.address ?? "Not Available",
+                                        event.address ?? "Not Available",
                                         style: GoogleFonts.urbanist(
                                           color: Colors.white,
                                         ),

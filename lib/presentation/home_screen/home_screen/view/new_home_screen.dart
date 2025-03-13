@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/home_screen/home_screen/view/event_list_screen.dart';
 import 'package:task2/presentation/home_screen/home_screen/widgets/ticket_widget.dart';
 import 'package:task2/presentation/profile/user_profile.dart';
 import '../../home_detail_screen/view/new_home_detail_screen.dart';
 import '../model/event_model.dart';
-import '../model/near_events_model.dart';
 import '../../pick_location/pick_location_screen.dart';
 
 class NewHomeScreen extends StatefulWidget {
@@ -205,7 +205,18 @@ class _EventWidgetState extends State<EventWidget> {
               ),
               const Spacer(),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => EventListScreen(
+                            events: popularEvents,
+                            title: "Popular Events",
+                          ),
+                    ),
+                  );
+                },
                 child: Text(
                   "See All",
                   style: GoogleFonts.urbanist(
@@ -230,7 +241,7 @@ class _EventWidgetState extends State<EventWidget> {
               controller: _scrollController,
               padding: EdgeInsets.symmetric(horizontal: padding),
               scrollDirection: Axis.horizontal,
-              itemCount: events.length,
+              itemCount: popularEvents.length,
               itemBuilder: (context, index) {
                 double parallaxOffset = 0;
                 if (_scrollController.hasClients) {
@@ -240,14 +251,13 @@ class _EventWidgetState extends State<EventWidget> {
                       itemPosition - _scrollController.offset;
                   parallaxOffset = distanceFromCenter * 0.1;
                 }
-                final event = events[index];
+                final event = popularEvents[index];
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder:
-                            (context) => NewHomeDetailScreen(events: event),
+                        builder: (context) => NewHomeDetailScreen(event: event),
                       ),
                     );
                   },
@@ -315,7 +325,7 @@ class _EventWidgetState extends State<EventWidget> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      event.title,
+                                      '${event.title} with ${event.artist}',
                                       style: GoogleFonts.urbanist(
                                         color: Colors.white,
                                         fontSize: fontSize * 0.7,
@@ -391,7 +401,18 @@ class _NearEventsWidgetState extends State<NearEventsWidget> {
               ),
               const Spacer(),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => EventListScreen(
+                            events: nearEvents,
+                            title: "Near Events",
+                          ),
+                    ),
+                  );
+                },
                 child: Text(
                   "See All",
                   style: GoogleFonts.urbanist(
@@ -416,79 +437,89 @@ class _NearEventsWidgetState extends State<NearEventsWidget> {
                 horizontal: padding,
                 vertical: padding * 0.4,
               ),
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: padding * 0.4,
-                  horizontal: padding * 0.4,
-                ),
-                decoration: BoxDecoration(
-                  color: Color(0xff042455),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: Image.asset(
-                        event.image,
-                        width: size.width * 0.2,
-                        height: size.height * 0.09,
-                        fit: BoxFit.cover,
-                      ),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NewHomeDetailScreen(event: event),
                     ),
-                    SizedBox(width: size.width * 0.03),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                '${event.title}: ',
-                                style: GoogleFonts.urbanist(
-                                  color: Colors.white,
-                                  fontSize: fontSize * 0.9,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  event.artist,
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: padding * 0.4,
+                    horizontal: padding * 0.4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xff042455),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: Image.asset(
+                          event.imageUrl,
+                          width: size.width * 0.2,
+                          height: size.height * 0.09,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(width: size.width * 0.03),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  '${event.title}: ',
                                   style: GoogleFonts.urbanist(
                                     color: Colors.white,
                                     fontSize: fontSize * 0.9,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
                                 ),
+                                Expanded(
+                                  child: Text(
+                                    event.artist,
+                                    style: GoogleFonts.urbanist(
+                                      color: Colors.white,
+                                      fontSize: fontSize * 0.9,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: size.height * 0.01),
+                            Text(
+                              event.date,
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white70,
+                                fontSize: fontSize * 0.7,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
-                          ),
-                          SizedBox(height: size.height * 0.01),
-                          Text(
-                            event.date,
-                            style: GoogleFonts.urbanist(
-                              color: Colors.white70,
-                              fontSize: fontSize * 0.7,
-                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-                          SizedBox(height: size.height * 0.003),
-                          Text(
-                            event.location,
-                            style: GoogleFonts.urbanist(
-                              color: Colors.white70,
-                              fontSize: fontSize * 0.7,
-                              fontWeight: FontWeight.bold,
+                            SizedBox(height: size.height * 0.003),
+                            Text(
+                              event.location,
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white70,
+                                fontSize: fontSize * 0.7,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
