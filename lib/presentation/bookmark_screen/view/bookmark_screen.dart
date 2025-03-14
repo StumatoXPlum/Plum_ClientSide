@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../home_screen/home_detail_screen/view/new_home_detail_screen.dart';
-import '../home_screen/home_screen/cubit/bookmark_cubit.dart';
-import '../home_screen/home_screen/model/event_model.dart';
+import '../../home_screen/home_detail_screen/view/new_home_detail_screen.dart';
+import '../cubit/bookmark_cubit.dart';
+import '../../home_screen/home_screen/model/event_model.dart';
 
 class BookmarkScreen extends StatelessWidget {
   const BookmarkScreen({super.key});

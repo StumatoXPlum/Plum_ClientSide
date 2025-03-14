@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/presentation/home_screen/home_screen/cubit/bookmark_cubit.dart';
+import 'package:task2/presentation/bookmark_screen/cubit/bookmark_cubit.dart';
 import 'core/bottom_navigation_bar.dart';
 import 'core/constants.dart';
 import 'firebase_options.dart';
@@ -14,7 +14,7 @@ import 'presentation/cart/cubit/cart_cubit.dart';
 import 'presentation/history_screen/cubit/order_history_cubit.dart';
 import 'presentation/home_screen/home_detail_screen/cubit/booking_cubit.dart';
 import 'presentation/home_screen/home_detail_screen/cubit/cart_buttons.dart';
-import 'presentation/home_screen/home_screen/cubit/earned_points_cubit.dart';
+import 'presentation/points_screen/cubit/earned_points_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

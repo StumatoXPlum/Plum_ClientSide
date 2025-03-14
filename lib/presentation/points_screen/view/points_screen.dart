@@ -5,7 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:task2/core/bottom_navigation_bar.dart';
 import 'package:task2/presentation/cart/cubit/cart_cubit.dart';
 import 'package:task2/presentation/home_screen/home_detail_screen/cubit/booking_cubit.dart';
-import 'package:task2/presentation/home_screen/home_screen/cubit/earned_points_cubit.dart';
+import 'package:task2/presentation/points_screen/cubit/earned_points_cubit.dart';
 import 'package:task2/presentation/receipt/receipt_screen.dart';
 
 class PointsScreen extends StatelessWidget {

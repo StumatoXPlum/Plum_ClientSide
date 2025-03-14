@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/presentation/home_screen/home_screen/cubit/bookmark_cubit.dart';
-import 'package:task2/presentation/home_screen/home_screen/view/event_list_screen.dart';
-import 'package:task2/presentation/home_screen/home_screen/widgets/ticket_widget.dart';
-import 'package:task2/presentation/profile/user_profile.dart';
+import '../../../bookmark_screen/cubit/bookmark_cubit.dart';
+import 'event_list_screen.dart';
+import '../widgets/ticket_widget.dart';
+import '../../../profile/user_profile.dart';
 import '../../home_detail_screen/view/new_home_detail_screen.dart';
 import '../../pick_location/pick_location_screen.dart';
 import '../model/event_model.dart';
@@ -300,8 +300,9 @@ class _EventWidgetState extends State<EventWidget> {
                               child:
                                   BlocBuilder<BookmarkCubit, List<EventModel>>(
                                     builder: (context, bookmarkedEvents) {
-                                      final isBookmarked = bookmarkedEvents
-                                          .contains(event);
+                                      final isBookmarked = bookmarkedEvents.any(
+                                        (e) => e.title == event.title,
+                                      );
                                       return GestureDetector(
                                         onTap: () {
                                           context

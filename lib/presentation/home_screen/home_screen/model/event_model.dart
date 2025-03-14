@@ -20,7 +20,36 @@ class EventModel {
     this.time,
     this.address,
   });
+
+  factory EventModel.fromJson(Map<String, dynamic> json) {
+    return EventModel(
+      title: json['title'] ?? '',
+      artist: json['artist'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
+      date: json['date'] ?? '',
+      location: json['location'] ?? '',
+      price: json['price'],
+      description: json['description'],
+      time: json['time'],
+      address: json['address'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'artist': artist,
+      'imageUrl': imageUrl,
+      'date': date,
+      'location': location,
+      'price': price,
+      'description': description,
+      'time': time,
+      'address': address,
+    };
+  }
 }
+
 
 final List<EventModel> popularEvents = [
   EventModel(

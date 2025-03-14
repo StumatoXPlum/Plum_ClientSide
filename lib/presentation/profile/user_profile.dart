@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:task2/presentation/points_screen/cubit/earned_points_cubit.dart';
 import '../authentication_screens/date_of_birth/date_of_birth.dart';
 import '../authentication_screens/sign_up_screen/auth_service/auth_service.dart';
 import '../authentication_screens/sign_up_screen/view/sign_up_screen.dart';
@@ -177,12 +179,52 @@ class UserProfileState extends State<UserProfile> {
             padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: SvgPicture.asset("assets/sign_up_assets/back.svg"),
-                  ),
+                Row(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: SvgPicture.asset(
+                          "assets/sign_up_assets/back.svg",
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: padding * 0.4,
+                        vertical: padding * 0.3,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white60, width: 1),
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(
+                            "assets/home_assets/coin.svg",
+                            height: size.height * 0.02,
+                            width: size.width * 0.02,
+                            fit: BoxFit.scaleDown,
+                          ),
+                          SizedBox(width: size.width * 0.02),
+                          BlocBuilder<EarnedPointsCubit, int>(
+                            builder: (context, state) {
+                              return Text(
+                                "$state",
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: fontSize * 0.8,
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 Center(
                   child: Container(

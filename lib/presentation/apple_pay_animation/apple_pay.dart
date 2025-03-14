@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../payment/view/payment_screen.dart';
-import '../points_screen/points_screen.dart';
+import '../points_screen/view/points_screen.dart';
 
 class ApplePayScreen extends StatefulWidget {
   const ApplePayScreen({super.key});
