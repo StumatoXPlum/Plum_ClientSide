@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../payment/view/payment_screen.dart';
+import '../../../bookmark_screen/view/booking_confirmation_screen.dart';
+import '../widgets/details_container.dart';
 import '../../home_screen/model/event_model.dart';
 
 class NewHomeDetailScreen extends StatelessWidget {
@@ -41,7 +41,6 @@ class NewHomeDetailScreen extends StatelessWidget {
                               child: Icon(
                                 Icons.arrow_back_ios,
                                 color: Colors.white,
-                                size: fontSize * 1.2,
                               ),
                             ),
                             SizedBox(width: padding),
@@ -60,124 +59,122 @@ class NewHomeDetailScreen extends StatelessWidget {
                   ),
                   SizedBox(height: size.height * 0.02),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                    child: Text(
-                      '${event.title} with ${event.artist}',
-                      style: GoogleFonts.urbanist(
-                        color: Colors.white,
-                        fontSize: fontSize * 1.2,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                    child: Text(
-                      event.price ?? "Not Available",
-                      style: GoogleFonts.urbanist(
-                        color: Color(0xff3579DD),
-                        fontSize: fontSize * 0.9,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: size.height * 0.03),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                    child: Text(
-                      "About this Event",
-                      style: GoogleFonts.urbanist(
-                        fontSize: fontSize,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: size.height * 0.003),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
-                    child: Text(
-                      event.description ?? "Not Available",
-                      style: GoogleFonts.urbanist(
-                        color: Colors.white70,
-                        fontSize: fontSize * 0.8,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: size.height * 0.02),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: padding * 1.5),
+                    padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
                     child: Container(
                       padding: EdgeInsets.all(padding),
+                      width: double.infinity,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white24, width: 0.5),
+                        color: Color(0xff191A24),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                "assets/home_assets/calendar.svg",
-                              ),
-                              SizedBox(width: size.width * 0.03),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      event.date,
-                                      style: GoogleFonts.urbanist(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: fontSize * 0.9,
-                                      ),
-                                    ),
-                                    Text(
-                                      event.time ?? "Not Available",
-                                      style: GoogleFonts.urbanist(
-                                        color: Colors.white70,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: size.height * 0.02),
-                          Padding(
-                            padding: EdgeInsets.only(left: padding * 0.6),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset("assets/home_assets/pin1.svg"),
-                                SizedBox(width: size.width * 0.05),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        event.location,
-                                        style: GoogleFonts.urbanist(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: fontSize * 0.9,
-                                        ),
-                                      ),
-                                      Text(
-                                        event.address ?? "Not Available",
-                                        style: GoogleFonts.urbanist(
-                                          color: Colors.white,
-                                        ),
-                                        overflow: TextOverflow.visible,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                          Text(
+                            event.title,
+                            style: GoogleFonts.urbanist(
+                              color: Colors.white,
+                              fontSize: fontSize,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
+                          Text(
+                            event.artist,
+                            style: GoogleFonts.urbanist(
+                              color: Colors.white70,
+                              fontSize: fontSize * 0.7,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: size.height * 0.02),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: padding),
+                      decoration: BoxDecoration(
+                        color: Color(0xff191A24),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: padding * 1,
+                            ),
+                            child: Text(
+                              "About this Event",
+                              style: GoogleFonts.urbanist(
+                                fontSize: fontSize,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: size.height * 0.003),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: padding * 1,
+                            ),
+                            child: Text(
+                              event.description ?? "Not Available",
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white70,
+                                fontSize: fontSize * 0.8,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: size.height * 0.02),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xff191A24),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: padding * 1,
+                              top: padding,
+                            ),
+                            child: Text(
+                              "Event Details",
+                              style: GoogleFonts.urbanist(
+                                fontSize: fontSize * 1,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          DetailsContainer(
+                            event: event,
+                            svgPath: 'assets/home_assets/booking.svg',
+                            title: "Event Fee",
+                            subtitle: '${event.price} / per person',
+                          ),
+                          DetailsContainer(
+                            event: event,
+                            svgPath: 'assets/home_assets/calendar.svg',
+                            title: event.date,
+                            subtitle: event.time ?? "Not Available",
+                          ),
+                          DetailsContainer(
+                            event: event,
+                            svgPath: 'assets/home_assets/pin1.svg',
+                            title: event.location,
+                            subtitle: event.address ?? "Not Available",
+                          ),
+                          SizedBox(height: size.height * 0.01),
                         ],
                       ),
                     ),
@@ -186,7 +183,7 @@ class NewHomeDetailScreen extends StatelessWidget {
               ),
             ),
           ),
-          Divider(color: Colors.white70, thickness: 1),
+          Divider(color: Colors.white54, thickness: 0.5),
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: padding,
@@ -205,7 +202,10 @@ class NewHomeDetailScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => PaymentScreen()),
+                    MaterialPageRoute(
+                      builder:
+                          (context) => BookingConfirmationScreen(event: event),
+                    ),
                   );
                 },
                 child: Text(
