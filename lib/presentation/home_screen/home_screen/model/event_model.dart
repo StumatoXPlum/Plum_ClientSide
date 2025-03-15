@@ -140,7 +140,7 @@ final List<EventModel> nearEvents = [
     address: "Meydan Grandstand - Nad Al Sheba - Dubai - UAE",
   ),
   EventModel(
-    title: 'Sufi Night with Kailash Kher',
+    title: 'Sufi Night',
     artist: 'Kailash Kher',
     imageUrl: 'assets/home_assets/near_events/near3.png',
     date: 'December 18, 2024',

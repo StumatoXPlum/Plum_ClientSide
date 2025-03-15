@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../cubit/ticket_cubit.dart';
+import 'package:task2/presentation/ticket/model/ticket_model.dart';
 import '../painter/ticket_painter.dart';
 
 class TicketView extends StatelessWidget {
@@ -43,13 +42,18 @@ class TicketView extends StatelessWidget {
                 child: Center(
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: Text(
-                      sideText,
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSize * 0.8,
-                        letterSpacing: 1,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: padding, right: padding),
+                      child: Text(
+                        sideText,
+                        style: GoogleFonts.urbanist(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: fontSize * 0.8,
+                          letterSpacing: 1,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -68,10 +72,10 @@ class TicketView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      flex: 2,
+                      flex: 3,
                       child: Text(
                         title,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.urbanist(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: fontSize * 1.2,
@@ -84,9 +88,10 @@ class TicketView extends StatelessWidget {
                     Expanded(
                       child: Text(
                         date,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.urbanist(
                           color: Colors.white70,
-                          fontSize: fontSize * 0.8,
+                          fontSize: fontSize * 0.9,
+                          fontWeight: FontWeight.bold,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -95,9 +100,10 @@ class TicketView extends StatelessWidget {
                     Expanded(
                       child: Text(
                         time,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.urbanist(
                           color: Colors.white70,
-                          fontSize: fontSize * 0.8,
+                          fontSize: fontSize * 0.9,
+                          fontWeight: FontWeight.bold,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -108,15 +114,16 @@ class TicketView extends StatelessWidget {
                       flex: 2,
                       child: Text(
                         location,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.urbanist(
                           color: Colors.white,
                           fontSize: fontSize * 0.9,
+                          fontWeight: FontWeight.bold,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(height: size.height * 0.005),
+                    SizedBox(height: size.height * 0.001),
                     const Divider(color: Colors.white70, thickness: 0.5),
                     Expanded(
                       child: Align(
@@ -125,10 +132,10 @@ class TicketView extends StatelessWidget {
                           fit: BoxFit.scaleDown,
                           child: Text(
                             ticketType,
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.urbanist(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: fontSize * 1,
+                              fontSize: fontSize * 1.5,
                             ),
                           ),
                         ),
@@ -146,40 +153,24 @@ class TicketView extends StatelessWidget {
 }
 
 class TicketWidget extends StatelessWidget {
-  const TicketWidget({super.key});
+  final TicketModel ticket;
+  const TicketWidget({super.key, required this.ticket});
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
-    return BlocBuilder<TicketCubit, TicketState>(
-      builder: (context, state) {
-        if (state is TicketLoaded) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-                child: TicketView(
-                  title: state.ticket.id,
-                  date: state.ticket.date,
-                  time: state.ticket.time,
-                  location: state.ticket.location,
-                  ticketType: "${state.ticket.quantity} Tickets",
-                  sideText: state.ticket.id,
-                ),
-              ),
-            ],
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-              strokeCap: StrokeCap.round,
-            ),
-          );
-        }
-      },
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+      child: TicketView(
+        title: ticket.title,
+        date: ticket.date,
+        time: ticket.time,
+        location: ticket.location,
+        ticketType: "${ticket.quantity} Tickets",
+        sideText: ticket.title,
+      ),
     );
   }
 }

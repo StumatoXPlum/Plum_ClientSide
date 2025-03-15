@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import '../../../core/bottom_navigation_bar.dart';
-import '../../ticket/cubit/ticket_cubit.dart';
 import '../../ticket/model/ticket_model.dart';
 import '../cubit/earned_points_cubit.dart';
 
@@ -47,17 +46,10 @@ class PointsScreen extends StatelessWidget {
               textColor: const Color(0xff3579DD),
               onTap: () {
                 context.read<EarnedPointsCubit>().incrementPoints();
-                context.read<TicketCubit>().setTicket(
-                  ticket,
-                ); 
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder:
-                        (context) => BottomNavScreen(
-                          initialIndex: 0,
-                          showSnackbar: true,
-                        ),
+                    builder: (context) => BottomNavScreen(initialIndex: 0),
                   ),
                   (route) => false,
                 );

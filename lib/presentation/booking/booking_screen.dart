@@ -28,9 +28,24 @@ class BookingScreen extends StatelessWidget {
           if (state is TicketLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is TicketLoaded) {
-            return Padding(
+            if (state.tickets.isEmpty) {
+              return Center(
+                child: Text(
+                  "No tickets booked yet",
+                  style: GoogleFonts.urbanist(color: Colors.white),
+                ),
+              );
+            }
+
+            return ListView.builder(
               padding: const EdgeInsets.all(16.0),
-              child: TicketWidget(),
+              itemCount: state.tickets.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 20.0),
+                  child: TicketWidget(ticket: state.tickets[index]),
+                );
+              },
             );
           } else if (state is TicketError) {
             return Center(
@@ -40,12 +55,7 @@ class BookingScreen extends StatelessWidget {
               ),
             );
           }
-          return Center(
-            child: Text(
-              "No bookings found",
-              style: GoogleFonts.urbanist(color: Colors.white),
-            ),
-          );
+          return const SizedBox.shrink();
         },
       ),
     );

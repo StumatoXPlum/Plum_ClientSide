@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:task2/presentation/bookmark_screen/view/bookmark_screen.dart';
 import '../presentation/booking/booking_screen.dart';
 import '../presentation/home_screen/home_screen/view/new_home_screen.dart';
@@ -50,76 +48,71 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       // selectedStartTime: widget.selectedStartTime,
       // selectedEndTime: widget.selectedEndTime,
       // ),
-      NewHomeScreen(
-        showSnackbar: widget.showSnackbar,
-        selectedDate: widget.selectedDate,
-        selectedStartTime: widget.selectedStartTime,
-        selectedEndTime: widget.selectedEndTime,
-      ),
+      NewHomeScreen(),
       BookmarkScreen(),
-        BookingScreen(),
+      BookingScreen(),
       MusicScreen(),
     ];
 
-    Future.delayed(Duration.zero, () {
-      if (widget.showSnackbar &&
-          _selectedIndex == 0 &&
-          widget.selectedDate != null &&
-          widget.selectedStartTime != null &&
-          widget.selectedEndTime != null) {
-        _showSnackbar();
-      }
-    });
-  }
+  //   Future.delayed(Duration.zero, () {
+  //     if (widget.showSnackbar &&
+  //         _selectedIndex == 0 &&
+  //         widget.selectedDate != null &&
+  //         widget.selectedStartTime != null &&
+  //         widget.selectedEndTime != null) {
+  //       _showSnackbar();
+  //     }
+  //   });
+  // }
 
-  void _showSnackbar() {
-    final String message = getFormattedDateTime(widget.selectedDate!);
-    final Size size = MediaQuery.of(context).size;
-    double fontSize = size.width * 0.04;
+  // void _showSnackbar() {
+  //   final String message = getFormattedDateTime(widget.selectedDate!);
+  //   final Size size = MediaQuery.of(context).size;
+  //   double fontSize = size.width * 0.04;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: const Color(0xff3579DD),
-        content: Row(
-          children: [
-            SvgPicture.asset(
-              "assets/home_assets/barcode.svg",
-              height: size.height * 0.03,
-            ),
-            SizedBox(width: size.width * 0.01),
-            Text(
-              message,
-              style: GoogleFonts.urbanist(
-                fontSize: fontSize * 0.8,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       backgroundColor: const Color(0xff3579DD),
+  //       content: Row(
+  //         children: [
+  //           SvgPicture.asset(
+  //             "assets/home_assets/barcode.svg",
+  //             height: size.height * 0.03,
+  //           ),
+  //           SizedBox(width: size.width * 0.01),
+  //           Text(
+  //             message,
+  //             style: GoogleFonts.urbanist(
+  //               fontSize: fontSize * 0.8,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //       behavior: SnackBarBehavior.floating,
+  //     ),
+  //   );
+  // }
 
-  String getFormattedDateTime(DateTime dateTime) {
-    String formattedTime = DateFormat("h:mm a").format(dateTime);
-    String dayWithSuffix = "${dateTime.day}${getDaySuffix(dateTime.day)}";
-    String formattedDate = DateFormat("MMM").format(dateTime);
-    return "You have a booking at $formattedTime $dayWithSuffix $formattedDate";
-  }
+  // String getFormattedDateTime(DateTime dateTime) {
+  //   String formattedTime = DateFormat("h:mm a").format(dateTime);
+  //   String dayWithSuffix = "${dateTime.day}${getDaySuffix(dateTime.day)}";
+  //   String formattedDate = DateFormat("MMM").format(dateTime);
+  //   return "You have a booking at $formattedTime $dayWithSuffix $formattedDate";
+  // }
 
-  String getDaySuffix(int day) {
-    if (day >= 11 && day <= 13) return "th";
-    switch (day % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
-    }
+  // String getDaySuffix(int day) {
+  //   if (day >= 11 && day <= 13) return "th";
+  //   switch (day % 10) {
+  //     case 1:
+  //       return "st";
+  //     case 2:
+  //       return "nd";
+  //     case 3:
+  //       return "rd";
+  //     default:
+  //       return "th";
+  //   }
   }
 
   void _onItemTapped(int index) {

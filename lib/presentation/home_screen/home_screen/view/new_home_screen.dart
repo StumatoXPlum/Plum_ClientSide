@@ -10,16 +10,16 @@ import '../../pick_location/pick_location_screen.dart';
 import '../model/event_model.dart';
 
 class NewHomeScreen extends StatefulWidget {
-  final bool showSnackbar;
-  final DateTime? selectedDate;
-  final String? selectedStartTime;
-  final String? selectedEndTime;
+  // final bool showSnackbar;
+  // final DateTime? selectedDate;
+  // final String? selectedStartTime;
+  // final String? selectedEndTime;
   const NewHomeScreen({
     super.key,
-    this.showSnackbar = false,
-    this.selectedDate,
-    this.selectedStartTime,
-    this.selectedEndTime,
+    // this.showSnackbar = false,
+    // this.selectedDate,
+    // this.selectedStartTime,
+    // this.selectedEndTime,
   });
 
   @override
@@ -70,8 +70,6 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                 ),
               ),
 
-              SizedBox(height: size.height * 0.02),
-              // TicketWidget(),
               SizedBox(height: size.height * 0.04),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: padding * 1.6),

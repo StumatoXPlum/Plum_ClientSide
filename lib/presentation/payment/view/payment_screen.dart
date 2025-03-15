@@ -157,7 +157,7 @@ class PaymentScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Center(
+                    child: Center( 
                       child: Text(
                         "Proceed Payment",
                         style: GoogleFonts.urbanist(

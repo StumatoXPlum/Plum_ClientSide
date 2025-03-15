@@ -4,6 +4,6 @@ class PaymentCubit extends Cubit<String?> {
   PaymentCubit() : super(null);
 
   void selectPaymentMethod(String method) {
-    emit(method);
+    emit(method); // keep track of payment meth
   }
 }
