@@ -57,7 +57,7 @@ class BottomNavScreenState extends State<BottomNavScreen> {
         selectedEndTime: widget.selectedEndTime,
       ),
       BookmarkScreen(),
-      BookingScreen(),
+        BookingScreen(),
       MusicScreen(),
     ];
 

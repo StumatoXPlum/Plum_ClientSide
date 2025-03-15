@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/presentation/bookmark_screen/cubit/bookmark_cubit.dart';
+import 'package:task2/presentation/ticket/cubit/ticket_cubit.dart';
 import 'core/bottom_navigation_bar.dart';
 import 'core/constants.dart';
 import 'firebase_options.dart';
@@ -34,10 +35,10 @@ void main() async {
         BlocProvider(create: (context) => CartCubit()),
         BlocProvider(create: (context) => AuthCubit()),
         BlocProvider(create: (context) => OrderHistoryCubit()),
-        BlocProvider(create: (context) => BookingCubit()),
         BlocProvider(create: (context) => CartButtonCubit()),
         BlocProvider(create: (context) => EarnedPointsCubit()),
         BlocProvider(create: (context) => BookmarkCubit()),
+        BlocProvider(create: (context) => TicketCubit()),
       ],
       child: const MyApp(),
     ),

@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../bookmark_screen/cubit/bookmark_cubit.dart';
 import 'event_list_screen.dart';
-import '../widgets/ticket_widget.dart';
 import '../../../profile/user_profile.dart';
 import '../../home_detail_screen/view/new_home_detail_screen.dart';
 import '../../pick_location/pick_location_screen.dart';
@@ -72,7 +71,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
               ),
 
               SizedBox(height: size.height * 0.02),
-              TicketWidget(),
+              // TicketWidget(),
               SizedBox(height: size.height * 0.04),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: padding * 1.6),

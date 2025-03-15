@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../bookmark_screen/view/booking_confirmation_screen.dart';
+import '../../../booking/booking_confirmation_screen.dart';
 import '../widgets/details_container.dart';
 import '../../home_screen/model/event_model.dart';
 

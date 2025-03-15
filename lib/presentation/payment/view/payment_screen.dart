@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/presentation/apple_pay_animation/apple_pay.dart';
-import 'package:task2/presentation/payment/cubit/payment_cubit.dart';
-import 'package:task2/presentation/wallet/wallet_screen.dart';
+import '../../apple_pay_animation/apple_pay.dart';
+import '../cubit/payment_cubit.dart';
+import '../../ticket/model/ticket_model.dart';
+import '../../wallet/wallet_screen.dart';
 
 class PaymentScreen extends StatelessWidget {
-  const PaymentScreen({super.key});
+  final TicketModel ticket;
+  const PaymentScreen({super.key, required this.ticket});
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +75,6 @@ class PaymentScreen extends StatelessWidget {
                               ),
                               child: SvgPicture.asset(
                                 "assets/payment_assets/wallet.svg",
-
                                 fit: BoxFit.scaleDown,
                               ),
                             ),
@@ -152,7 +153,7 @@ class PaymentScreen extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ApplePayScreen(),
+                          builder: (context) => ApplePayScreen(ticket: ticket),
                         ),
                       );
                     },
@@ -307,7 +308,10 @@ class PaymentSuccessDialog extends StatelessWidget {
             SizedBox(height: size.height * 0.02),
             Text(
               "Your order is confirmed and on its way. Get set to savor your chosen delights!",
-              style: GoogleFonts.urbanist(fontSize: fontSize * 0.7, color: Colors.white70),
+              style: GoogleFonts.urbanist(
+                fontSize: fontSize * 0.7,
+                color: Colors.white70,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: size.height * 0.02),

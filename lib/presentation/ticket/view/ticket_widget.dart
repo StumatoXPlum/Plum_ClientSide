@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../cubit/ticket_cubit.dart';
+import '../painter/ticket_painter.dart';
 
 class TicketView extends StatelessWidget {
   final String title;
@@ -77,10 +80,21 @@ class TicketView extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(height: size.height * 0.005),
+                    SizedBox(height: size.height * 0.003),
                     Expanded(
                       child: Text(
-                        "$date | $time",
+                        date,
+                        style: GoogleFonts.poppins(
+                          color: Colors.white70,
+                          fontSize: fontSize * 0.8,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        time,
                         style: GoogleFonts.poppins(
                           color: Colors.white70,
                           fontSize: fontSize * 0.8,
@@ -131,102 +145,6 @@ class TicketView extends StatelessWidget {
   }
 }
 
-class TicketPainter extends CustomPainter {
-  final Color color;
-
-  TicketPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint =
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.fill;
-
-    final double cornerRadius = size.height * 0.04;
-    final double notchRadius = size.height * 0.05;
-    final double leftSectionWidth = size.width * 0.20;
-    final double dotLineX = leftSectionWidth;
-
-    final Path path = Path();
-
-    path.moveTo(cornerRadius, 0);
-    path.lineTo(size.width - cornerRadius, 0);
-
-    path.arcToPoint(
-      Offset(size.width, cornerRadius),
-      radius: Radius.circular(cornerRadius),
-      clockwise: true,
-    );
-
-    path.lineTo(size.width, size.height - cornerRadius);
-
-    path.arcToPoint(
-      Offset(size.width - cornerRadius, size.height),
-      radius: Radius.circular(cornerRadius),
-      clockwise: true,
-    );
-
-    path.lineTo(cornerRadius, size.height);
-
-    path.arcToPoint(
-      Offset(0, size.height - cornerRadius),
-      radius: Radius.circular(cornerRadius),
-      clockwise: true,
-    );
-
-    path.lineTo(0, cornerRadius);
-
-    path.arcToPoint(
-      Offset(cornerRadius, 0),
-      radius: Radius.circular(cornerRadius),
-      clockwise: true,
-    );
-
-    path.close();
-
-    canvas.drawPath(path, paint);
-
-    final Paint dottedLinePaint =
-        Paint()
-          ..color = Colors.black
-          ..strokeWidth = 2
-          ..style = PaintingStyle.stroke;
-
-    const double dashHeight = 10;
-    const double dashSpace = 4;
-    double startY = notchRadius;
-
-    while (startY < size.height - notchRadius) {
-      canvas.drawLine(
-        Offset(dotLineX, startY),
-        Offset(dotLineX, startY + dashHeight),
-        dottedLinePaint,
-      );
-      startY += dashHeight + dashSpace;
-    }
-
-    final Paint clearPaint =
-        Paint()
-          ..color = Colors.black
-          ..style = PaintingStyle.fill
-          ..blendMode = BlendMode.clear;
-
-    canvas.drawCircle(Offset(dotLineX, 0), notchRadius * 1.5, clearPaint);
-
-    canvas.drawCircle(
-      Offset(dotLineX, size.height),
-      notchRadius * 1.5,
-      clearPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}
-
 class TicketWidget extends StatelessWidget {
   const TicketWidget({super.key});
 
@@ -234,36 +152,34 @@ class TicketWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
-    double fontSize = size.width * 0.05;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: padding * 1.6,
-            vertical: padding,
-          ),
-          child: Text(
-            "Your tickets",
-            style: GoogleFonts.urbanist(
+    return BlocBuilder<TicketCubit, TicketState>(
+      builder: (context, state) {
+        if (state is TicketLoaded) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                child: TicketView(
+                  title: state.ticket.id,
+                  date: state.ticket.date,
+                  time: state.ticket.time,
+                  location: state.ticket.location,
+                  ticketType: "${state.ticket.quantity} Tickets",
+                  sideText: state.ticket.id,
+                ),
+              ),
+            ],
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(
               color: Colors.white,
-              fontSize: fontSize * 1,
-              fontWeight: FontWeight.bold,
+              strokeCap: StrokeCap.round,
             ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-          child: TicketView(
-            title: "KV5 - YOGMUSIIC",
-            date: "February 22, 2025",
-            time: "07.00 PM",
-            location: "Romeo Lane, Dubai",
-            ticketType: "2 VIP Tickets",
-            sideText: "SOUNDS by AKS",
-          ),
-        ),
-      ],
+          );
+        }
+      },
     );
   }
 }

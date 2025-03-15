@@ -21,6 +21,19 @@ class EventModel {
     this.address,
   });
 
+  factory EventModel.empty() {
+    return EventModel(
+      title: "",
+      date: "",
+      time: "",
+      location: "",
+      address: null,
+      price: null,
+      imageUrl: "",
+      artist: "",
+    );
+  }
+
   factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(
       title: json['title'] ?? '',

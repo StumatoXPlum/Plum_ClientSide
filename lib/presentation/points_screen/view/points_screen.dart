@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:task2/core/bottom_navigation_bar.dart';
-import 'package:task2/presentation/cart/cubit/cart_cubit.dart';
-import 'package:task2/presentation/home_screen/home_detail_screen/cubit/booking_cubit.dart';
-import 'package:task2/presentation/points_screen/cubit/earned_points_cubit.dart';
-import 'package:task2/presentation/receipt/receipt_screen.dart';
+import '../../../core/bottom_navigation_bar.dart';
+import '../../ticket/cubit/ticket_cubit.dart';
+import '../../ticket/model/ticket_model.dart';
+import '../cubit/earned_points_cubit.dart';
 
 class PointsScreen extends StatelessWidget {
-  const PointsScreen({super.key});
+  final TicketModel ticket;
+  const PointsScreen({super.key, required this.ticket});
 
   @override
   Widget build(BuildContext context) {
@@ -42,28 +42,14 @@ class PointsScreen extends StatelessWidget {
             ),
             Spacer(),
             BottomButtons(
-              label: "View Receipt",
-              color: const Color(0xff3579DD),
-              textColor: Colors.white,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ReceiptScreen()),
-                );
-              },
-            ),
-            SizedBox(height: size.height * 0.03),
-            BottomButtons(
               label: "Back to Home",
               color: Color(0xff162130),
               textColor: const Color(0xff3579DD),
               onTap: () {
-                final bookingCubit = context.read<BookingCubit>();
-                final selectedDate = bookingCubit.state.selectedDate;
-                final selectedStartTime = bookingCubit.state.selectedStartTime;
-                final selectedEndTime = bookingCubit.state.selectedEndTime;
                 context.read<EarnedPointsCubit>().incrementPoints();
-                context.read<CartCubit>().clearCart(context);
+                context.read<TicketCubit>().setTicket(
+                  ticket,
+                ); 
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
@@ -71,9 +57,6 @@ class PointsScreen extends StatelessWidget {
                         (context) => BottomNavScreen(
                           initialIndex: 0,
                           showSnackbar: true,
-                          selectedDate: selectedDate,
-                          selectedStartTime: selectedStartTime.toString(),
-                          selectedEndTime: selectedEndTime.toString(),
                         ),
                   ),
                   (route) => false,

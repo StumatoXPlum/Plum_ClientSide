@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/presentation/home_screen/home_screen/model/event_model.dart';
-import '../../payment/view/payment_screen.dart';
+import '../home_screen/home_screen/model/event_model.dart';
+import '../ticket/cubit/ticket_cubit.dart';
+import '../ticket/model/ticket_model.dart';
+import '../payment/view/payment_screen.dart';
 
 class BookingConfirmationScreen extends StatefulWidget {
   final EventModel event;
@@ -300,9 +303,20 @@ class BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                   ),
                 ),
                 onPressed: () {
+                  final ticket = TicketModel(
+                    title: widget.event.title,
+                    date: widget.event.date,
+                    time: widget.event.time ?? "TBA",
+                    location: widget.event.location,
+                    quantity: ticketCount,
+                    id: widget.event.title,
+                  );
+                  context.read<TicketCubit>().setTicket(ticket);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => PaymentScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => PaymentScreen(ticket: ticket),
+                    ),
                   );
                 },
                 child: Text(
