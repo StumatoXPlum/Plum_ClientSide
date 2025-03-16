@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'presentation/bookmark_screen/cubit/bookmark_cubit.dart';
+import 'presentation/ticket/cubit/ticket_cubit.dart';
 import 'core/bottom_navigation_bar.dart';
 import 'core/constants.dart';
 import 'firebase_options.dart';
 import 'presentation/authentication_screens/sign_up_screen/cubit/auth_cubit.dart';
 import 'presentation/authentication_screens/sign_up_screen/view/sign_up_screen.dart';
-import 'presentation/bookmark_screen/cubit/bookmark_cubit.dart';
 import 'presentation/points_screen/cubit/earned_points_cubit.dart';
-import 'presentation/ticket/cubit/ticket_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
