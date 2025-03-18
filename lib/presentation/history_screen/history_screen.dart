@@ -167,7 +167,7 @@
 //                                   onTap: () {
 //                                     Navigator.push(
 //                                       context,
-//                                       MaterialPageRoute(
+//                                       CupertinoPageRoute(
 //                                         builder: (context) => ReceiptScreen(),
 //                                       ),
 //                                     );

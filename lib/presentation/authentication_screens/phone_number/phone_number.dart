@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -51,7 +52,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
   void _pickCountry() async {
     final chosenCountry = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const ChooseCountryScreen()),
+      CupertinoPageRoute(builder: (context) => const ChooseCountryScreen()),
     );
 
     if (chosenCountry != null && chosenCountry is Country) {
@@ -107,7 +108,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
       bool success = await TwilioVerifyService().sendOtp(phoneNumber);
       Navigator.push(
         context,
-        MaterialPageRoute(
+        CupertinoPageRoute(
           builder:
               (context) => PhoneVerification(
                 phoneNumber: phoneNumber,

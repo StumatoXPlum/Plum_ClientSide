@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -47,7 +48,7 @@ class PointsScreen extends StatelessWidget {
                 context.read<EarnedPointsCubit>().incrementPoints();
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => BottomNavScreen(initialIndex: 0),
                   ),
                   (route) => false,

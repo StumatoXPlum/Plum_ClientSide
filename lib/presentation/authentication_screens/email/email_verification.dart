@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -111,12 +112,12 @@ class _EmailVerificationState extends State<EmailVerification> {
         if (widget.isExistingUser) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => BottomNavScreen()),
+            CupertinoPageRoute(builder: (context) => BottomNavScreen()),
           );
         } else {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => EnterNameScreen()),
+            CupertinoPageRoute(builder: (context) => EnterNameScreen()),
           );
         }
       } else {

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -77,7 +78,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         }, SetOptions(merge: true));
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DateOfBirth()),
+          CupertinoPageRoute(builder: (context) => DateOfBirth()),
         );
       } catch (e) {
         print("Error: $e");
@@ -101,7 +102,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         await _storePhoneNumber(widget.phoneNumber);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => DateOfBirth()),
+          CupertinoPageRoute(builder: (context) => DateOfBirth()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -86,7 +86,7 @@
 //                           onTap: () {
 //                             Navigator.push(
 //                               context,
-//                               MaterialPageRoute(
+//                               CupertinoPageRoute(
 //                                 builder:
 //                                     (context) => HomeDetailScreen(
 //                                       item: shuffledItems[index],

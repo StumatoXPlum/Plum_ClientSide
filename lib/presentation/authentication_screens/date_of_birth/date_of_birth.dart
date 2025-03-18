@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -192,7 +193,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => BottomNavScreen()),
+        CupertinoPageRoute(builder: (context) => BottomNavScreen()),
       );
     }
   }
@@ -288,7 +289,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(
+                        CupertinoPageRoute(
                           builder: (context) => BottomNavScreen(),
                         ),
                       );

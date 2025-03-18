@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -114,7 +115,7 @@ class UserProfileState extends State<UserProfile> {
     if (mounted) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => SignUpScreen()),
+        CupertinoPageRoute(builder: (context) => SignUpScreen()),
         (route) => false,
       );
     }
@@ -123,7 +124,9 @@ class UserProfileState extends State<UserProfile> {
   Future<void> navigateToDateOfBirthScreen() async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => DateOfBirth(isFromProfile: true)),
+      CupertinoPageRoute(
+        builder: (context) => DateOfBirth(isFromProfile: true),
+      ),
     );
     fetchUserData();
   }

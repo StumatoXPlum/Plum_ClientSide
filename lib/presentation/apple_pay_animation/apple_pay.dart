@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:task2/presentation/ticket/model/ticket_model.dart';
@@ -6,7 +7,7 @@ import '../points_screen/view/points_screen.dart';
 
 class ApplePayScreen extends StatefulWidget {
   final TicketModel ticket;
-  const ApplePayScreen({super.key,required this.ticket});
+  const ApplePayScreen({super.key, required this.ticket});
 
   @override
   ApplePayScreenState createState() => ApplePayScreenState();
@@ -28,7 +29,9 @@ class ApplePayScreenState extends State<ApplePayScreen> {
         Navigator.pop(context);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PointsScreen(ticket: widget.ticket,)),
+          CupertinoPageRoute(
+            builder: (context) => PointsScreen(ticket: widget.ticket),
+          ),
         );
       });
     });

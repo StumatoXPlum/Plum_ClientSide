@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabse;
@@ -56,25 +56,25 @@ class AuthService {
             userData['phoneNumber'] == "") {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => PhoneNumber()),
+            CupertinoPageRoute(builder: (context) => PhoneNumber()),
           );
         } else if (!userData.containsKey('dateOfBirth') ||
             userData['dateOfBirth'] == "") {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => EnterNameScreen()),
+            CupertinoPageRoute(builder: (context) => EnterNameScreen()),
           );
         } else {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => BottomNavScreen()),
+            CupertinoPageRoute(builder: (context) => BottomNavScreen()),
           );
         }
       } else {
         await _saveUserToDatabase(user);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => PhoneNumber()),
+          CupertinoPageRoute(builder: (context) => PhoneNumber()),
         );
       }
       return user;

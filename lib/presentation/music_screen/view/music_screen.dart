@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/music_screen/model/music_model.dart';
@@ -105,7 +106,7 @@ class MusicScreen extends StatelessWidget {
                           onTap: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
+                              CupertinoPageRoute(
                                 builder:
                                     (context) =>
                                         PlaylistScreen(playlist: playlist),

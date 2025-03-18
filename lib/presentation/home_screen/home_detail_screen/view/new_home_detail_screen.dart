@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/core/custom_button.dart';
@@ -193,7 +194,7 @@ class NewHomeDetailScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder:
                         (context) => BookingConfirmationScreen(event: event),
                   ),

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
@@ -59,7 +60,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const PhoneNumber()),
+        CupertinoPageRoute(builder: (context) => const PhoneNumber()),
       );
     } catch (e) {
       ScaffoldMessenger.of(

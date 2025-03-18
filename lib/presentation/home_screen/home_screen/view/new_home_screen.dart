@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -59,7 +60,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
+                          CupertinoPageRoute(
                             builder: (context) => UserProfile(),
                           ),
                         );
@@ -77,7 +78,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                   onTap: () async {
                     final selectedLocation = await Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      CupertinoPageRoute(
                         builder: (context) => PickLocationScreen(),
                       ),
                     );
@@ -207,7 +208,7 @@ class _EventWidgetState extends State<EventWidget> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
+                    CupertinoPageRoute(
                       builder:
                           (context) => EventListScreen(
                             events: popularEvents,
@@ -255,7 +256,7 @@ class _EventWidgetState extends State<EventWidget> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      CupertinoPageRoute(
                         builder: (context) => NewHomeDetailScreen(event: event),
                       ),
                     );
@@ -417,7 +418,7 @@ class _NearEventsWidgetState extends State<NearEventsWidget> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
+                    CupertinoPageRoute(
                       builder:
                           (context) => EventListScreen(
                             events: nearEvents,
@@ -454,7 +455,7 @@ class _NearEventsWidgetState extends State<NearEventsWidget> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
+                    CupertinoPageRoute(
                       builder: (context) => NewHomeDetailScreen(event: event),
                     ),
                   );

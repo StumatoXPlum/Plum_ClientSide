@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../home_detail_screen/view/new_home_detail_screen.dart';
@@ -36,7 +37,7 @@ class EventListScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => NewHomeDetailScreen(event: event),
                   ),
                 );

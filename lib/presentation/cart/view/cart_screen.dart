@@ -239,7 +239,7 @@
 //                       orderHistoryCubit.addOrder(cartCubit.state);
 //                       Navigator.pushReplacement(
 //                         context,
-//                         MaterialPageRoute(
+//                         CupertinoPageRoute(
 //                           builder: (context) => PaymentScreen(),
 //                         ),
 //                       );

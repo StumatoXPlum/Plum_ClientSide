@@ -120,7 +120,7 @@
 //                             onTap: () {
 //                               Navigator.push(
 //                                 context,
-//                                 MaterialPageRoute(
+//                                 CupertinoPageRoute(
 //                                   builder:
 //                                       (context) => const ShoppingCartScreen(),
 //                                 ),
@@ -136,7 +136,7 @@
 //                             onTap: () {
 //                               Navigator.push(
 //                                 context,
-//                                 MaterialPageRoute(
+//                                 CupertinoPageRoute(
 //                                   builder: (context) => UserProfile(),
 //                                 ),
 //                               );
@@ -246,7 +246,7 @@
 //                 onTap: () async {
 //                   final selectedLocation = await Navigator.push(
 //                     context,
-//                     MaterialPageRoute(
+//                     CupertinoPageRoute(
 //                       builder: (context) => PickLocationScreen(),
 //                     ),
 //                   );
@@ -451,7 +451,7 @@
 //                 onTap: () {
 //                   Navigator.push(
 //                     context,
-//                     MaterialPageRoute(
+//                     CupertinoPageRoute(
 //                       builder: (context) => RecommendationScreen(items: items),
 //                     ),
 //                   );
@@ -495,7 +495,7 @@
 //                   onTap: () {
 //                     Navigator.push(
 //                       context,
-//                       MaterialPageRoute(
+//                       CupertinoPageRoute(
 //                         builder: (context) => HomeDetailScreen(item: item),
 //                       ),
 //                     );

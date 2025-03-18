@@ -128,7 +128,7 @@
 //                     onTap: () {
 //                       Navigator.push(
 //                         context,
-//                         MaterialPageRoute(
+//                         CupertinoPageRoute(
 //                           builder: (context) => const ShoppingCartScreen(),
 //                         ),
 //                       );
@@ -429,7 +429,7 @@
 //             }
 //             Navigator.push(
 //               context,
-//               MaterialPageRoute(builder: (context) => ShoppingCartScreen()),
+//               CupertinoPageRoute(builder: (context) => ShoppingCartScreen()),
 //             );
 //           },
 //         ),

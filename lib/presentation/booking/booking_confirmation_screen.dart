@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -307,7 +308,7 @@ class BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 context.read<TicketCubit>().setTicket(ticket);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => PaymentScreen(ticket: ticket),
                   ),
                 );
