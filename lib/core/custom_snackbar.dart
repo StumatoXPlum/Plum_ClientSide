@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CustomSnackbar extends StatelessWidget {
   final String message;
   final Color color;
 
-  const CustomSnackbar({
-    super.key,
-    required this.message,
-    required this.color,
-  });
+  const CustomSnackbar({super.key, required this.message, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +23,10 @@ class CustomSnackbar extends StatelessWidget {
             ),
             child: Text(
               message,
-              style: const TextStyle(
+              style: GoogleFonts.urbanist(
                 color: Colors.white,
                 fontSize: 16,
-                fontFamily: 'Switzer',
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),

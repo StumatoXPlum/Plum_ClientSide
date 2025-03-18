@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/core/custom_button.dart';
 import '../home_screen/home_screen/model/event_model.dart';
 import '../ticket/cubit/ticket_cubit.dart';
 import '../ticket/model/ticket_model.dart';
@@ -291,45 +292,29 @@ class BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(padding),
-            child: SizedBox(
-              width: double.infinity,
-              height: size.height * 0.06,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff3579DD),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+            child: CustomButton(
+              buttonText: 'Proceed to Payment',
+              onTap: () {
+                final ticket = TicketModel(
+                  title: widget.event.title,
+                  date: widget.event.date,
+                  time: widget.event.time ?? "TBA",
+                  location: widget.event.location,
+                  quantity: ticketCount,
+                  id: widget.event.title,
+                );
+                context.read<TicketCubit>().setTicket(ticket);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PaymentScreen(ticket: ticket),
                   ),
-                ),
-                onPressed: () {
-                  final ticket = TicketModel(
-                    title: widget.event.title,
-                    date: widget.event.date,
-                    time: widget.event.time ?? "TBA",
-                    location: widget.event.location,
-                    quantity: ticketCount,
-                    id: widget.event.title,
-                  );
-                  context.read<TicketCubit>().setTicket(ticket);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PaymentScreen(ticket: ticket),
-                    ),
-                  );
-                },
-                child: Text(
-                  "Proceed to Payment",
-                  style: GoogleFonts.urbanist(
-                    color: Colors.white,
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+                );
+              },
             ),
           ),
+          SizedBox(height: size.height * 0.02),
         ],
       ),
     );

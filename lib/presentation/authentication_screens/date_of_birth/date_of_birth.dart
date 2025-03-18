@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:task2/core/custom_button.dart';
 import '../../../core/bottom_navigation_bar.dart';
 
 class DateOfBirth extends StatefulWidget {
@@ -166,6 +167,36 @@ class _DateOfBirthState extends State<DateOfBirth> {
   final GlobalKey dayKey = GlobalKey();
   final GlobalKey yearKey = GlobalKey();
 
+  void onTap() async {
+    if (!isDOBSelected) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Please select your Date of Birth.",
+            style: GoogleFonts.urbanist(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    String dob = "$selectedDay $selectedMonth $selectedYear";
+    await _storeDateOfBirth(dob);
+
+    if (widget.isFromProfile) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => BottomNavScreen()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -248,46 +279,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
               ),
 
               SizedBox(height: size.height * 0.08),
-              InkWell(
-                onTap: () async {
-                  if (!isDOBSelected) return;
-
-                  String dob = "$selectedDay $selectedMonth $selectedYear";
-                  await _storeDateOfBirth(dob);
-
-                  if (widget.isFromProfile) {
-                    Navigator.pop(context);
-                  } else {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BottomNavScreen(),
-                      ),
-                    );
-                  }
-                },
-
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(padding * 1.5),
-                  decoration: BoxDecoration(
-                    color:
-                        isDOBSelected
-                            ? const Color(0xff3579DD)
-                            : const Color(0xff4D4D4D),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Text(
-                    "Verify",
-                    style: GoogleFonts.urbanist(
-                      fontSize: fontSize,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
+              CustomButton(buttonText: "Verify", onTap: onTap),
               if (!widget.isFromProfile) ...[
                 SizedBox(height: size.height * 0.02),
                 Align(

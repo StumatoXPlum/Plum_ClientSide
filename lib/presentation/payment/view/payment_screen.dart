@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/core/custom_button.dart';
 import '../../apple_pay_animation/apple_pay.dart';
 import '../cubit/payment_cubit.dart';
 import '../../ticket/model/ticket_model.dart';
@@ -141,15 +142,9 @@ class PaymentScreen extends StatelessWidget {
                   SizedBox(height: size.height * 0.05),
                   Divider(color: Colors.grey, thickness: 0.1),
                   SizedBox(height: size.height * 0.01),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xff3579DD),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: padding * 1.2),
-                    ),
-                    onPressed: () {
+                  CustomButton(
+                    buttonText: "Proceed Payment",
+                    onTap: () {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
@@ -157,16 +152,8 @@ class PaymentScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Center( 
-                      child: Text(
-                        "Proceed Payment",
-                        style: GoogleFonts.urbanist(
-                          fontSize: fontSize,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
                   ),
+                  SizedBox(height: size.height * 0.05),
                 ],
               ),
             ),

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/core/custom_button.dart';
 import '../../../core/bottom_navigation_bar.dart';
 import '../name_screen/enter_name_screen.dart';
 
@@ -85,7 +86,16 @@ class _EmailVerificationState extends State<EmailVerification> {
     if (isVerifying) return;
     String otp = _otpController.text.trim();
     if (otp.isEmpty) {
-      showCustomSnackbar(context, "Enter OTP", Colors.green.shade600);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Please Enter OTP',
+            style: GoogleFonts.urbanist(fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
       return;
     }
 
@@ -264,43 +274,31 @@ class _EmailVerificationState extends State<EmailVerification> {
                 ),
               ),
               SizedBox(height: size.height * 0.04),
-              GestureDetector(
+              CustomButton(
+                buttonText: "Verify",
                 onTap: verifyOtp,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: isOtpEntered ? Color(0xff3579DD) : Color(0xff4D4D4D),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: padding,
-                      vertical: padding * 1.5,
-                    ),
-                    child: Center(
-                      child:
-                          isVerifying
-                              ? SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
-                                  ),
-                                  strokeWidth: 2.5,
-                                ),
-                              )
-                              : Text(
-                                "Verify",
-                                style: GoogleFonts.urbanist(
-                                  fontSize: fontSize * 0.9,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center,
+                child: Center(
+                  child:
+                      isVerifying
+                          ? SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
                               ),
-                    ),
-                  ),
+                              strokeWidth: 2.5,
+                            ),
+                          )
+                          : Text(
+                            "Verify",
+                            style: GoogleFonts.urbanist(
+                              fontSize: fontSize * 0.9,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                 ),
               ),
             ],

@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import '../../../core/custom_snackbar.dart';
+import 'package:task2/core/custom_button.dart';
 import '../date_of_birth/date_of_birth.dart';
 import 'phone_auth/phone_auth.dart';
 
@@ -35,13 +35,16 @@ class _PhoneVerificationState extends State<PhoneVerification> {
         isOtpEntered = otpController.text.isNotEmpty;
       });
     });
-
     if (widget.isMockOtp) {
       Future.delayed(Duration(milliseconds: 300), () {
-        showCustomSnackbar(
-          context,
-          "We're having some issues. Try this temporary OTP: 123456",
-          Colors.orange,
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "We're having some issue, Please try this OTP: 123456",
+            ),
+            backgroundColor: Colors.orange,
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       });
 
@@ -81,6 +84,36 @@ class _PhoneVerificationState extends State<PhoneVerification> {
       }
     } else {
       print("No user found!");
+    }
+  }
+
+  void onTap() async {
+    if (isOtpEntered && !isVerifying) {
+      setState(() {
+        isVerifying = true;
+      });
+      bool isValid = await TwilioVerifyService().verifyOtp(
+        widget.phoneNumber,
+        otpController.text,
+      );
+      if (isValid) {
+        print('OTP Verified');
+        await _storePhoneNumber(widget.phoneNumber);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DateOfBirth()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Invalid OTP'),
+            backgroundColor: Colors.red.shade600,
+          ),
+        );
+      }
+      setState(() {
+        isVerifying = false;
+      });
     }
   }
 
@@ -192,16 +225,20 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                               widget.phoneNumber,
                             );
                             if (success) {
-                              showCustomSnackbar(
-                                context,
-                                "New OTP has been sent",
-                                Colors.green.shade600,
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('New OTP has been sent'),
+                                  backgroundColor: Colors.green.shade600,
+                                ),
                               );
                             } else {
-                              showCustomSnackbar(
-                                context,
-                                "Failed to resend OTP try again!",
-                                Colors.red.shade600,
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Failed to resend OTP try again!',
+                                  ),
+                                  backgroundColor: Colors.red.shade600,
+                                ),
                               );
                             }
                           },
@@ -220,64 +257,30 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                 ),
               ),
               SizedBox(height: size.height * 0.04),
-              GestureDetector(
-                onTap: () async {
-                  if (isOtpEntered && !isVerifying) {
-                    setState(() {
-                      isVerifying = true;
-                    });
-                    bool isValid = await TwilioVerifyService().verifyOtp(
-                      widget.phoneNumber,
-                      otpController.text,
-                    );
-                    if (isValid) {
-                      print('OTP Verified');
-                      await _storePhoneNumber(widget.phoneNumber);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => DateOfBirth()),
-                      );
-                    } else {
-                      showCustomSnackbar(
-                        context,
-                        "Invalid OTP, Please try again!",
-                        Colors.red.shade600,
-                      );
-                    }
-                    setState(() {
-                      isVerifying = false;
-                    });
-                  }
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(padding * 1.5),
-                  decoration: BoxDecoration(
-                    color: isOtpEntered ? Color(0xff3579DD) : Color(0xff4D4D4D),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child:
-                      isVerifying
-                          ? const Center(
-                            child: SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            ),
-                          )
-                          : Text(
-                            "Verify",
-                            style: GoogleFonts.urbanist(
-                              fontSize: fontSize,
+              CustomButton(
+                buttonText: "Verify",
+                onTap: onTap,
+                child:
+                    isVerifying
+                        ? const Center(
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                              strokeWidth: 2,
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                ),
+                        )
+                        : Text(
+                          "Verify",
+                          style: GoogleFonts.urbanist(
+                            fontSize: fontSize,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
               ),
             ],
           ),

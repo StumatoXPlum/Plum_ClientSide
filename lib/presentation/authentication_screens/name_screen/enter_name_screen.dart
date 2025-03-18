@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:task2/core/custom_button.dart';
 import '../phone_number/phone_number.dart';
 import '../sign_up_screen/auth_service/auth_service.dart';
 
@@ -42,13 +43,12 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
       if (firebaseUser == null && supabaseUser == null) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Sign in first')));
+        ).showSnackBar(const SnackBar(content: Text('Sign in first')));
         return;
       }
 
       String uid = firebaseUser?.uid ?? supabaseUser!.id;
       String email = firebaseUser?.email ?? supabaseUser!.email ?? "";
-
       String avatarUrl = AuthService.getRandomAvatarUrl(uid);
 
       await FirebaseFirestore.instance.collection('users').doc(uid).set({
@@ -59,7 +59,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => PhoneNumber()),
+        MaterialPageRoute(builder: (context) => const PhoneNumber()),
       );
     } catch (e) {
       ScaffoldMessenger.of(
@@ -123,52 +123,20 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
                   fillColor: Colors.transparent,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Color(0xff3579DD)),
+                    borderSide: const BorderSide(color: Color(0xff3579DD)),
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Color(0xff3579DD)),
                   ),
                 ),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
                 cursorColor: Colors.white,
               ),
               SizedBox(height: size.height * 0.04),
-              GestureDetector(
-                onTap: isNameEntered && !isLoading ? saveUserToFirestore : null,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color:
-                        isNameEntered ? Color(0xff3579DD) : Color(0xff4D4D4D),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: padding,
-                      vertical: padding * 1.5,
-                    ),
-                    child:
-                        isLoading
-                            ? Center(
-                              child: SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            )
-                            : Text(
-                              "Continue",
-                              style: GoogleFonts.urbanist(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                  ),
-                ),
+              CustomButton(
+                buttonText: "Continue",
+                onTap:
+                    isNameEntered && !isLoading ? saveUserToFirestore : () {},
               ),
             ],
           ),

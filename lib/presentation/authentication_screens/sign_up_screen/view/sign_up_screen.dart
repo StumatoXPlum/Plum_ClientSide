@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:neopop/widgets/buttons/neopop_button/neopop_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/bottom_navigation_bar.dart';
 import '../../../../core/custom_snackbar.dart';
@@ -257,6 +258,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _buildEmailInput(Size size) {
+    final Size size = MediaQuery.of(context).size;
+    double padding = size.width * 0.03;
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       child: Column(
@@ -303,8 +306,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ).hasMatch(email)) {
                 showCustomSnackbar(
                   context,
-                  "Enter a valid email",
-                  Colors.green.shade600,
+                  "Please Enter a valid email!",
+                  Colors.red.shade600,
                 );
                 return;
               }
@@ -346,39 +349,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
               setState(() => isContinuing = false);
             },
-
-            child: Container(
+            child: SizedBox(
               width: double.infinity,
-              decoration: BoxDecoration(
+              child: NeoPopButton(
+                disabledColor: Color(0xff3579DD),
                 color: Color(0xff3579DD),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.03,
-                vertical: MediaQuery.of(context).size.width * 0.03,
-              ),
-              child: Center(
-                child:
-                    isContinuing
-                        ? SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: padding),
+                  child:
+                      isContinuing
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                  strokeWidth: 2.5,
+                                ),
+                              ),
+                            ],
+                          )
+                          : Text(
+                            "Continue",
+                            style: GoogleFonts.urbanist(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
-                            strokeWidth: 2.5,
+                            textAlign: TextAlign.center,
                           ),
-                        )
-                        : Text(
-                          "Continue",
-                          style: GoogleFonts.urbanist(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                ),
               ),
             ),
           ),
@@ -416,29 +420,23 @@ class SignInButton extends StatelessWidget {
     double padding = size.width * 0.03;
     double iconSize = size.width * 0.05;
     double fontSize = size.width * 0.04;
-    return GestureDetector(
-      onTap: onTap,
+
+    return NeoPopButton(
+      onTapUp: onTap,
+      color: Colors.white,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: padding,
-          horizontal: padding * 2,
-        ),
-        width: size.width * 0.8,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(size.width * 0.015),
-        ),
+        padding: EdgeInsets.symmetric(vertical: padding),
         child:
             isLoading
-                ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
+                ? SizedBox(
+                  height: iconSize,
+                  child: Center(
+                    child: SizedBox(
                       height: iconSize,
                       width: iconSize,
                       child: const CircularProgressIndicator(strokeWidth: 2),
                     ),
-                  ],
+                  ),
                 )
                 : Row(
                   mainAxisAlignment: MainAxisAlignment.center,

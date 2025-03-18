@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:task2/core/custom_button.dart';
 import 'package:task2/presentation/points_screen/cubit/earned_points_cubit.dart';
 import '../authentication_screens/date_of_birth/date_of_birth.dart';
 import '../authentication_screens/sign_up_screen/auth_service/auth_service.dart';
@@ -276,28 +277,7 @@ class UserProfileState extends State<UserProfile> {
                   onTap: navigateToDateOfBirthScreen,
                 ),
                 SizedBox(height: size.height * 0.04),
-                GestureDetector(
-                  onTap: _signOut,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: padding * 1.5),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border: Border.all(color: Color(0xff3579DD)),
-                      borderRadius: BorderRadius.circular(42),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Log Out",
-                        style: GoogleFonts.urbanist(
-                          fontSize: fontSize,
-                          color: Color(0xff3579DD),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                CustomButton(buttonText: "Log Out", onTap: _signOut),
               ],
             ),
           ),

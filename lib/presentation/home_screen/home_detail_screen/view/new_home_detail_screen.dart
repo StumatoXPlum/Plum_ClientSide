@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/core/custom_button.dart';
 import '../../../booking/booking_confirmation_screen.dart';
 import '../widgets/details_container.dart';
 import '../../home_screen/model/event_model.dart';
@@ -184,39 +185,20 @@ class NewHomeDetailScreen extends StatelessWidget {
             ),
           ),
           Divider(color: Colors.white54, thickness: 0.5),
+          SizedBox(height: size.height * 0.01),
           Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: padding,
-              vertical: padding * 1.2,
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              height: size.height * 0.06,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xff3579DD),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+            padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+            child: CustomButton(
+              buttonText: "Book Event",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => BookingConfirmationScreen(event: event),
                   ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => BookingConfirmationScreen(event: event),
-                    ),
-                  );
-                },
-                child: Text(
-                  "Book Event",
-                  style: GoogleFonts.urbanist(
-                    color: Colors.white,
-                    fontSize: fontSize * 1,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+                );
+              },
             ),
           ),
           SizedBox(height: size.height * 0.02),

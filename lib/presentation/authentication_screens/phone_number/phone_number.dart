@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:task2/core/custom_button.dart';
 import 'country_picker.dart';
 import 'phone_auth/phone_auth.dart';
 import 'phone_verification.dart';
@@ -91,6 +92,33 @@ class _PhoneNumberState extends State<PhoneNumber> {
           });
         }
       }
+    }
+  }
+
+  void verifyNumber() async {
+    if (isPhoneEnter && !isLoading) {
+      setState(() {
+        isLoading = true;
+      });
+
+      String phoneNumber =
+          "+${selectedCountry.phoneCode}${phoneController.text}";
+
+      bool success = await TwilioVerifyService().sendOtp(phoneNumber);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => PhoneVerification(
+                phoneNumber: phoneNumber,
+                isMockOtp: !success,
+              ),
+        ),
+      );
+
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -201,68 +229,30 @@ class _PhoneNumberState extends State<PhoneNumber> {
               ],
             ),
             SizedBox(height: size.height * 0.07),
-            GestureDetector(
-              onTap: () async {
-                if (isPhoneEnter && !isLoading) {
-                  setState(() {
-                    isLoading = true;
-                  });
-
-                  String phoneNumber =
-                      "+${selectedCountry.phoneCode}${phoneController.text}";
-
-                  bool success = await TwilioVerifyService().sendOtp(
-                    phoneNumber,
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => PhoneVerification(
-                            phoneNumber: phoneNumber,
-                            isMockOtp: !success,
-                          ),
-                    ),
-                  );
-
-                  setState(() {
-                    isLoading = false;
-                  });
-                }
-              },
-
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(padding * 1.5),
-                decoration: BoxDecoration(
-                  color:
-                      isPhoneEnter
-                          ? const Color(0xff3579DD)
-                          : Color(0xff4D4D4D),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child:
-                    isLoading
-                        ? const Center(
-                          child: SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                        )
-                        : Text(
-                          "Send OTP",
-                          style: GoogleFonts.urbanist(
-                            fontSize: fontSize,
+            CustomButton(
+              onTap: verifyNumber,
+              buttonText: "Verify",
+              child:
+                  isLoading
+                      ? const Center(
+                        child: SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                            strokeWidth: 2,
                           ),
-                          textAlign: TextAlign.center,
                         ),
-              ),
+                      )
+                      : Text(
+                        "Send OTP",
+                        style: GoogleFonts.urbanist(
+                          fontSize: fontSize,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
             ),
           ],
         ),

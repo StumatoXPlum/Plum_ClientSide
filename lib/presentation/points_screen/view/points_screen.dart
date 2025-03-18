@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:task2/core/custom_button.dart';
 import '../../../core/bottom_navigation_bar.dart';
 import '../../ticket/model/ticket_model.dart';
 import '../cubit/earned_points_cubit.dart';
@@ -40,10 +41,8 @@ class PointsScreen extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             Spacer(),
-            BottomButtons(
-              label: "Back to Home",
-              color: Color(0xff162130),
-              textColor: const Color(0xff3579DD),
+            CustomButton(
+              buttonText: "Back to Home",
               onTap: () {
                 context.read<EarnedPointsCubit>().incrementPoints();
                 Navigator.pushAndRemoveUntil(
@@ -63,44 +62,44 @@ class PointsScreen extends StatelessWidget {
   }
 }
 
-class BottomButtons extends StatelessWidget {
-  final String label;
-  final Color color;
-  final Color textColor;
-  final VoidCallback? onTap;
-  const BottomButtons({
-    super.key,
-    required this.label,
-    required this.color,
-    required this.textColor,
-    this.onTap,
-  });
+// class BottomButtons extends StatelessWidget {
+//   final String label;
+//   final Color color;
+//   final Color textColor;
+//   final VoidCallback? onTap;
+//   const BottomButtons({
+//     super.key,
+//     required this.label,
+//     required this.color,
+//     required this.textColor,
+//     this.onTap,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-    double padding = size.width * 0.03;
-    double fontSize = size.width * 0.05;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: padding * 1.5),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(34),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: GoogleFonts.urbanist(
-              color: textColor,
-              fontSize: fontSize * 0.9,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     final Size size = MediaQuery.of(context).size;
+//     double padding = size.width * 0.03;
+//     double fontSize = size.width * 0.05;
+//     return GestureDetector(
+//       onTap: onTap,
+//       child: Container(
+//         padding: EdgeInsets.symmetric(vertical: padding * 1.5),
+//         width: double.infinity,
+//         decoration: BoxDecoration(
+//           color: color,
+//           borderRadius: BorderRadius.circular(34),
+//         ),
+//         child: Center(
+//           child: Text(
+//             label,
+//             style: GoogleFonts.urbanist(
+//               color: textColor,
+//               fontSize: fontSize * 0.9,
+//               fontWeight: FontWeight.w500,
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
