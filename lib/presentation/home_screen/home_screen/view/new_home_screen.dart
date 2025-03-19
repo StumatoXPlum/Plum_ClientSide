@@ -11,25 +11,35 @@ import '../../pick_location/pick_location_screen.dart';
 import '../model/event_model.dart';
 
 class NewHomeScreen extends StatefulWidget {
-  // final bool showSnackbar;
-  // final DateTime? selectedDate;
-  // final String? selectedStartTime;
-  // final String? selectedEndTime;
-  const NewHomeScreen({
-    super.key,
-    // this.showSnackbar = false,
-    // this.selectedDate,
-    // this.selectedStartTime,
-    // this.selectedEndTime,
-  });
+  const NewHomeScreen({super.key});
 
   @override
   State<NewHomeScreen> createState() => _NewHomeScreenState();
 }
 
-class _NewHomeScreenState extends State<NewHomeScreen> {
+class _NewHomeScreenState extends State<NewHomeScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+  late Animation<double> opacity;
+  late Animation<Offset> slideAnimation;
   final String _locationText = "Tap to set location";
   String? _yourLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 800),
+    );
+    opacity = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
+    slideAnimation = Tween<Offset>(
+      begin: Offset(0, -1),
+      end: Offset(0, 0),
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
+    controller.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -43,31 +53,34 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-                child: Row(
-                  children: [
-                    Text(
-                      'Find \nTrending Events',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: fontSize * 1.4,
-                        fontWeight: FontWeight.w500,
+                child: SlideTransition(
+                  position: slideAnimation,
+                  child: Row(
+                    children: [
+                      Text(
+                        'Find \nTrending Events',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: fontSize * 1.4,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    Spacer(),
-                    SvgPicture.asset('assets/home_assets/bell.svg'),
-                    SizedBox(width: padding),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => UserProfile(),
-                          ),
-                        );
-                      },
-                      child: SvgPicture.asset('assets/home_assets/user.svg'),
-                    ),
-                  ],
+                      Spacer(),
+                      SvgPicture.asset('assets/home_assets/bell.svg'),
+                      SizedBox(width: padding),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) => UserProfile(),
+                            ),
+                          );
+                        },
+                        child: SvgPicture.asset('assets/home_assets/user.svg'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
@@ -90,67 +103,70 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                       });
                     }
                   },
-                  child: Container(
-                    padding: EdgeInsets.all(padding),
-                    decoration: BoxDecoration(
-                      color: Color(0xff161C25),
-                      borderRadius: BorderRadius.circular(42),
-                      border: Border.all(color: Color(0xff202938)),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(padding),
-                          decoration: BoxDecoration(
-                            color: Color(0xff2D3748),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Color(0xff202938),
-                              width: 2,
+                  child: FadeTransition(
+                    opacity: opacity,
+                    child: Container(
+                      padding: EdgeInsets.all(padding),
+                      decoration: BoxDecoration(
+                        color: Color(0xff161C25),
+                        borderRadius: BorderRadius.circular(42),
+                        border: Border.all(color: Color(0xff202938)),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(padding),
+                            decoration: BoxDecoration(
+                              color: Color(0xff2D3748),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Color(0xff202938),
+                                width: 2,
+                              ),
+                            ),
+                            child: SvgPicture.asset(
+                              "assets/home_assets/pin.svg",
+                              fit: BoxFit.scaleDown,
                             ),
                           ),
-                          child: SvgPicture.asset(
-                            "assets/home_assets/pin.svg",
-                            fit: BoxFit.scaleDown,
-                          ),
-                        ),
-                        SizedBox(width: size.width * 0.03),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Your Location",
-                                style: GoogleFonts.urbanist(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: fontSize * 0.9,
+                          SizedBox(width: size.width * 0.03),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Your Location",
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: fontSize * 0.9,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: size.height * 0.001),
-                              Text(
-                                _yourLocation ?? _locationText,
-                                style: GoogleFonts.urbanist(
-                                  color: Colors.white60,
+                                SizedBox(height: size.height * 0.001),
+                                Text(
+                                  _yourLocation ?? _locationText,
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.white60,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 15),
-                            child: Icon(
-                              Icons.arrow_forward_ios,
-                              color: Color(0xff3579DD),
-                              size: 16,
+                              ],
                             ),
                           ),
-                        ),
-                      ],
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 15),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: Color(0xff3579DD),
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -393,7 +409,34 @@ class NearEventsWidget extends StatefulWidget {
   State<NearEventsWidget> createState() => _NearEventsWidgetState();
 }
 
-class _NearEventsWidgetState extends State<NearEventsWidget> {
+class _NearEventsWidgetState extends State<NearEventsWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController listController;
+  late List<Animation<Offset>> itemAnimations = [];
+
+  @override
+  void initState() {
+    super.initState();
+    listController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    itemAnimations = List.generate(
+      nearEvents.length,
+      (index) => Tween(begin: Offset(0, 1), end: Offset.zero).animate(
+        CurvedAnimation(
+          parent: listController,
+          curve: Interval(
+            index * (1 / nearEvents.length),
+            1,
+            curve: Curves.easeIn,
+          ),
+        ),
+      ),
+    );
+    listController.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -460,79 +503,82 @@ class _NearEventsWidgetState extends State<NearEventsWidget> {
                     ),
                   );
                 },
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: padding * 0.4,
-                    horizontal: padding * 0.4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Color(0xff042455),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: Image.asset(
-                          event.imageUrl,
-                          width: size.width * 0.2,
-                          height: size.height * 0.09,
-                          fit: BoxFit.cover,
+                child: SlideTransition(
+                  position: itemAnimations[index],
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: padding * 0.4,
+                      horizontal: padding * 0.4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xff042455),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: Image.asset(
+                            event.imageUrl,
+                            width: size.width * 0.2,
+                            height: size.height * 0.09,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: size.width * 0.03),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  '${event.title}: ',
-                                  style: GoogleFonts.urbanist(
-                                    color: Colors.white,
-                                    fontSize: fontSize * 0.9,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    event.artist,
+                        SizedBox(width: size.width * 0.03),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    '${event.title}: ',
                                     style: GoogleFonts.urbanist(
                                       color: Colors.white,
                                       fontSize: fontSize * 0.9,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
                                   ),
+                                  Expanded(
+                                    child: Text(
+                                      event.artist,
+                                      style: GoogleFonts.urbanist(
+                                        color: Colors.white,
+                                        fontSize: fontSize * 0.9,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: size.height * 0.01),
+                              Text(
+                                event.date,
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white70,
+                                  fontSize: fontSize * 0.7,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ],
-                            ),
-                            SizedBox(height: size.height * 0.01),
-                            Text(
-                              event.date,
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white70,
-                                fontSize: fontSize * 0.7,
-                                fontWeight: FontWeight.bold,
                               ),
-                            ),
-                            SizedBox(height: size.height * 0.003),
-                            Text(
-                              event.location,
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white70,
-                                fontSize: fontSize * 0.7,
-                                fontWeight: FontWeight.bold,
+                              SizedBox(height: size.height * 0.003),
+                              Text(
+                                event.location,
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white70,
+                                  fontSize: fontSize * 0.7,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

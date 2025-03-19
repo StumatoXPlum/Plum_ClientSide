@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -188,7 +187,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 if (mounted) {
                   Navigator.pushReplacement(
                     context,
-                    CupertinoPageRoute(
+                    MaterialPageRoute(
                       builder:
                           (context) =>
                               (!isRegistrationComplete || !hasPhoneNumber)
@@ -230,7 +229,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   context.read<AuthCubit>().setUserEmail(user.email ?? "");
                   Navigator.push(
                     context,
-                    CupertinoPageRoute(builder: (context) => BottomNavScreen()),
+                    MaterialPageRoute(builder: (context) => BottomNavScreen()),
                   );
                 } else {
                   showCustomSnackbar(
@@ -331,7 +330,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 print("OTP sent successfully");
                 Navigator.push(
                   context,
-                  CupertinoPageRoute(
+                  MaterialPageRoute(
                     builder:
                         (context) => EmailVerification(
                           email: email,

@@ -4,11 +4,43 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../home_detail_screen/view/new_home_detail_screen.dart';
 import '../model/event_model.dart';
 
-class EventListScreen extends StatelessWidget {
+class EventListScreen extends StatefulWidget {
   final List<EventModel> events;
   final String title;
 
   const EventListScreen({super.key, required this.events, required this.title});
+
+  @override
+  State<EventListScreen> createState() => _EventListScreenState();
+}
+
+class _EventListScreenState extends State<EventListScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+  late List<Animation<Offset>> animations = [];
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 800),
+    );
+    animations = List.generate(
+      widget.events.length,
+      (index) => Tween(begin: Offset(0, 1), end: Offset.zero).animate(
+        CurvedAnimation(
+          parent: controller,
+          curve: Interval(
+            index * (1 / widget.events.length),
+            1,
+            curve: Curves.easeIn,
+          ),
+        ),
+      ),
+    );
+    controller.forward();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +50,10 @@ class EventListScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
       appBar: AppBar(
-        title: Text(title, style: GoogleFonts.poppins(color: Colors.white)),
+        title: Text(
+          widget.title,
+          style: GoogleFonts.poppins(color: Colors.white),
+        ),
         backgroundColor: const Color(0xff090D14),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -30,9 +65,9 @@ class EventListScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
         child: ListView.builder(
-          itemCount: events.length,
+          itemCount: widget.events.length,
           itemBuilder: (context, index) {
-            final event = events[index];
+            final event = widget.events[index];
             return GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -42,58 +77,61 @@ class EventListScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: padding * 0.6,
-                  vertical: padding * 0.6,
-                ),
-                margin: EdgeInsets.symmetric(vertical: padding * 0.6),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        event.imageUrl,
-                        width: size.width * 0.2,
-                        height: size.height * 0.1,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    SizedBox(width: size.width * 0.03),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: padding,
-                          horizontal: padding,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              event.title,
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white,
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: size.height * 0.01),
-                            Text(
-                              '${event.location} - ${event.date}',
-                              style: GoogleFonts.urbanist(
-                                color: Colors.white70,
-                                fontSize: fontSize * 0.7,
-                              ),
-                            ),
-                          ],
+              child: SlideTransition(
+                position: animations[index],
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: padding * 0.6,
+                    vertical: padding * 0.6,
+                  ),
+                  margin: EdgeInsets.symmetric(vertical: padding * 0.6),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          event.imageUrl,
+                          width: size.width * 0.2,
+                          height: size.height * 0.1,
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(width: size.width * 0.03),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: padding,
+                            horizontal: padding,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                event.title,
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white,
+                                  fontSize: fontSize,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: size.height * 0.01),
+                              Text(
+                                '${event.location} - ${event.date}',
+                                style: GoogleFonts.urbanist(
+                                  color: Colors.white70,
+                                  fontSize: fontSize * 0.7,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

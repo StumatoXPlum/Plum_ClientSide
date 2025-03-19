@@ -25,9 +25,12 @@ class BottomNavScreen extends StatefulWidget {
   BottomNavScreenState createState() => BottomNavScreenState();
 }
 
-class BottomNavScreenState extends State<BottomNavScreen> {
+class BottomNavScreenState extends State<BottomNavScreen>
+    with SingleTickerProviderStateMixin {
   late int _selectedIndex;
   late List<Widget> _screens;
+  late AnimationController controller;
+  late Animation<Offset> slideAnimation;
 
   final List<String> _iconPaths = [
     "assets/home_assets/home.svg",
@@ -54,65 +57,75 @@ class BottomNavScreenState extends State<BottomNavScreen> {
       MusicScreen(),
     ];
 
-  //   Future.delayed(Duration.zero, () {
-  //     if (widget.showSnackbar &&
-  //         _selectedIndex == 0 &&
-  //         widget.selectedDate != null &&
-  //         widget.selectedStartTime != null &&
-  //         widget.selectedEndTime != null) {
-  //       _showSnackbar();
-  //     }
-  //   });
-  // }
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).animate(controller);
+    controller.forward();
 
-  // void _showSnackbar() {
-  //   final String message = getFormattedDateTime(widget.selectedDate!);
-  //   final Size size = MediaQuery.of(context).size;
-  //   double fontSize = size.width * 0.04;
+    //   Future.delayed(Duration.zero, () {
+    //     if (widget.showSnackbar &&
+    //         _selectedIndex == 0 &&
+    //         widget.selectedDate != null &&
+    //         widget.selectedStartTime != null &&
+    //         widget.selectedEndTime != null) {
+    //       _showSnackbar();
+    //     }
+    //   });
+    // }
 
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       backgroundColor: const Color(0xff3579DD),
-  //       content: Row(
-  //         children: [
-  //           SvgPicture.asset(
-  //             "assets/home_assets/barcode.svg",
-  //             height: size.height * 0.03,
-  //           ),
-  //           SizedBox(width: size.width * 0.01),
-  //           Text(
-  //             message,
-  //             style: GoogleFonts.urbanist(
-  //               fontSize: fontSize * 0.8,
-  //               fontWeight: FontWeight.bold,
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //       behavior: SnackBarBehavior.floating,
-  //     ),
-  //   );
-  // }
+    // void _showSnackbar() {
+    //   final String message = getFormattedDateTime(widget.selectedDate!);
+    //   final Size size = MediaQuery.of(context).size;
+    //   double fontSize = size.width * 0.04;
 
-  // String getFormattedDateTime(DateTime dateTime) {
-  //   String formattedTime = DateFormat("h:mm a").format(dateTime);
-  //   String dayWithSuffix = "${dateTime.day}${getDaySuffix(dateTime.day)}";
-  //   String formattedDate = DateFormat("MMM").format(dateTime);
-  //   return "You have a booking at $formattedTime $dayWithSuffix $formattedDate";
-  // }
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       backgroundColor: const Color(0xff3579DD),
+    //       content: Row(
+    //         children: [
+    //           SvgPicture.asset(
+    //             "assets/home_assets/barcode.svg",
+    //             height: size.height * 0.03,
+    //           ),
+    //           SizedBox(width: size.width * 0.01),
+    //           Text(
+    //             message,
+    //             style: GoogleFonts.urbanist(
+    //               fontSize: fontSize * 0.8,
+    //               fontWeight: FontWeight.bold,
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //       behavior: SnackBarBehavior.floating,
+    //     ),
+    //   );
+    // }
 
-  // String getDaySuffix(int day) {
-  //   if (day >= 11 && day <= 13) return "th";
-  //   switch (day % 10) {
-  //     case 1:
-  //       return "st";
-  //     case 2:
-  //       return "nd";
-  //     case 3:
-  //       return "rd";
-  //     default:
-  //       return "th";
-  //   }
+    // String getFormattedDateTime(DateTime dateTime) {
+    //   String formattedTime = DateFormat("h:mm a").format(dateTime);
+    //   String dayWithSuffix = "${dateTime.day}${getDaySuffix(dateTime.day)}";
+    //   String formattedDate = DateFormat("MMM").format(dateTime);
+    //   return "You have a booking at $formattedTime $dayWithSuffix $formattedDate";
+    // }
+
+    // String getDaySuffix(int day) {
+    //   if (day >= 11 && day <= 13) return "th";
+    //   switch (day % 10) {
+    //     case 1:
+    //       return "st";
+    //     case 2:
+    //       return "nd";
+    //     case 3:
+    //       return "rd";
+    //     default:
+    //       return "th";
+    //   }
   }
 
   void _onItemTapped(int index) {
@@ -124,34 +137,38 @@ class BottomNavScreenState extends State<BottomNavScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xff090D14),
       body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
         ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: const Color(0xff090D14),
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          selectedItemColor: const Color(0xff3579DD),
-          unselectedItemColor: Colors.white,
-          showUnselectedLabels: true,
-          items: List.generate(4, (index) {
-            return BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                _iconPaths[index],
-                colorFilter: ColorFilter.mode(
-                  _selectedIndex == index ? Color(0xff3579DD) : Colors.white,
-                  BlendMode.srcIn,
+        child: SlideTransition(
+          position: slideAnimation,
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: const Color(0xff090D14),
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            selectedItemColor: const Color(0xff3579DD),
+            unselectedItemColor: Colors.white,
+            showUnselectedLabels: true,
+            items: List.generate(4, (index) {
+              return BottomNavigationBarItem(
+                icon: SvgPicture.asset(
+                  _iconPaths[index],
+                  colorFilter: ColorFilter.mode(
+                    _selectedIndex == index ? Color(0xff3579DD) : Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                  width: 24,
+                  height: 24,
                 ),
-                width: 24,
-                height: 24,
-              ),
-              label: ['Home', 'Saved', 'Booking', 'Music'][index],
-            );
-          }),
+                label: ['Home', 'Saved', 'Booking', 'Music'][index],
+              );
+            }),
+          ),
         ),
       ),
     );
