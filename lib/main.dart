@@ -34,7 +34,7 @@ void main() async {
         BlocProvider(create: (context) => BookmarkCubit()),
         BlocProvider(create: (context) => TicketCubit()),
       ],
-      child: DevicePreview(builder: (context) => const MyApp()),
+      child: const MyApp(),
     ),
   );
 }
