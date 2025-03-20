@@ -54,7 +54,7 @@ class _NewHomeDetailScreenState extends State<NewHomeDetailScreen>
                         enabled: true,
                         child: Hero(
                           tag: 'image${widget.event.title}',
-                          child: Image.asset(
+                          child: Image.network(
                             widget.event.imageUrl,
                             fit: BoxFit.cover,
                             width: double.infinity,
@@ -129,6 +129,7 @@ class _NewHomeDetailScreenState extends State<NewHomeDetailScreen>
                     child: SlideTransition(
                       position: slideAnimation,
                       child: Container(
+                        width: double.infinity,
                         padding: EdgeInsets.symmetric(vertical: padding),
                         decoration: BoxDecoration(
                           color: Color(0xff191A24),
@@ -156,7 +157,7 @@ class _NewHomeDetailScreenState extends State<NewHomeDetailScreen>
                                 horizontal: padding * 1,
                               ),
                               child: Text(
-                                widget.event.description ?? "Not Available",
+                                widget.event.description,
                                 style: GoogleFonts.urbanist(
                                   color: Colors.white70,
                                   fontSize: fontSize * 0.8,
@@ -205,13 +206,13 @@ class _NewHomeDetailScreenState extends State<NewHomeDetailScreen>
                               event: widget.event,
                               svgPath: 'assets/home_assets/calendar.svg',
                               title: widget.event.date,
-                              subtitle: widget.event.time ?? "Not Available",
+                              subtitle: widget.event.time,
                             ),
                             DetailsContainer(
                               event: widget.event,
                               svgPath: 'assets/home_assets/pin1.svg',
                               title: widget.event.location,
-                              subtitle: widget.event.address ?? "Not Available",
+                              subtitle: widget.event.address,
                             ),
                             SizedBox(height: size.height * 0.01),
                           ],

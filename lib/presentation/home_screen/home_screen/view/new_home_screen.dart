@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/home_screen/home_screen/supabase/supabase_service.dart';
 import '../../../bookmark_screen/cubit/bookmark_cubit.dart';
 import 'event_list_screen.dart';
 import '../../../profile/user_profile.dart';
@@ -19,6 +20,9 @@ class NewHomeScreen extends StatefulWidget {
 
 class _NewHomeScreenState extends State<NewHomeScreen>
     with TickerProviderStateMixin {
+  final SupabaseService _supabaseService = SupabaseService();
+  List<EventModel> popularEvents = [];
+  List<EventModel> nearbyEvents = [];
   late AnimationController controller;
   late Animation<Offset> slideAnimation;
   final String _locationText = "Tap to set location";
@@ -27,6 +31,7 @@ class _NewHomeScreenState extends State<NewHomeScreen>
   @override
   void initState() {
     super.initState();
+    loadEvents();
     controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 1000),
@@ -38,6 +43,20 @@ class _NewHomeScreenState extends State<NewHomeScreen>
     ).animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
 
     controller.forward();
+  }
+
+  Future<void> loadEvents() async {
+    final fetchedEvents = await _supabaseService.fetchEvents();
+    setState(() {
+      popularEvents =
+          fetchedEvents
+              .where((event) => event.imageUrl.contains("/popular/"))
+              .toList();
+      nearbyEvents =
+          fetchedEvents
+              .where((event) => event.imageUrl.contains("/nearby/"))
+              .toList();
+    });
   }
 
   @override
@@ -178,8 +197,8 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                 ),
               ),
               SizedBox(height: size.height * 0.01),
-              EventWidget(),
-              NearEventsWidget(),
+              EventWidget(events: popularEvents),
+              NearEventsWidget(events: nearbyEvents),
             ],
           ),
         ),
@@ -189,7 +208,8 @@ class _NewHomeScreenState extends State<NewHomeScreen>
 }
 
 class EventWidget extends StatefulWidget {
-  const EventWidget({super.key});
+  final List<EventModel> events;
+  const EventWidget({super.key, required this.events});
 
   @override
   State<EventWidget> createState() => _EventWidgetState();
@@ -216,12 +236,12 @@ class _EventWidgetState extends State<EventWidget>
     );
 
     itemAnimations = List.generate(
-      nearEvents.length,
+      widget.events.length,
       (index) => Tween(begin: Offset(-1, 0), end: Offset.zero).animate(
         CurvedAnimation(
           parent: listController,
           curve: Interval(
-            index * (1 / nearEvents.length),
+            index * (1 / widget.events.length),
             1,
             curve: Curves.easeIn,
           ),
@@ -232,13 +252,17 @@ class _EventWidgetState extends State<EventWidget>
       begin: const Offset(0, 1),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: slideController, curve: Curves.easeIn));
-    listController.forward();
-    slideController.forward();
+    if (widget.events.isNotEmpty) {
+      listController.forward();
+      slideController.forward();
+    }
   }
 
   @override
   void dispose() {
     listController.dispose();
+    slideController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -273,7 +297,7 @@ class _EventWidgetState extends State<EventWidget>
                       CupertinoPageRoute(
                         builder:
                             (context) => EventListScreen(
-                              events: popularEvents,
+                              events: widget.events,
                               title: "Popular Events",
                             ),
                       ),
@@ -292,7 +316,7 @@ class _EventWidgetState extends State<EventWidget>
             ),
           ),
         ),
-        SizedBox(height: size.height * 0.02),
+        SizedBox(height: size.height * 0.04),
         SizedBox(
           height: size.height * 0.24,
           child: NotificationListener<ScrollNotification>(
@@ -304,8 +328,11 @@ class _EventWidgetState extends State<EventWidget>
               controller: _scrollController,
               padding: EdgeInsets.symmetric(horizontal: padding),
               scrollDirection: Axis.horizontal,
-              itemCount: popularEvents.length,
+              itemCount: widget.events.length,
               itemBuilder: (context, index) {
+                if (widget.events.isEmpty) {
+                  return const SizedBox();
+                }
                 double parallaxOffset = 0;
                 if (_scrollController.hasClients) {
                   final itemWidth = size.width * 0.7 + padding;
@@ -314,7 +341,7 @@ class _EventWidgetState extends State<EventWidget>
                       itemPosition - _scrollController.offset;
                   parallaxOffset = distanceFromCenter * 0.1;
                 }
-                final event = popularEvents[index];
+                final event = widget.events[index];
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -325,7 +352,10 @@ class _EventWidgetState extends State<EventWidget>
                     );
                   },
                   child: SlideTransition(
-                    position: itemAnimations[index],
+                    position:
+                        itemAnimations.isNotEmpty
+                            ? itemAnimations[index]
+                            : AlwaysStoppedAnimation(Offset.zero),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -348,11 +378,40 @@ class _EventWidgetState extends State<EventWidget>
                                         enabled: true,
                                         child: Hero(
                                           tag: 'image${event.title}',
-                                          child: Image.asset(
+                                          child: Image.network(
                                             event.imageUrl,
                                             fit: BoxFit.cover,
                                             width: size.width * 0.9,
                                             height: size.height * 0.24,
+                                            loadingBuilder: (
+                                              context,
+                                              child,
+                                              loadingProgress,
+                                            ) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return Center(
+                                                child: CircularProgressIndicator(
+                                                  value:
+                                                      loadingProgress
+                                                                  .expectedTotalBytes !=
+                                                              null
+                                                          ? loadingProgress
+                                                                  .cumulativeBytesLoaded /
+                                                              (loadingProgress
+                                                                      .expectedTotalBytes ??
+                                                                  1)
+                                                          : null,
+                                                ),
+                                              );
+                                            },
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    Icon(
+                                                      Icons.error,
+                                                      color: Colors.red,
+                                                    ),
                                           ),
                                         ),
                                       ),
@@ -459,7 +518,8 @@ class _EventWidgetState extends State<EventWidget>
 }
 
 class NearEventsWidget extends StatefulWidget {
-  const NearEventsWidget({super.key});
+  final List<EventModel> events;
+  const NearEventsWidget({super.key, required this.events});
 
   @override
   State<NearEventsWidget> createState() => _NearEventsWidgetState();
@@ -475,33 +535,42 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
   @override
   void initState() {
     super.initState();
+    _initAnimations();
+  }
+
+  void _initAnimations() {
     listController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
     slideController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1000),
     );
+
     itemAnimations = List.generate(
-      nearEvents.length,
-      (index) => Tween(begin: Offset(0, 1), end: Offset.zero).animate(
+      widget.events.length,
+      (index) => Tween(begin: const Offset(0, 1), end: Offset.zero).animate(
         CurvedAnimation(
           parent: listController,
           curve: Interval(
-            index * (1 / nearEvents.length),
+            index * (1 / (widget.events.isNotEmpty ? widget.events.length : 1)),
             1,
             curve: Curves.easeIn,
           ),
         ),
       ),
     );
+
     slideAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: slideController, curve: Curves.easeIn));
-    listController.forward();
-    slideController.forward();
+
+    if (widget.events.isNotEmpty) {
+      listController.forward();
+      slideController.forward();
+    }
   }
 
   @override
@@ -528,7 +597,7 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
                   "Events Near You",
                   style: GoogleFonts.urbanist(
                     color: Colors.white,
-                    fontSize: fontSize * 1,
+                    fontSize: fontSize,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -540,7 +609,7 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
                       CupertinoPageRoute(
                         builder:
                             (context) => EventListScreen(
-                              events: nearEvents,
+                              events: widget.events,
                               title: "Near Events",
                             ),
                       ),
@@ -559,13 +628,16 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
             ),
           ),
         ),
-        SizedBox(height: size.height * 0.02),
+        SizedBox(height: size.height * 0.04),
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: nearEvents.length,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: widget.events.length,
           itemBuilder: (context, index) {
-            final event = nearEvents[index];
+            if (widget.events.isEmpty) return const SizedBox();
+
+            final event = widget.events[index];
+
             return Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: padding,
@@ -581,14 +653,17 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
                   );
                 },
                 child: SlideTransition(
-                  position: itemAnimations[index],
+                  position:
+                      itemAnimations.isNotEmpty
+                          ? itemAnimations[index]
+                          : AlwaysStoppedAnimation(Offset.zero),
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       vertical: padding * 0.4,
                       horizontal: padding * 0.4,
                     ),
                     decoration: BoxDecoration(
-                      color: Color(0xff042455),
+                      color: const Color(0xff042455),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -599,17 +674,45 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
                             enabled: true,
                             child: Hero(
                               tag: 'image${event.title}',
-                              child: Image.asset(
+                              child: Image.network(
                                 event.imageUrl,
-                                width: size.width * 0.2,
-                                height: size.height * 0.09,
                                 fit: BoxFit.cover,
+                                width: size.width * 0.2,
+                                height: size.height * 0.10,
+                                loadingBuilder: (
+                                  context,
+                                  child,
+                                  loadingProgress,
+                                ) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(padding),
+                                      child: CircularProgressIndicator(
+                                        backgroundColor: Colors.white70,
+                                        value:
+                                            loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                        .cumulativeBytesLoaded /
+                                                    (loadingProgress
+                                                            .expectedTotalBytes ??
+                                                        1)
+                                                : null,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                errorBuilder:
+                                    (context, error, stackTrace) =>
+                                        Icon(Icons.error, color: Colors.red),
                               ),
                             ),
                           ),
                         ),
                         SizedBox(width: size.width * 0.03),
-                        Expanded(
+                        Flexible(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -623,7 +726,7 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Expanded(
+                                  Flexible(
                                     child: Text(
                                       event.artist,
                                       style: GoogleFonts.urbanist(

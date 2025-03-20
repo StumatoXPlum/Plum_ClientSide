@@ -29,11 +29,7 @@ class BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
 
     double pricePerTicket =
         double.tryParse(
-          widget.event.price
-                  ?.split('-')
-                  .first
-                  .replaceAll(RegExp(r'[^0-9]'), '') ??
-              '0',
+          widget.event.price.split('-').first.replaceAll(RegExp(r'[^0-9]'), ''),
         ) ??
         0;
     double totalPrice = ticketCount * pricePerTicket;
@@ -79,7 +75,7 @@ class BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: Image.asset(
+                            child: Image.network(
                               widget.event.imageUrl,
                               width: size.width * 0.2,
                               height: size.width * 0.3,
@@ -158,8 +154,7 @@ class BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Text(
-                                            widget.event.address ??
-                                                "Not Available",
+                                            widget.event.address,
                                             style: GoogleFonts.urbanist(
                                               color: Colors.white70,
                                               fontSize: fontSize * 0.7,
@@ -300,7 +295,7 @@ class BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
                 final ticket = TicketModel(
                   title: widget.event.title,
                   date: widget.event.date,
-                  time: widget.event.time ?? "TBA",
+                  time: widget.event.time,
                   location: widget.event.location,
                   quantity: ticketCount,
                   id: widget.event.title,

@@ -30,7 +30,7 @@ class TicketView extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      height: ticketHeight,
+      height: ticketHeight.clamp(130, 180),
       child: CustomPaint(
         painter: TicketPainter(color: const Color(0xFF3679DC)),
         child: Row(
@@ -43,7 +43,7 @@ class TicketView extends StatelessWidget {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Padding(
-                      padding: EdgeInsets.only(left: padding, right: padding),
+                      padding: EdgeInsets.symmetric(horizontal: padding),
                       child: Text(
                         sideText,
                         style: GoogleFonts.urbanist(
@@ -60,42 +60,48 @@ class TicketView extends StatelessWidget {
                 ),
               ),
             ),
+            // Main Ticket Content
             Expanded(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                   padding * 3.5,
-                  padding * 1.2,
+                  padding * 0.8,
                   padding * 1.5,
-                  padding,
+                  padding * 0.8,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      flex: 3,
+                    Flexible(
                       child: Text(
                         title,
                         style: GoogleFonts.urbanist(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: fontSize * 1.2,
+                          fontSize: fontSize * 1.1,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(height: size.height * 0.003),
-                    Expanded(
-                      child: Text(
-                        date,
-                        style: GoogleFonts.urbanist(
-                          color: Colors.white70,
-                          fontSize: fontSize * 0.9,
-                          fontWeight: FontWeight.bold,
+                    SizedBox(height: size.height * 0.005),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            date,
+                            style: GoogleFonts.urbanist(
+                              color: Colors.white70,
+                              fontSize: fontSize * 0.9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                        SizedBox(width: size.width * 0.02),
+                      ],
                     ),
                     Expanded(
                       child: Text(
@@ -107,11 +113,11 @@ class TicketView extends StatelessWidget {
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.right,
                       ),
                     ),
-                    SizedBox(height: size.height * 0.01),
-                    Expanded(
-                      flex: 2,
+                    SizedBox(height: size.height * 0.005),
+                    Flexible(
                       child: Text(
                         location,
                         style: GoogleFonts.urbanist(
@@ -123,21 +129,15 @@ class TicketView extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(height: size.height * 0.001),
                     const Divider(color: Colors.white70, thickness: 0.5),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            ticketType,
-                            style: GoogleFonts.urbanist(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: fontSize * 1.5,
-                            ),
-                          ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        ticketType,
+                        style: GoogleFonts.urbanist(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: fontSize * 0.9,
                         ),
                       ),
                     ),
