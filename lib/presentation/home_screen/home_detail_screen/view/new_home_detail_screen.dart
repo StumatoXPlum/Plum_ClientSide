@@ -24,7 +24,7 @@ class _NewHomeDetailScreenState extends State<NewHomeDetailScreen>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800),
+      duration: Duration(milliseconds: 600),
     );
     slideAnimation = Tween(
       begin: Offset(0, 1),
@@ -50,11 +50,17 @@ class _NewHomeDetailScreenState extends State<NewHomeDetailScreen>
                 children: [
                   Stack(
                     children: [
-                      Image.asset(
-                        widget.event.imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: size.height * 1 / 3,
+                      HeroMode(
+                        enabled: true,
+                        child: Hero(
+                          tag: 'image${widget.event.title}',
+                          child: Image.asset(
+                            widget.event.imageUrl,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: size.height * 1 / 3,
+                          ),
+                        ),
                       ),
                       Positioned(
                         top: padding * 5,

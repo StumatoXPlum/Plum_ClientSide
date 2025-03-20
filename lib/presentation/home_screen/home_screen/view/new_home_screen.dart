@@ -18,9 +18,8 @@ class NewHomeScreen extends StatefulWidget {
 }
 
 class _NewHomeScreenState extends State<NewHomeScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController controller;
-  late Animation<double> opacity;
   late Animation<Offset> slideAnimation;
   final String _locationText = "Tap to set location";
   String? _yourLocation;
@@ -30,14 +29,21 @@ class _NewHomeScreenState extends State<NewHomeScreen>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800),
+      duration: Duration(milliseconds: 1000),
     );
-    opacity = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
+
     slideAnimation = Tween<Offset>(
       begin: Offset(0, -1),
       end: Offset(0, 0),
     ).animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
+
     controller.forward();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -103,8 +109,8 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                       });
                     }
                   },
-                  child: FadeTransition(
-                    opacity: opacity,
+                  child: SlideTransition(
+                    position: slideAnimation,
                     child: Container(
                       padding: EdgeInsets.all(padding),
                       decoration: BoxDecoration(
@@ -189,12 +195,50 @@ class EventWidget extends StatefulWidget {
   State<EventWidget> createState() => _EventWidgetState();
 }
 
-class _EventWidgetState extends State<EventWidget> {
+class _EventWidgetState extends State<EventWidget>
+    with TickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
+  late AnimationController listController;
+  late List<Animation<Offset>> itemAnimations = [];
+  late AnimationController slideController;
+  late Animation<Offset> slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    listController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    slideController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
+    );
+
+    itemAnimations = List.generate(
+      nearEvents.length,
+      (index) => Tween(begin: Offset(-1, 0), end: Offset.zero).animate(
+        CurvedAnimation(
+          parent: listController,
+          curve: Interval(
+            index * (1 / nearEvents.length),
+            1,
+            curve: Curves.easeIn,
+          ),
+        ),
+      ),
+    );
+    slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: slideController, curve: Curves.easeIn));
+    listController.forward();
+    slideController.forward();
+  }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    listController.dispose();
     super.dispose();
   }
 
@@ -209,40 +253,43 @@ class _EventWidgetState extends State<EventWidget> {
         SizedBox(height: size.height * 0.02),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: padding),
-          child: Row(
-            children: [
-              Text(
-                "Popular Events",
-                style: GoogleFonts.urbanist(
-                  color: Colors.white,
-                  fontSize: fontSize * 1,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder:
-                          (context) => EventListScreen(
-                            events: popularEvents,
-                            title: "Popular Events",
-                          ),
-                    ),
-                  );
-                },
-                child: Text(
-                  "See All",
+          child: SlideTransition(
+            position: slideAnimation,
+            child: Row(
+              children: [
+                Text(
+                  "Popular Events",
                   style: GoogleFonts.urbanist(
-                    color: const Color(0xff3579DD),
+                    color: Colors.white,
+                    fontSize: fontSize * 1,
                     fontWeight: FontWeight.bold,
-                    fontSize: fontSize * 0.9,
                   ),
                 ),
-              ),
-            ],
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder:
+                            (context) => EventListScreen(
+                              events: popularEvents,
+                              title: "Popular Events",
+                            ),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "See All",
+                    style: GoogleFonts.urbanist(
+                      color: const Color(0xff3579DD),
+                      fontWeight: FontWeight.bold,
+                      fontSize: fontSize * 0.9,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         SizedBox(height: size.height * 0.02),
@@ -277,120 +324,129 @@ class _EventWidgetState extends State<EventWidget> {
                       ),
                     );
                   },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(right: padding),
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: SizedBox(
-                                height: size.height * 0.2,
-                                width: size.width * 0.7,
-                                child: OverflowBox(
-                                  maxWidth: size.width * 0.9,
-                                  maxHeight: size.height * 0.24,
-                                  alignment: Alignment.center,
-                                  child: Transform.translate(
-                                    offset: Offset(parallaxOffset, 0),
-                                    child: Hero(
-                                      tag: 'image${event.title}',
-                                      child: Image.asset(
-                                        event.imageUrl,
-                                        fit: BoxFit.cover,
-                                        width: size.width * 0.9,
-                                        height: size.height * 0.24,
+                  child: SlideTransition(
+                    position: itemAnimations[index],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(right: padding),
+                          child: Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: SizedBox(
+                                  height: size.height * 0.2,
+                                  width: size.width * 0.7,
+                                  child: OverflowBox(
+                                    maxWidth: size.width * 0.9,
+                                    maxHeight: size.height * 0.24,
+                                    alignment: Alignment.center,
+                                    child: Transform.translate(
+                                      offset: Offset(parallaxOffset, 0),
+                                      child: HeroMode(
+                                        enabled: true,
+                                        child: Hero(
+                                          tag: 'image${event.title}',
+                                          child: Image.asset(
+                                            event.imageUrl,
+                                            fit: BoxFit.cover,
+                                            width: size.width * 0.9,
+                                            height: size.height * 0.24,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Positioned(
-                              top: 5,
-                              right: 5,
-                              child:
-                                  BlocBuilder<BookmarkCubit, List<EventModel>>(
-                                    builder: (context, bookmarkedEvents) {
-                                      final isBookmarked = bookmarkedEvents.any(
-                                        (e) => e.title == event.title,
-                                      );
-                                      return GestureDetector(
-                                        onTap: () {
-                                          context
-                                              .read<BookmarkCubit>()
-                                              .toggleBookmark(event);
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                            color: Colors.black,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Icon(
-                                            isBookmarked
-                                                ? Icons.bookmark
-                                                : Icons.bookmark_border,
-                                            color: Colors.white,
-                                            size: fontSize,
-                                          ),
+                              Positioned(
+                                top: 5,
+                                right: 5,
+                                child: BlocBuilder<
+                                  BookmarkCubit,
+                                  List<EventModel>
+                                >(
+                                  builder: (context, bookmarkedEvents) {
+                                    final isBookmarked = bookmarkedEvents.any(
+                                      (e) => e.title == event.title,
+                                    );
+                                    return GestureDetector(
+                                      onTap: () {
+                                        context
+                                            .read<BookmarkCubit>()
+                                            .toggleBookmark(event);
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          shape: BoxShape.circle,
                                         ),
-                                      );
-                                    },
-                                  ),
-                            ),
-                            Positioned(
-                              bottom: 5,
-                              left: 5,
-                              right: 5,
-                              child: Container(
-                                padding: EdgeInsets.all(padding * 0.5),
-                                decoration: BoxDecoration(
-                                  color: Color(0xff0A0A0A),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${event.title} with ${event.artist}',
-                                      style: GoogleFonts.urbanist(
-                                        color: Colors.white,
-                                        fontSize: fontSize * 0.7,
-                                        fontWeight: FontWeight.bold,
+                                        child: Icon(
+                                          isBookmarked
+                                              ? Icons.bookmark
+                                              : Icons.bookmark_border,
+                                          color: Colors.white,
+                                          size: fontSize,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: size.height * 0.003),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          event.date,
-                                          style: GoogleFonts.urbanist(
-                                            color: Colors.white70,
-                                            fontSize: fontSize * 0.6,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          event.location,
-                                          style: GoogleFonts.urbanist(
-                                            color: Colors.white70,
-                                            fontSize: fontSize * 0.6,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                    );
+                                  },
                                 ),
                               ),
-                            ),
-                          ],
+                              Positioned(
+                                bottom: 5,
+                                left: 5,
+                                right: 5,
+                                child: Container(
+                                  padding: EdgeInsets.all(padding * 0.5),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xff0A0A0A),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${event.title} with ${event.artist}',
+                                        style: GoogleFonts.urbanist(
+                                          color: Colors.white,
+                                          fontSize: fontSize * 0.7,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: size.height * 0.003),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            event.date,
+                                            style: GoogleFonts.urbanist(
+                                              color: Colors.white70,
+                                              fontSize: fontSize * 0.6,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            event.location,
+                                            style: GoogleFonts.urbanist(
+                                              color: Colors.white70,
+                                              fontSize: fontSize * 0.6,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },
@@ -410,8 +466,10 @@ class NearEventsWidget extends StatefulWidget {
 }
 
 class _NearEventsWidgetState extends State<NearEventsWidget>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController listController;
+  late AnimationController slideController;
+  late Animation<Offset> slideAnimation;
   late List<Animation<Offset>> itemAnimations = [];
 
   @override
@@ -420,6 +478,10 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
     listController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
+    );
+    slideController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 1000),
     );
     itemAnimations = List.generate(
       nearEvents.length,
@@ -434,7 +496,19 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
         ),
       ),
     );
+    slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: slideController, curve: Curves.easeIn));
     listController.forward();
+    slideController.forward();
+  }
+
+  @override
+  void dispose() {
+    listController.dispose();
+    slideController.dispose();
+    super.dispose();
   }
 
   @override
@@ -446,40 +520,43 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-          child: Row(
-            children: [
-              Text(
-                "Events Near You",
-                style: GoogleFonts.urbanist(
-                  color: Colors.white,
-                  fontSize: fontSize * 1,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder:
-                          (context) => EventListScreen(
-                            events: nearEvents,
-                            title: "Near Events",
-                          ),
-                    ),
-                  );
-                },
-                child: Text(
-                  "See All",
+          child: SlideTransition(
+            position: slideAnimation,
+            child: Row(
+              children: [
+                Text(
+                  "Events Near You",
                   style: GoogleFonts.urbanist(
-                    color: const Color(0xff3579DD),
+                    color: Colors.white,
+                    fontSize: fontSize * 1,
                     fontWeight: FontWeight.bold,
-                    fontSize: fontSize * 0.9,
                   ),
                 ),
-              ),
-            ],
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder:
+                            (context) => EventListScreen(
+                              events: nearEvents,
+                              title: "Near Events",
+                            ),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "See All",
+                    style: GoogleFonts.urbanist(
+                      color: const Color(0xff3579DD),
+                      fontWeight: FontWeight.bold,
+                      fontSize: fontSize * 0.9,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         SizedBox(height: size.height * 0.02),
@@ -518,11 +595,17 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(6),
-                          child: Image.asset(
-                            event.imageUrl,
-                            width: size.width * 0.2,
-                            height: size.height * 0.09,
-                            fit: BoxFit.cover,
+                          child: HeroMode(
+                            enabled: true,
+                            child: Hero(
+                              tag: 'image${event.title}',
+                              child: Image.asset(
+                                event.imageUrl,
+                                width: size.width * 0.2,
+                                height: size.height * 0.09,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
                         ),
                         SizedBox(width: size.width * 0.03),
