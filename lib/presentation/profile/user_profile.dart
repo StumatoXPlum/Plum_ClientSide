@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'package:task2/core/custom_button.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
 import 'package:task2/presentation/points_screen/cubit/earned_points_cubit.dart';
 import '../authentication_screens/date_of_birth/date_of_birth.dart';
 import '../authentication_screens/sign_up_screen/auth_service/auth_service.dart';

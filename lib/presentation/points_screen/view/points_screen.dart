@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:task2/core/custom_button.dart';
-import '../../../core/bottom_navigation_bar.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
+import '../../../core/custom_widgets/bottom_navigation_bar.dart';
 import '../../ticket/model/ticket_model.dart';
 import '../cubit/earned_points_cubit.dart';
 

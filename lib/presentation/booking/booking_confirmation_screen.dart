@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/core/custom_button.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
 import '../home_screen/home_screen/model/event_model.dart';
 import '../ticket/cubit/ticket_cubit.dart';
 import '../ticket/model/ticket_model.dart';

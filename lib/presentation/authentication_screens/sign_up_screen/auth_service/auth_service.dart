@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabse;
-import '../../../../core/bottom_navigation_bar.dart';
+import '../../../../core/custom_widgets/bottom_navigation_bar.dart';
 import '../../name_screen/enter_name_screen.dart';
 import '../../phone_number/phone_number.dart';
 

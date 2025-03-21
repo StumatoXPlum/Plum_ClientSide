@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'package:task2/core/custom_button.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
 import '../phone_number/phone_number.dart';
 import '../sign_up_screen/auth_service/auth_service.dart';
 

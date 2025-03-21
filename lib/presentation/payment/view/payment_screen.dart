@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/core/custom_button.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
 import '../../apple_pay_animation/apple_pay.dart';
 import '../cubit/payment_cubit.dart';
 import '../../ticket/model/ticket_model.dart';

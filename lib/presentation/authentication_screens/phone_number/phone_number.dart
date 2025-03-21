@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'package:task2/core/custom_button.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
 import 'package:task2/presentation/authentication_screens/phone_number/phone_auth/phone_auth.dart';
 import 'country_picker.dart';
 import 'phone_verification.dart';

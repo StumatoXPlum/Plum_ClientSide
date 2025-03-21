@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'package:task2/core/custom_button.dart';
-import '../../../core/bottom_navigation_bar.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
+import '../../../core/custom_widgets/bottom_navigation_bar.dart';
 
 class DateOfBirth extends StatefulWidget {
   final bool isFromProfile;

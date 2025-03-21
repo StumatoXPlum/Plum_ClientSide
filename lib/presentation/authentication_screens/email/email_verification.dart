@@ -4,8 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/custom_button.dart';
-import '../../../core/bottom_navigation_bar.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
+import '../../../core/custom_widgets/bottom_navigation_bar.dart';
 import '../name_screen/enter_name_screen.dart';
 
 class EmailVerification extends StatefulWidget {
