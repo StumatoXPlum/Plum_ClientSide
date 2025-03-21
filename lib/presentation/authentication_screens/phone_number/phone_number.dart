@@ -7,8 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:task2/core/custom_button.dart';
+import 'package:task2/presentation/authentication_screens/phone_number/phone_auth/phone_auth.dart';
 import 'country_picker.dart';
-import 'phone_auth/phone_auth.dart';
 import 'phone_verification.dart';
 
 class PhoneNumber extends StatefulWidget {
@@ -20,7 +20,6 @@ class PhoneNumber extends StatefulWidget {
 
 class _PhoneNumberState extends State<PhoneNumber> {
   String userName = "there";
-
   Country selectedCountry = Country(
     phoneCode: "91",
     countryCode: "IN",
@@ -43,22 +42,18 @@ class _PhoneNumberState extends State<PhoneNumber> {
     super.initState();
     fetchUserName();
     phoneController.addListener(() {
-      setState(() {
-        isPhoneEnter = phoneController.text.isNotEmpty;
-      });
+      setState(() => isPhoneEnter = phoneController.text.isNotEmpty);
     });
   }
 
   void _pickCountry() async {
-    final chosenCountry = await Navigator.push(
+    final chosenCountry = await Navigator.push<Country>(
       context,
       CupertinoPageRoute(builder: (context) => const ChooseCountryScreen()),
     );
 
-    if (chosenCountry != null && chosenCountry is Country) {
-      setState(() {
-        selectedCountry = chosenCountry;
-      });
+    if (chosenCountry != null) {
+      setState(() => selectedCountry = chosenCountry);
     }
   }
 
@@ -68,59 +63,38 @@ class _PhoneNumberState extends State<PhoneNumber> {
     final supabase.User? supabaseUser =
         supabase.Supabase.instance.client.auth.currentUser;
 
-    if (firebaseUser == null && supabaseUser == null) {
-      print("No authenticated user found.");
-      return;
-    }
+    if (firebaseUser == null && supabaseUser == null) return;
 
     String uid = firebaseUser?.uid ?? supabaseUser!.id;
     final userDoc =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
-    if (userDoc.exists && userDoc.data() != null) {
-      print("User data found in Firestore: ${userDoc.data()}");
-      setState(() {
-        userName = userDoc.data()!['name'] ?? "there";
-      });
-    } else {
-      print("User not found in Firestore, trying fallback.");
-
-      if (firebaseUser != null) {
-        String email = firebaseUser.email ?? "";
-        if (email.isNotEmpty) {
-          setState(() {
-            userName = email.split('@').first;
-          });
-        }
-      }
+    if (userDoc.exists) {
+      setState(() => userName = userDoc['name'] ?? "there");
+    } else if (firebaseUser?.email != null) {
+      setState(() => userName = firebaseUser!.email!.split('@').first);
     }
   }
 
   void verifyNumber() async {
-    if (isPhoneEnter && !isLoading) {
-      setState(() {
-        isLoading = true;
-      });
+    if (!isPhoneEnter || isLoading) return;
 
-      String phoneNumber =
-          "+${selectedCountry.phoneCode}${phoneController.text}";
+    setState(() => isLoading = true);
 
-      bool success = await TwilioVerifyService().sendOtp(phoneNumber);
-      Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder:
-              (context) => PhoneVerification(
-                phoneNumber: phoneNumber,
-                isMockOtp: !success,
-              ),
-        ),
-      );
+    String phoneNumber = "+${selectedCountry.phoneCode}${phoneController.text}";
+    bool success = await TwilioVerifyService().sendOtp(phoneNumber);
 
-      setState(() {
-        isLoading = false;
-      });
-    }
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder:
+            (context) => PhoneVerification(
+              phoneNumber: phoneNumber,
+              isMockOtp: !success,
+            ),
+      ),
+    ).then((_) => setState(() => isLoading = false));
   }
 
   @override
@@ -166,7 +140,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
               "Please enter your phone number",
               style: GoogleFonts.urbanist(
                 color: Colors.white70,
-                fontSize: fontSize * 1,
+                fontSize: fontSize,
               ),
             ),
             SizedBox(height: size.height * 0.04),

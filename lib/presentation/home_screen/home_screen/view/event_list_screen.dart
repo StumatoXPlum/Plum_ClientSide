@@ -93,7 +93,7 @@ class _EventListScreenState extends State<EventListScreen>
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
+                        child: Image.network(
                           event.imageUrl,
                           width: size.width * 0.2,
                           height: size.height * 0.1,

@@ -180,21 +180,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 context.read<AuthCubit>().setUserEmail(user.email ?? "");
                 final userData = doc.data() as Map<String, dynamic>?;
                 bool isRegistrationComplete =
-                    doc.exists && (userData?['registrationComplete'] == true);
+                    userData?['registrationComplete'] == true;
                 bool hasPhoneNumber =
-                    doc.exists && (userData?['phoneNumber'] ?? '').isNotEmpty;
+                    userData?['phoneNumber'] != null &&
+                    userData?['phoneNumber'].isNotEmpty;
 
                 if (mounted) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              (!isRegistrationComplete || !hasPhoneNumber)
-                                  ? PhoneNumber()
-                                  : BottomNavScreen(),
-                    ),
-                  );
+                  if (isRegistrationComplete && hasPhoneNumber) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BottomNavScreen(),
+                      ),
+                    );
+                  } else if (!hasPhoneNumber) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => PhoneNumber()),
+                    );
+                  }
                 }
               } catch (e) {
                 if (mounted) {

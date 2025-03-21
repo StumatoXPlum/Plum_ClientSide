@@ -63,8 +63,6 @@ class UserProfileState extends State<UserProfile> {
               .get();
 
       if (userDoc.exists) {
-        print("got firestor Data: ${userDoc.data()}");
-
         setState(() {
           phoneNumber =
               userDoc.data().toString().contains('phoneNumber')
@@ -86,8 +84,6 @@ class UserProfileState extends State<UserProfile> {
               userDoc.data().toString().contains('name')
                   ? userDoc['name']
                   : (isGoogleSignIn ? email.split('@').first : "Not Available");
-
-          print("got Name: $name");
         });
       } else {
         print("User does not exist");

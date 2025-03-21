@@ -20,7 +20,10 @@ class BookmarkScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Saved Events",
-          style: GoogleFonts.poppins(color: Colors.white),
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         backgroundColor: const Color(0xff090D14),
         automaticallyImplyLeading: false,
@@ -56,7 +59,7 @@ class BookmarkScreen extends StatelessWidget {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
+                        child: Image.network(
                           event.imageUrl,
                           fit: BoxFit.cover,
                           width: size.width * 0.9,

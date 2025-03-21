@@ -53,10 +53,10 @@ class MusicScreen extends StatelessWidget {
                   SizedBox(height: size.height * 0.02),
                   Text(
                     "Share your Music",
-                    style: GoogleFonts.urbanist(
+                    style: GoogleFonts.poppins(
                       color: Colors.white,
                       fontSize: fontSize * 1.2,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   Text(

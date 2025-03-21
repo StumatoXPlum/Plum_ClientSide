@@ -47,6 +47,8 @@ class _NewHomeScreenState extends State<NewHomeScreen>
 
   Future<void> loadEvents() async {
     final fetchedEvents = await _supabaseService.fetchEvents();
+
+    if (!mounted) return;
     setState(() {
       popularEvents =
           fetchedEvents
@@ -277,46 +279,43 @@ class _EventWidgetState extends State<EventWidget>
         SizedBox(height: size.height * 0.02),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: padding),
-          child: SlideTransition(
-            position: slideAnimation,
-            child: Row(
-              children: [
-                Text(
-                  "Popular Events",
-                  style: GoogleFonts.urbanist(
-                    color: Colors.white,
-                    fontSize: fontSize * 1,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Row(
+            children: [
+              Text(
+                "Popular Events",
+                style: GoogleFonts.urbanist(
+                  color: Colors.white,
+                  fontSize: fontSize * 1,
+                  fontWeight: FontWeight.bold,
                 ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder:
-                            (context) => EventListScreen(
-                              events: widget.events,
-                              title: "Popular Events",
-                            ),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    "See All",
-                    style: GoogleFonts.urbanist(
-                      color: const Color(0xff3579DD),
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize * 0.9,
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder:
+                          (context) => EventListScreen(
+                            events: widget.events,
+                            title: "Popular Events",
+                          ),
                     ),
+                  );
+                },
+                child: Text(
+                  "See All",
+                  style: GoogleFonts.urbanist(
+                    color: const Color(0xff3579DD),
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize * 0.9,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        SizedBox(height: size.height * 0.04),
+        SizedBox(height: size.height * 0.02),
         SizedBox(
           height: size.height * 0.24,
           child: NotificationListener<ScrollNotification>(
@@ -589,46 +588,43 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-          child: SlideTransition(
-            position: slideAnimation,
-            child: Row(
-              children: [
-                Text(
-                  "Events Near You",
-                  style: GoogleFonts.urbanist(
-                    color: Colors.white,
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Row(
+            children: [
+              Text(
+                "Events Near You",
+                style: GoogleFonts.urbanist(
+                  color: Colors.white,
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
                 ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder:
-                            (context) => EventListScreen(
-                              events: widget.events,
-                              title: "Near Events",
-                            ),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    "See All",
-                    style: GoogleFonts.urbanist(
-                      color: const Color(0xff3579DD),
-                      fontWeight: FontWeight.bold,
-                      fontSize: fontSize * 0.9,
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder:
+                          (context) => EventListScreen(
+                            events: widget.events,
+                            title: "Near Events",
+                          ),
                     ),
+                  );
+                },
+                child: Text(
+                  "See All",
+                  style: GoogleFonts.urbanist(
+                    color: const Color(0xff3579DD),
+                    fontWeight: FontWeight.bold,
+                    fontSize: fontSize * 0.9,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        SizedBox(height: size.height * 0.04),
+        SizedBox(height: size.height * 0.01),
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),

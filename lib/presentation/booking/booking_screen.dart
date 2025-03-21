@@ -14,8 +14,8 @@ class BookingScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Your Bookings",
-          style: GoogleFonts.urbanist(
-            fontWeight: FontWeight.bold,
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w500,
             color: Colors.white,
           ),
         ),
