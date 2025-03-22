@@ -60,6 +60,7 @@ dependencies:
   url_launcher: ^6.3.1
   neopop: ^1.0.2
   firebase_messaging: ^15.2.4
+  toggle_switch: ^2.3.0
 
 dev_dependencies:
   flutter_test:

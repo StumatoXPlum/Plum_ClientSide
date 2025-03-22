@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/home_screen/home_screen/supabase/supabase_service.dart';
+import 'package:task2/presentation/questions_screens/view/group_size_screen.dart';
 import '../../../bookmark_screen/cubit/bookmark_cubit.dart';
 import 'event_list_screen.dart';
 import '../../../profile/user_profile.dart';
@@ -47,16 +48,24 @@ class _NewHomeScreenState extends State<NewHomeScreen>
 
   Future<void> loadEvents() async {
     final fetchedEvents = await _supabaseService.fetchEvents();
-
     if (!mounted) return;
     setState(() {
       popularEvents =
           fetchedEvents
-              .where((event) => event.imageUrl.contains("/popular/"))
+              .where(
+                (event) =>
+                    event.imageUrl.isNotEmpty &&
+                    event.imageUrl.split('/').contains('popular'),
+              )
               .toList();
+
       nearbyEvents =
           fetchedEvents
-              .where((event) => event.imageUrl.contains("/nearby/"))
+              .where(
+                (event) =>
+                    event.imageUrl.isNotEmpty &&
+                    event.imageUrl.split('/').contains('nearby'),
+              )
               .toList();
     });
   }
@@ -200,6 +209,53 @@ class _NewHomeScreenState extends State<NewHomeScreen>
               ),
               SizedBox(height: size.height * 0.01),
               EventWidget(events: popularEvents),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: padding * 1.8),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => const GroupSizeScreen(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      border: Border(
+                        top: BorderSide(color: Color(0xff3579DD), width: 1),
+                        left: BorderSide(color: Color(0xff3579DD), width: 1),
+                        right: BorderSide(color: Color(0xff3579DD), width: 3),
+                        bottom: BorderSide(color: Color(0xff3579DD), width: 3),
+                      ),
+                    ),
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Do you want to book an exclusive group event?",
+                          style: GoogleFonts.urbanist(
+                            color: Colors.white,
+                            fontSize: fontSize * 0.8,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "(Elevate your experience with a tailored event – choose your vibe!)",
+                          style: GoogleFonts.urbanist(
+                            color: Colors.white70,
+                            fontSize: fontSize * 0.6,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: size.height * 0.04),
               NearEventsWidget(events: nearbyEvents),
             ],
           ),
@@ -378,7 +434,9 @@ class _EventWidgetState extends State<EventWidget>
                                         child: Hero(
                                           tag: 'image${event.title}',
                                           child: Image.network(
-                                            event.imageUrl,
+                                            event.imageUrl.isNotEmpty
+                                                ? event.imageUrl
+                                                : "https://tinyurl.com/2mwx6exe",
                                             fit: BoxFit.cover,
                                             width: size.width * 0.9,
                                             height: size.height * 0.24,
@@ -671,7 +729,9 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
                             child: Hero(
                               tag: 'image${event.title}',
                               child: Image.network(
-                                event.imageUrl,
+                                event.imageUrl.isNotEmpty
+                                    ? event.imageUrl
+                                    : "https://tinyurl.com/2mwx6exe",
                                 fit: BoxFit.cover,
                                 width: size.width * 0.2,
                                 height: size.height * 0.10,
