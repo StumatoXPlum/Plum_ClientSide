@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -133,6 +132,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _buildButtons(BuildContext context, Size size) {
+    final authService = AuthService();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: Column(
@@ -160,7 +160,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               setState(() => isLoading = true);
 
               try {
-                final user = await _authService.signInWithGoogle(context);
+                final user = await authService.signInWithGoogle(context);
                 if (user == null) {
                   if (mounted) {
                     showCustomSnackbar(
@@ -172,18 +172,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   return;
                 }
 
-                DocumentSnapshot doc =
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(user.uid)
-                        .get();
+                final response =
+                    await Supabase.instance.client
+                        .from('users')
+                        .select()
+                        .eq('id', user.id)
+                        .maybeSingle();
                 context.read<AuthCubit>().setUserEmail(user.email ?? "");
-                final userData = doc.data() as Map<String, dynamic>?;
                 bool isRegistrationComplete =
-                    userData?['registrationComplete'] == true;
+                    response?['registrationComplete'] == true;
                 bool hasPhoneNumber =
-                    userData?['phoneNumber'] != null &&
-                    userData?['phoneNumber'].isNotEmpty;
+                    response?['phonenumber'] != null &&
+                    response?['phonenumber'].isNotEmpty;
 
                 if (mounted) {
                   if (isRegistrationComplete && hasPhoneNumber) {
@@ -227,8 +227,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               });
 
               try {
-                final user = await _authService.signInWithApple();
-
+                final user = await _authService.signInWithApple(context);
                 if (user != null) {
                   context.read<AuthCubit>().setUserEmail(user.email ?? "");
                   Navigator.push(
@@ -264,6 +263,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildEmailInput(Size size) {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
+
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       child: Column(
@@ -271,7 +271,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            "Please enter your email ",
+            "Please enter your email",
             style: GoogleFonts.urbanist(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -310,7 +310,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ).hasMatch(email)) {
                 showCustomSnackbar(
                   context,
-                  "Please Enter a valid email!",
+                  "Please enter a valid email!",
                   Colors.red.shade600,
                 );
                 return;
@@ -319,26 +319,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
               setState(() => isContinuing = true);
 
               try {
-                final userDoc =
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .where('email', isEqualTo: email)
-                        .limit(1)
-                        .get();
-                print("User document found: ${userDoc.docs.isNotEmpty}");
-                await Supabase.instance.client.auth.signInWithOtp(
+                final supabase = Supabase.instance.client;
+                final existingUser =
+                    await supabase
+                        .from('users')
+                        .select('id')
+                        .eq('email', email)
+                        .maybeSingle();
+
+                bool isExistingUser = existingUser != null;
+                await supabase.auth.signInWithOtp(
                   email: email,
-                  emailRedirectTo: null,
-                  shouldCreateUser: userDoc.docs.isEmpty,
+                  emailRedirectTo: "your-app://callback",
                 );
-                print("OTP sent successfully");
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder:
                         (context) => EmailVerification(
                           email: email,
-                          isExistingUser: userDoc.docs.isNotEmpty,
+                          isExistingUser: isExistingUser,
                         ),
                   ),
                 );

@@ -1,12 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'package:task2/core/custom_widgets/custom_button.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/custom_widgets/custom_button.dart';
 import '../phone_number/phone_number.dart';
-import '../sign_up_screen/auth_service/auth_service.dart';
 
 class EnterNameScreen extends StatefulWidget {
   const EnterNameScreen({super.key});
@@ -26,7 +23,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
     super.dispose();
   }
 
-  Future<void> saveUserToFirestore() async {
+  Future<void> saveUserToSupabase() async {
     if (!mounted) return;
     String name = _nameController.text.trim();
     if (name.isEmpty) return;
@@ -36,27 +33,23 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
     });
 
     try {
-      firebase_auth.User? firebaseUser =
-          firebase_auth.FirebaseAuth.instance.currentUser;
-      final supabase.User? supabaseUser =
-          supabase.Supabase.instance.client.auth.currentUser;
+      final supabase = Supabase.instance.client;
+      final user = supabase.auth.currentUser;
 
-      if (firebaseUser == null && supabaseUser == null) {
+      if (user == null) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('Sign in first')));
         return;
       }
 
-      String uid = firebaseUser?.uid ?? supabaseUser!.id;
-      String email = firebaseUser?.email ?? supabaseUser!.email ?? "";
-      String avatarUrl = AuthService.getRandomAvatarUrl(uid);
-
-      await FirebaseFirestore.instance.collection('users').doc(uid).set({
+      await supabase.from('users').upsert({
+        'id': user.id,
         'name': name,
-        'email': email,
-        'avatarUrl': avatarUrl,
-      }, SetOptions(merge: true));
+        'email': user.email ?? "",
+        'avatarurl':
+            'https://api.dicebear.com/7.x/identicon/svg?seed=${user.id}',
+      });
 
       Navigator.push(
         context,
@@ -136,8 +129,7 @@ class _EnterNameScreenState extends State<EnterNameScreen> {
               SizedBox(height: size.height * 0.04),
               CustomButton(
                 buttonText: "Continue",
-                onTap:
-                    isNameEntered && !isLoading ? saveUserToFirestore : () {},
+                onTap: isNameEntered && !isLoading ? saveUserToSupabase : () {},
               ),
             ],
           ),

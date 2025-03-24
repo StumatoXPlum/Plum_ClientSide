@@ -1,15 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/core/custom_widgets/custom_button.dart';
+import 'package:task2/presentation/authentication_screens/sign_up_screen/auth_service/auth_service.dart';
 import 'package:task2/presentation/points_screen/cubit/earned_points_cubit.dart';
 import '../authentication_screens/date_of_birth/date_of_birth.dart';
-import '../authentication_screens/sign_up_screen/auth_service/auth_service.dart';
 import '../authentication_screens/sign_up_screen/view/sign_up_screen.dart';
 
 class UserProfile extends StatefulWidget {
@@ -24,8 +22,9 @@ class UserProfileState extends State<UserProfile> {
   String email = "Not Available";
   String phoneNumber = "Not Available";
   String dateOfBirth = "Not set yet";
-  bool isGoogleSignIn = false;
   String avatarUrl = "";
+
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   @override
   void initState() {
@@ -34,84 +33,41 @@ class UserProfileState extends State<UserProfile> {
   }
 
   Future<void> fetchUserData() async {
-    final firebase_auth.FirebaseAuth firebaseAuth =
-        firebase_auth.FirebaseAuth.instance;
-    final supabase.SupabaseClient supabaseClient =
-        supabase.Supabase.instance.client;
-
-    firebase_auth.User? firebaseUser = firebaseAuth.currentUser;
-    final supabase.User? supabaseUser = supabaseClient.auth.currentUser;
-
-    String userId;
-    if (firebaseUser != null) {
-      isGoogleSignIn = true;
-      email = firebaseUser.email ?? "Not Available";
-      userId = firebaseUser.uid;
-    } else if (supabaseUser != null) {
-      isGoogleSignIn = false;
-      email = supabaseUser.email ?? "Not Available";
-      userId = supabaseUser.id;
-    } else {
-      return;
-    }
+    final user = _supabase.auth.currentUser;
+    if (user == null) return;
 
     try {
-      DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(userId)
-              .get();
+      final response =
+          await _supabase
+              .from('users')
+              .select('email, name, phonenumber, dateofbirth, avatarurl')
+              .eq('id', user.id)
+              .single(); 
 
-      if (userDoc.exists) {
-        setState(() {
-          phoneNumber =
-              userDoc.data().toString().contains('phoneNumber')
-                  ? userDoc['phoneNumber']
-                  : "Not Available";
+      setState(() {
+        email = response['email'] ?? user.email ?? "Not Available";
+        name = response['name'] ?? email.split('@').first;
+        phoneNumber = response['phonenumber'] ?? "Not Available";
+        dateOfBirth = response['dateofbirth'] ?? "Not set yet";
 
-          dateOfBirth =
-              userDoc.data().toString().contains('dateOfBirth') &&
-                      userDoc['dateOfBirth'].toString().isNotEmpty
-                  ? userDoc['dateOfBirth']
-                  : "Not set yet";
+        avatarUrl =
+            response['avatarurl']?.isNotEmpty == true
+                ? response['avatarurl']
+                : AuthService.getRandomAvatarUrl(user.id);
+      });
 
-          avatarUrl =
-              userDoc.data().toString().contains('avatarUrl')
-                  ? userDoc['avatarUrl']
-                  : AuthService.getRandomAvatarUrl(userId);
-
-          name =
-              userDoc.data().toString().contains('name')
-                  ? userDoc['name']
-                  : (isGoogleSignIn ? email.split('@').first : "Not Available");
-        });
-      } else {
-        print("User does not exist");
-      }
+      print("Fetched user data: $response"); 
     } catch (e) {
-      print("Error fething user: $e");
+      print("Error fetching user data: $e");
     }
   }
 
   Future<void> _signOut() async {
-    final firebase_auth.FirebaseAuth firebaseAuth =
-        firebase_auth.FirebaseAuth.instance;
-    final supabase.SupabaseClient supabaseClient =
-        supabase.Supabase.instance.client;
-
-    final firebase_auth.User? firebaseUser = firebaseAuth.currentUser;
-    final supabase.User? supabaseUser = supabaseClient.auth.currentUser;
-
-    if (firebaseUser != null) {
-      await firebaseAuth.signOut();
-    } else if (supabaseUser != null) {
-      await supabaseClient.auth.signOut();
-    }
-
+    await _supabase.auth.signOut();
     if (mounted) {
       Navigator.pushAndRemoveUntil(
         context,
-        CupertinoPageRoute(builder: (context) => SignUpScreen()),
+        CupertinoPageRoute(builder: (context) => const SignUpScreen()),
         (route) => false,
       );
     }
@@ -121,7 +77,7 @@ class UserProfileState extends State<UserProfile> {
     await Navigator.push(
       context,
       CupertinoPageRoute(
-        builder: (context) => DateOfBirth(isFromProfile: true),
+        builder: (context) => const DateOfBirth(isFromProfile: true),
       ),
     );
     fetchUserData();
@@ -179,18 +135,14 @@ class UserProfileState extends State<UserProfile> {
             padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
             child: Column(
               children: [
+                /// **Header Row**
                 Row(
                   children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: SvgPicture.asset(
-                          "assets/sign_up_assets/back.svg",
-                        ),
-                      ),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: SvgPicture.asset("assets/sign_up_assets/back.svg"),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: padding * 0.4,
@@ -226,25 +178,36 @@ class UserProfileState extends State<UserProfile> {
                     ),
                   ],
                 ),
+
+                /// **User Profile Image**
+                SizedBox(height: size.height * 0.04),
                 Center(
                   child: Container(
                     padding: EdgeInsets.all(padding * 1.2),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Color(0xff3579DD), width: 4),
+                      border: Border.all(
+                        color: const Color(0xff3579DD),
+                        width: 4,
+                      ),
                     ),
                     child: ClipOval(
                       child: Image.network(
-                        avatarUrl.isNotEmpty
-                            ? avatarUrl
-                            : AuthService.getRandomAvatarUrl(email),
+                        avatarUrl,
                         height: size.height * 0.15,
                         width: size.width * 0.3,
                         fit: BoxFit.cover,
+                        errorBuilder:
+                            (context, error, stackTrace) => const Icon(
+                              Icons.person,
+                              size: 100,
+                              color: Colors.white,
+                            ),
                       ),
                     ),
                   ),
                 ),
+
                 SizedBox(height: size.height * 0.02),
                 Text(
                   name,
@@ -253,6 +216,7 @@ class UserProfileState extends State<UserProfile> {
                     fontSize: fontSize,
                   ),
                 ),
+
                 SizedBox(height: size.height * 0.03),
                 buildTextField(
                   "Your Email",
@@ -275,6 +239,7 @@ class UserProfileState extends State<UserProfile> {
                   isReadOnly: true,
                   onTap: navigateToDateOfBirthScreen,
                 ),
+
                 SizedBox(height: size.height * 0.04),
                 CustomButton(buttonText: "Log Out", onTap: _signOut),
               ],

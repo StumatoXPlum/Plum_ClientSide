@@ -1,18 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/core/custom_widgets/custom_button.dart';
 import '../date_of_birth/date_of_birth.dart';
-import 'phone_auth/phone_auth.dart';
 
 class PhoneVerification extends StatefulWidget {
   final String phoneNumber;
   final bool isMockOtp;
+
   const PhoneVerification({
     super.key,
     required this.phoneNumber,
@@ -27,94 +25,96 @@ class _PhoneVerificationState extends State<PhoneVerification> {
   final TextEditingController otpController = TextEditingController();
   bool isOtpEntered = false;
   bool isVerifying = false;
+  final supabase = Supabase.instance.client;
 
   @override
   void initState() {
     super.initState();
+
     otpController.addListener(() {
-      setState(() {
-        isOtpEntered = otpController.text.isNotEmpty;
-      });
+      setState(() => isOtpEntered = otpController.text.length == 6);
     });
+
     if (widget.isMockOtp) {
-      Future.delayed(Duration(milliseconds: 300), () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              "We're having some issue, Please try this OTP: 123456",
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                "We're having some issues. Try this OTP: 123456",
+              ),
+              backgroundColor: Colors.orange,
+              behavior: SnackBarBehavior.floating,
             ),
-            backgroundColor: Colors.orange,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      });
-
-      Future.delayed(Duration(seconds: 10), () {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          );
+        }
       });
     }
   }
 
-  Future<void> _storePhoneNumber(String phoneNumber) async {
-    final firebaseAuth = FirebaseAuth.instance;
-    final supabaseUser = supabase.Supabase.instance.client.auth.currentUser;
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red.shade600),
+    );
+  }
 
-    String? uid;
-    String? email;
+  Future<void> _verifyOtp() async {
+    if (!isOtpEntered || isVerifying) return;
 
-    if (firebaseAuth.currentUser != null) {
-      uid = firebaseAuth.currentUser!.uid;
-      email = firebaseAuth.currentUser!.email;
-    } else if (supabaseUser != null) {
-      uid = supabaseUser.id;
-      email = supabaseUser.email;
-    }
+    setState(() => isVerifying = true);
+    final supabase = Supabase.instance.client;
 
-    if (uid != null) {
-      try {
-        await FirebaseFirestore.instance.collection('users').doc(uid).set({
-          'phoneNumber': phoneNumber,
-          'email': email,
-        }, SetOptions(merge: true));
-        Navigator.push(
-          context,
-          CupertinoPageRoute(builder: (context) => DateOfBirth()),
-        );
-      } catch (e) {
-        print("Error: $e");
+    try {
+      final existingUser = supabase.auth.currentUser;
+      if (existingUser == null) {
+        throw AuthException("No authenticated user found.");
       }
-    } else {
-      print("No user found!");
-    }
-  }
 
-  void onTap() async {
-    if (isOtpEntered && !isVerifying) {
-      setState(() {
-        isVerifying = true;
-      });
-      bool isValid = await TwilioVerifyService().verifyOtp(
-        widget.phoneNumber,
-        otpController.text,
-      );
-      if (isValid) {
-        print('OTP Verified');
-        await _storePhoneNumber(widget.phoneNumber);
-        Navigator.push(
-          context,
-          CupertinoPageRoute(builder: (context) => DateOfBirth()),
-        );
+      final existingUserId = existingUser.id;
+      print("Existing user ID: $existingUserId");
+
+      if (widget.isMockOtp && otpController.text == "123456") {
+        print("Mock OTP verified successfully.");
+
+        await supabase
+            .from('users')
+            .update({'phonenumber': widget.phoneNumber})
+            .eq('id', existingUserId);
+
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Invalid OTP'),
-            backgroundColor: Colors.red.shade600,
-          ),
+        final otpResponse = await supabase.auth.verifyOTP(
+          token: otpController.text,
+          type: OtpType.sms, 
         );
+
+        final verifiedUser = otpResponse.user;
+        if (verifiedUser == null || verifiedUser.id != existingUserId) {
+          throw AuthException("OTP verified, but user session changed.");
+        }
+        await supabase.auth.updateUser(
+          UserAttributes(phone: widget.phoneNumber),
+        );
+        await supabase
+            .from('users')
+            .update({'phonenumber': widget.phoneNumber})
+            .eq('id', existingUserId);
+
       }
-      setState(() {
-        isVerifying = false;
-      });
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        CupertinoPageRoute(builder: (context) => const DateOfBirth()),
+      );
+    } on AuthException catch (e) {
+      print("Auth Error: ${e.message}");
+      _showError(e.message);
+    } catch (e) {
+      _showError("Something went wrong. Please try again.");
+    } finally {
+      if (mounted) {
+        setState(() => isVerifying = false);
+      }
     }
   }
 
@@ -124,6 +124,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
     double padding = size.width * 0.03;
     double iconSize = size.width * 0.05;
     double fontSize = size.width * 0.05;
+
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
       appBar: AppBar(
@@ -160,14 +161,13 @@ class _PhoneVerificationState extends State<PhoneVerification> {
               ),
               SizedBox(height: size.height * 0.02),
               Text(
-                "We've sent an SMS with an activation code to your phone ${widget.phoneNumber}",
+                "We've sent an SMS with an activation code to ${widget.phoneNumber}",
                 style: GoogleFonts.urbanist(
-                  fontSize: fontSize * 1,
+                  fontSize: fontSize,
                   color: Colors.white70,
                 ),
                 textAlign: TextAlign.center,
               ),
-
               SizedBox(height: size.height * 0.1),
               Pinput(
                 controller: otpController,
@@ -185,104 +185,9 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                     border: Border.all(color: const Color(0xff3579DD)),
                   ),
                 ),
-                focusedPinTheme: PinTheme(
-                  width: 50,
-                  height: 60,
-                  textStyle: GoogleFonts.urbanist(
-                    fontSize: fontSize,
-                    color: Colors.white,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xff090D14),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blueAccent),
-                  ),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    isOtpEntered = value.length == 6;
-                  });
-                },
               ),
               SizedBox(height: size.height * 0.05),
-              Align(
-                alignment: Alignment.center,
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "I didn't receive the code ",
-                        style: GoogleFonts.urbanist(
-                          fontSize: fontSize * 0.8,
-                          color: Colors.white70,
-                        ),
-                      ),
-                      WidgetSpan(
-                        alignment: PlaceholderAlignment.baseline,
-                        baseline: TextBaseline.alphabetic,
-                        child: GestureDetector(
-                          onTap: () async {
-                            bool success = await TwilioVerifyService().sendOtp(
-                              widget.phoneNumber,
-                            );
-                            if (success) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('New OTP has been sent'),
-                                  backgroundColor: Colors.green.shade600,
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Failed to resend OTP try again!',
-                                  ),
-                                  backgroundColor: Colors.red.shade600,
-                                ),
-                              );
-                            }
-                          },
-                          child: Text(
-                            "Resend",
-                            style: GoogleFonts.urbanist(
-                              color: Colors.white,
-                              fontSize: fontSize * 0.8,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: size.height * 0.04),
-              CustomButton(
-                buttonText: "Verify",
-                onTap: onTap,
-                child:
-                    isVerifying
-                        ? const Center(
-                          child: SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                        )
-                        : Text(
-                          "Verify",
-                          style: GoogleFonts.urbanist(
-                            fontSize: fontSize,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-              ),
+              CustomButton(buttonText: "Verify", onTap: _verifyOtp),
             ],
           ),
         ),

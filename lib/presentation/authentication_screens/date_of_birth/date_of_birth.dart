@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/core/custom_widgets/custom_button.dart';
 import '../../../core/custom_widgets/bottom_navigation_bar.dart';
 
@@ -43,7 +41,6 @@ class _DateOfBirthState extends State<DateOfBirth> {
 
   bool get isDOBSelected =>
       selectedDay != null && selectedMonth != null && selectedYear != null;
-
   OverlayEntry? overlayEntry;
 
   void removeOverlay() {
@@ -52,31 +49,24 @@ class _DateOfBirthState extends State<DateOfBirth> {
   }
 
   Future<void> _storeDateOfBirth(String dob) async {
-    final firebaseUser = FirebaseAuth.instance.currentUser;
-    final supabaseUser = supabase.Supabase.instance.client.auth.currentUser;
-    String? uid;
-    String? email;
+    final supabaseClient = Supabase.instance.client;
+    final user = supabaseClient.auth.currentUser;
 
-    if (firebaseUser != null) {
-      uid = firebaseUser.uid;
-      email = firebaseUser.email;
-    } else if (supabaseUser != null) {
-      uid = supabaseUser.id;
-      email = supabaseUser.email;
+    if (user == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please sign in first')));
+      return;
     }
 
-    if (uid != null) {
-      try {
-        await FirebaseFirestore.instance.collection('users').doc(uid).set({
-          'dateOfBirth': dob,
-          'email': email,
-        }, SetOptions(merge: true));
-        print("dob stored");
-      } catch (e) {
-        print("errror : $e");
-      }
-    } else {
-      print("No user found");
+    try {
+      await supabaseClient.from('users').update({'dateofbirth': dob}).match({
+        'id': user.id,
+      });
+
+      print("Dob stored");
+    } catch (e) {
+      print("Error storing DOB: $e");
     }
   }
 
@@ -185,6 +175,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
       );
       return;
     }
+
     String dob = "$selectedDay $selectedMonth $selectedYear";
     await _storeDateOfBirth(dob);
 
@@ -278,7 +269,6 @@ class _DateOfBirthState extends State<DateOfBirth> {
                   ),
                 ],
               ),
-
               SizedBox(height: size.height * 0.08),
               CustomButton(buttonText: "Verify", onTap: onTap),
               if (!widget.isFromProfile) ...[

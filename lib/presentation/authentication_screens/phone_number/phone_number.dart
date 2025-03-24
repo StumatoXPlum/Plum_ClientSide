@@ -1,15 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/core/custom_widgets/custom_button.dart';
-import 'package:task2/presentation/authentication_screens/phone_number/phone_auth/phone_auth.dart';
-import 'country_picker.dart';
-import 'phone_verification.dart';
+import 'package:task2/presentation/authentication_screens/phone_number/phone_verification.dart';
 
 class PhoneNumber extends StatefulWidget {
   const PhoneNumber({super.key});
@@ -46,56 +42,78 @@ class _PhoneNumberState extends State<PhoneNumber> {
     });
   }
 
-  void _pickCountry() async {
-    final chosenCountry = await Navigator.push<Country>(
-      context,
-      CupertinoPageRoute(builder: (context) => const ChooseCountryScreen()),
+  void _pickCountry() {
+    showCountryPicker(
+      context: context,
+      showPhoneCode: true,
+      onSelect: (Country country) {
+        setState(() => selectedCountry = country);
+      },
     );
-
-    if (chosenCountry != null) {
-      setState(() => selectedCountry = chosenCountry);
-    }
   }
 
   Future<void> fetchUserName() async {
-    final firebase_auth.User? firebaseUser =
-        firebase_auth.FirebaseAuth.instance.currentUser;
-    final supabase.User? supabaseUser =
-        supabase.Supabase.instance.client.auth.currentUser;
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
 
-    if (firebaseUser == null && supabaseUser == null) return;
-
-    String uid = firebaseUser?.uid ?? supabaseUser!.id;
-    final userDoc =
-        await FirebaseFirestore.instance.collection('users').doc(uid).get();
-
-    if (userDoc.exists) {
-      setState(() => userName = userDoc['name'] ?? "there");
-    } else if (firebaseUser?.email != null) {
-      setState(() => userName = firebaseUser!.email!.split('@').first);
-    }
-  }
-
-  void verifyNumber() async {
-    if (!isPhoneEnter || isLoading) return;
-
-    setState(() => isLoading = true);
-
-    String phoneNumber = "+${selectedCountry.phoneCode}${phoneController.text}";
-    bool success = await TwilioVerifyService().sendOtp(phoneNumber);
+    final userData =
+        await Supabase.instance.client
+            .from('users')
+            .select('name')
+            .eq('id', user.id)
+            .maybeSingle();
 
     if (!mounted) return;
+
+    setState(() => userName = userData?['name'] ?? "there");
+  }
+
+ void verifyNumber() async {
+  if (!isPhoneEnter || isLoading) return;
+
+  setState(() => isLoading = true);
+
+  String phoneNumber = "+${selectedCountry.phoneCode}${phoneController.text.trim()}";
+
+  try {
+    // Twilio OTP is TEMPORARILY DISABLED
+    /*
+    await Supabase.instance.client.auth.signInWithOtp(
+      phone: phoneNumber,
+      shouldCreateUser: false,
+    );
+    */
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      await Supabase.instance.client
+          .from('users')
+          .update({'phonenumber': phoneNumber})
+          .eq('id', user.id);
+    }
     Navigator.push(
       context,
       CupertinoPageRoute(
-        builder:
-            (context) => PhoneVerification(
-              phoneNumber: phoneNumber,
-              isMockOtp: !success,
-            ),
+        builder: (context) => PhoneVerification(phoneNumber: phoneNumber, isMockOtp: true),
       ),
-    ).then((_) => setState(() => isLoading = false));
+    );
+
+  } on AuthException catch (e) {
+    print("Auth Error: ${e.message}");
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error: ${e.message}")),
+    );
+  } catch (e) {
+    print("Unexpected Error: $e");
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Failed to proceed. Try again!")),
+    );
   }
+
+  setState(() => isLoading = false);
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -204,31 +222,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
               ],
             ),
             SizedBox(height: size.height * 0.07),
-            CustomButton(
-              onTap: verifyNumber,
-              buttonText: "Verify",
-              child:
-                  isLoading
-                      ? const Center(
-                        child: SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      )
-                      : Text(
-                        "Send OTP",
-                        style: GoogleFonts.urbanist(
-                          fontSize: fontSize,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-            ),
+            CustomButton(onTap: verifyNumber, buttonText: "Send OTP"),
           ],
         ),
       ),

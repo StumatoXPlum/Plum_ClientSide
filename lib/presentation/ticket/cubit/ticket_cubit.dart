@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../model/ticket_model.dart';
@@ -35,8 +33,6 @@ class TicketError extends TicketState {
 }
 
 class TicketCubit extends Cubit<TicketState> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final SupabaseClient _supabase = Supabase.instance.client;
 
   TicketCubit() : super(TicketInitial()) {
@@ -51,15 +47,10 @@ class TicketCubit extends Cubit<TicketState> {
     }
 
     try {
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('bookings')
-          .add(ticket.toFirestore());
-
-      print("Booking saved");
+      await _supabase.from('bookings').insert(ticket.toJson());
+      print("Booking saved to Supabase");
     } catch (e) {
-      emit(TicketError("Failed to save booking: $e"));
+      emit(TicketError("Failed to save booking: \$e"));
     }
   }
 
@@ -70,23 +61,14 @@ class TicketCubit extends Cubit<TicketState> {
       return;
     }
 
-    final bookingRef = _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('bookings');
-
-    bookingRef.snapshots().listen((snapshot) {
+    _supabase.from('bookings').stream(primaryKey: ['id']).listen((data) {
       final List<TicketModel> tickets =
-          snapshot.docs.map((doc) => TicketModel.fromFirestore(doc)).toList();
-
+          data.map((json) => TicketModel.fromSupabase(json)).toList();
       emit(TicketLoaded(tickets));
     });
   }
 
   String? _getUserId() {
-    if (_firebaseAuth.currentUser != null) {
-      return _firebaseAuth.currentUser?.uid;
-    }
     return _supabase.auth.currentUser?.id;
   }
 }

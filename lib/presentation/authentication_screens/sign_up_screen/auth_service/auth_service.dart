@@ -1,66 +1,140 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as supabse;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/custom_widgets/bottom_navigation_bar.dart';
 import '../../name_screen/enter_name_screen.dart';
 import '../../phone_number/phone_number.dart';
 
 class AuthService {
-  final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final SupabaseClient _supabase = Supabase.instance.client;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    serverClientId:
+        "615462309629-uacsqqrrstemjgeg68jopd4nrbjj6bmj.apps.googleusercontent.com",
+  );
 
+  /// Generates a random avatar for users
   static String getRandomAvatarUrl(String userId) {
     return "https://api.dicebear.com/7.x/notionists/png?seed=$userId";
+  }
+
+  Future<void> _storeUserInSupabase(User user) async {
+    try {
+      final email = user.email ?? user.userMetadata?['email'] ?? '';
+      final name = user.userMetadata?['full_name'] ?? '';
+      final avatarUrl = getRandomAvatarUrl(user.id);
+
+      if (email.isEmpty) {
+        return;
+      }
+      final existingUser =
+          await _supabase
+              .from('users')
+              .select('id, name, phonenumber, dateofbirth')
+              .eq('email', email)
+              .maybeSingle();
+
+      if (existingUser != null) {
+        await _supabase
+            .from('users')
+            .update({
+              if (name.isNotEmpty && existingUser['name'] == null) 'name': name,
+              'avatarurl': avatarUrl,
+            })
+            .eq('id', existingUser['id']);
+      } else {
+        await _supabase.from('users').insert({
+          'id': user.id,
+          'email': email,
+          'name': name,
+          'avatarurl': avatarUrl,
+          'phonenumber': "",
+          'dateofbirth': "",
+          'bookmark_ids': [],
+        });
+
+        print("new user: ${user.id}");
+      }
+    } catch (error) {
+      print("Supabase User Insert Error: $error");
+    }
   }
 
   Future<User?> signInWithGoogle(BuildContext context) async {
     try {
       await _googleSignIn.signOut();
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null;
+
+      if (googleUser == null) {
+        print("Google Sign-In was canceled.");
+        return null;
+      }
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+
+      if (googleAuth.idToken == null) {
+        _showSnackBar(context, "Google Sign-In failed. Try again.");
+        return null;
+      }
+
+      final AuthResponse response = await _supabase.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: googleAuth.idToken!,
       );
 
-      final UserCredential userCredential = await _auth.signInWithCredential(
-        credential,
-      );
-      final User? user = userCredential.user;
+      final User? user = response.user;
       if (user == null) return null;
 
-      QuerySnapshot querySnapshot =
-          await _firestore
-              .collection('users')
-              .where('email', isEqualTo: user.email)
-              .get();
+      await _storeUserInSupabase(user);
+      _navigateBasedOnUser(context, user);
 
-      if (querySnapshot.docs.isNotEmpty) {
-        DocumentSnapshot existingUserDoc = querySnapshot.docs.first;
-        Map<String, dynamic> userData =
-            existingUserDoc.data() as Map<String, dynamic>;
+      return user;
+    } catch (e) {
+      print("Google Sign-In Error: $e");
+      _showSnackBar(context, "Google Sign-In Error: $e");
+      return null;
+    }
+  }
 
-        if (existingUserDoc.id != user.uid) {
-          await _firestore.collection('users').doc(user.uid).set(userData);
-        }
+  Future<User?> signInWithApple(BuildContext context) async {
+    try {
+      await _supabase.auth.signInWithOAuth(
+        OAuthProvider.apple,
+        redirectTo: "your-app://callback",
+      );
 
-        if (!userData.containsKey('phoneNumber') ||
-            userData['phoneNumber'] == "") {
-          Navigator.pushReplacement(
+      final Session? session = _supabase.auth.currentSession;
+      final User? user = session?.user;
+
+      if (user != null) {
+        await _storeUserInSupabase(user);
+        _navigateBasedOnUser(context, user);
+      }
+      return user;
+    } catch (e) {
+      print("Apple Sign-In Error: $e");
+      return null;
+    }
+  }
+
+  void _navigateBasedOnUser(BuildContext context, User user) async {
+    try {
+      final response =
+          await _supabase
+              .from('users')
+              .select('phonenumber, dateofbirth')
+              .eq('id', user.id)
+              .maybeSingle();
+
+      if (response != null) {
+        if (response['phonenumber'] == "") {
+          Navigator.push(
             context,
             CupertinoPageRoute(builder: (context) => PhoneNumber()),
           );
-        } else if (!userData.containsKey('dateOfBirth') ||
-            userData['dateOfBirth'] == "") {
-          Navigator.pushReplacement(
+        } else if (response['dateofbirth'] == "") {
+          Navigator.push(
             context,
             CupertinoPageRoute(builder: (context) => EnterNameScreen()),
           );
@@ -70,82 +144,20 @@ class AuthService {
             CupertinoPageRoute(builder: (context) => BottomNavScreen()),
           );
         }
-      } else {
-        await _saveUserToDatabase(user);
-        Navigator.pushReplacement(
-          context,
-          CupertinoPageRoute(builder: (context) => PhoneNumber()),
-        );
       }
-      return user;
-    } catch (e) {
-      print("Google Sign-In Error: $e");
-      return null;
-    }
-  }
-
-  Future<User?> signInWithApple() async {
-    try {
-      final appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-
-      final OAuthProvider oAuthProvider = OAuthProvider("apple.com");
-      final OAuthCredential credential = oAuthProvider.credential(
-        idToken: appleCredential.identityToken,
-        accessToken: appleCredential.authorizationCode,
-      );
-
-      final UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithCredential(credential);
-      final User? user = userCredential.user;
-
-      if (user != null) {
-        await _saveUserToDatabase(user);
-      }
-      return user;
-    } catch (e) {
-      print("Apple Sign-In Error: $e");
-      return null;
-    }
-  }
-
-  Future<void> _saveUserToDatabase(User user) async {
-    QuerySnapshot querySnapshot =
-        await _firestore
-            .collection('users')
-            .where('email', isEqualTo: user.email)
-            .limit(1)
-            .get();
-    if (querySnapshot.docs.isNotEmpty) {
-      DocumentSnapshot existingUserDoc = querySnapshot.docs.first;
-      String existingUid = existingUserDoc.id;
-      if (existingUid != user.uid) {
-        await _firestore.collection('users').doc(existingUid).update({
-          'uid': user.uid,
-        });
-      }
-    } else {
-      String avatarUrl = getRandomAvatarUrl(user.uid);
-      await _firestore.collection('users').doc(user.uid).set({
-        'uid': user.uid,
-        'name': user.displayName ?? "there",
-        'email': user.email,
-        'phoneNumber': "",
-        'dateOfBirth': "",
-        'avatarUrl': avatarUrl,
-      });
+    } catch (error) {
+      print("Navigation Error: $error");
     }
   }
 
   Future<void> signOut() async {
     await _googleSignIn.signOut();
-    await _auth.signOut();
-    await supabse.Supabase.instance.client.auth.signOut(
-      scope: supabse.SignOutScope.global,
+    await _supabase.auth.signOut();
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );
   }
 }

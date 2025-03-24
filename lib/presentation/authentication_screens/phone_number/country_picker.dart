@@ -2,6 +2,7 @@ import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
 
 class ChooseCountryScreen extends StatefulWidget {
   const ChooseCountryScreen({super.key});
@@ -178,33 +179,15 @@ class ChooseCountryScreenState extends State<ChooseCountryScreen> {
         padding: EdgeInsets.all(padding * 1.5),
         child: SizedBox(
           width: double.infinity,
-          child: InkWell(
-            onTap:
-                selectedCountry != null
-                    ? () {
-                      Navigator.pop(context, selectedCountry);
-                    }
-                    : null,
-
-            child: Container(
-              padding: EdgeInsets.all(padding * 1.5),
-              decoration: BoxDecoration(
-                color:
-                    selectedCountry == null
-                        ? Color(0xff4D4D4D)
-                        : const Color(0xff3579DD),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Text(
-                "Continue",
-                style: GoogleFonts.urbanist(
-                  fontSize: fontSize,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
+          child: CustomButton(
+            buttonText: "Continue",
+            onTap: () {
+              selectedCountry != null
+                  ? () {
+                    Navigator.pop(context, selectedCountry);
+                  }
+                  : null;
+            },
           ),
         ),
       ),

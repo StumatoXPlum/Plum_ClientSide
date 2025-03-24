@@ -1,4 +1,5 @@
 class EventModel {
+  final String id;
   final String title;
   final String artist;
   final String imageUrl;
@@ -10,6 +11,7 @@ class EventModel {
   final String address;
 
   const EventModel({
+    required this.id,
     required this.title,
     required this.artist,
     required this.imageUrl,
@@ -23,6 +25,7 @@ class EventModel {
 
   factory EventModel.empty() {
     return EventModel(
+      id: "",
       title: "",
       artist: "",
       imageUrl: "",
@@ -37,6 +40,7 @@ class EventModel {
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(
+      id: json['id'] ?? '',
       title: json['title'] ?? '',
       artist: json['artist'] ?? '',
       imageUrl: json['imageUrl'] ?? '',
@@ -51,9 +55,10 @@ class EventModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'title': title,
       'artist': artist,
-      'imageurl': imageUrl,
+      'imageUrl': imageUrl,
       'date': date,
       'location': location,
       'price': price,

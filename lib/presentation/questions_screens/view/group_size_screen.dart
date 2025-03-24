@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/core/custom_widgets/custom_button.dart';
 import 'package:task2/presentation/questions_screens/view/booking_preference.dart';
 import 'package:task2/presentation/questions_screens/widgets/progress_bar.dart';
@@ -18,6 +19,51 @@ class GroupSizeScreenState extends State<GroupSizeScreen> {
   final TextEditingController _childrenController = TextEditingController();
   final TextEditingController _adultsController = TextEditingController();
   final TextEditingController _seniorsController = TextEditingController();
+
+  Future<void> _storeGroupSizeResponse() async {
+    final supabase = Supabase.instance.client;
+    final user = supabase.auth.currentUser;
+
+    if (user == null) {
+      return;
+    }
+
+    try {
+      final questionData =
+          await supabase
+              .from('questions')
+              .select('id')
+              .eq('question', 'Enter Group Size')
+              .maybeSingle();
+
+      if (questionData == null) {
+        return;
+      }
+
+      final questionId = questionData['id'];
+
+      final response = await supabase.from('responses').insert([
+        {
+          'user_id': user.id,
+          'question_id': questionId,
+          'response': {
+            'total_members': int.tryParse(_totalMembersController.text) ?? 0,
+            'infants': int.tryParse(_infantsController.text) ?? 0,
+            'children': int.tryParse(_childrenController.text) ?? 0,
+            'adults': int.tryParse(_adultsController.text) ?? 0,
+            'seniors': int.tryParse(_seniorsController.text) ?? 0,
+          },
+        },
+      ]);
+
+      if (response.error != null) {
+      } else {
+        print('Group size response stored successfully!');
+      }
+    } catch (error) {
+      print('Error storing response: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +123,8 @@ class GroupSizeScreenState extends State<GroupSizeScreen> {
                 padding: EdgeInsets.only(bottom: padding * 1.5),
                 child: CustomButton(
                   buttonText: "Next",
-                  onTap: () {
+                  onTap: () async {
+                    await _storeGroupSizeResponse();
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
@@ -102,6 +149,7 @@ class GroupSizeScreenState extends State<GroupSizeScreen> {
         style: GoogleFonts.urbanist(color: Colors.white),
         controller: controller,
         keyboardType: TextInputType.number,
+        textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: GoogleFonts.urbanist(color: Colors.white70),

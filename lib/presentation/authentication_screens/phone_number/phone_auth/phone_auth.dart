@@ -1,63 +1,65 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../../../../core/constants.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:async';
 
-class TwilioVerifyService {
-  final String accountSid = AppSecrets.twilioAccountSID;
-  final String authToken = AppSecrets.twilioAuthToken;
-  final String serviceSid = AppSecrets.twilioServiceSid;
-
-  String _getAuthHeader() {
-    String credentials = '$accountSid:$authToken';
-    return 'Basic ' + base64Encode(utf8.encode(credentials));
-  }
-
-  Future<bool> sendOtp(String phoneNumber) async {
+class PhoneAuthService {
+  final SupabaseClient _supabase;
+  PhoneAuthService(this._supabase);
+  Future<bool> updateUserPhoneNumber(String phoneNumber, String userId) async {
     try {
-      final response = await http.post(
-        Uri.parse(
-          'https://verify.twilio.com/v2/Services/$serviceSid/Verifications',
-        ),
-        headers: {
-          'Authorization': _getAuthHeader(),
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {'To': phoneNumber, 'Channel': 'sms'},
-      );
-
-      if (response.statusCode == 201) {
-        return true; 
-      } else {
-        throw Exception("Twilio error");
+      if (userId.isEmpty) {
+        return false;
       }
+      await _supabase.from('users').upsert({
+        'id': userId,
+        'phonenumber': phoneNumber,
+      }, onConflict: 'id');
+      return true;
     } catch (e) {
-      print("Twilio service is down. Using mock OTP: 123456");
       return false;
     }
   }
 
-  Future<bool> verifyOtp(String phoneNumber, String otp) async {
-    if (otp == "123456") {
-      print("Mock OTP Verified!");
-      return true; 
-    }
-
+  Future<bool> sendPhoneOtpForVerification(String phoneNumber) async {
     try {
-      final response = await http.post(
-        Uri.parse(
-          'https://verify.twilio.com/v2/Services/$serviceSid/VerificationCheck',
-        ),
-        headers: {
-          'Authorization': _getAuthHeader(),
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {'To': phoneNumber, 'Code': otp},
+      final currentUser = _supabase.auth.currentUser;
+      if (currentUser == null) {
+        return false;
+      }
+
+      await _supabase.auth.signInWithOtp(
+        phone: phoneNumber,
+        shouldCreateUser: false,
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> verifyPhoneOtpWithoutSignIn(
+    String phoneNumber,
+    String otp,
+  ) async {
+    try {
+      final currentUser = _supabase.auth.currentUser;
+      if (currentUser == null || currentUser.email == null) {
+        return false;
+      }
+
+      await _supabase.auth.verifyOTP(
+        phone: phoneNumber,
+        token: otp,
+        type: OtpType.sms,
       );
 
-      final data = jsonDecode(response.body);
-      return data['status'] == 'approved';
+      await _supabase.from('users').upsert({
+        'id': currentUser.id,
+        'email': currentUser.email!,
+        'phonenumber': phoneNumber,
+      }, onConflict: 'email');
+
+      return true;
     } catch (e) {
-      print("Twilio verification failed.");
       return false;
     }
   }

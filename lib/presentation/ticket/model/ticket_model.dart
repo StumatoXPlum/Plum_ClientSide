@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class TicketModel {
   final String id;
   final String title;
@@ -17,20 +15,20 @@ class TicketModel {
     required this.quantity,
   });
 
-  factory TicketModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>?;
+  factory TicketModel.fromSupabase(Map<String, dynamic> data) {
     return TicketModel(
-      id: doc.id,
-      title: data?['title'] ?? 'Unknown',
-      date: data?['date'] ?? '',
-      time: data?['time'] ?? '',
-      location: data?['location'] ?? '',
-      quantity: data?['quantity'] ?? 1,
+      id: data['id'] ?? '',
+      title: data['title'] ?? 'Unknown',
+      date: data['date'] ?? '',
+      time: data['time'] ?? '',
+      location: data['location'] ?? '',
+      quantity: data['quantity'] ?? 1,
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toJson() {
     return {
+      "id": id,
       "title": title,
       "date": date,
       "time": time,

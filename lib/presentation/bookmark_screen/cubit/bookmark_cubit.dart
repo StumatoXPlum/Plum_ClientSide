@@ -1,58 +1,90 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../home_screen/home_screen/model/event_model.dart';
 
 class BookmarkCubit extends Cubit<List<EventModel>> {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final SupabaseClient _supabase = Supabase.instance.client;
 
   BookmarkCubit() : super([]) {
-    _initialize();
-  }
-
-  Future<void> _initialize() async {
-    await _loadBookmarks();
+    _loadBookmarks();
   }
 
   Future<void> _loadBookmarks() async {
-    String? userId = _getUserId();
+    final userId = _getUserId();
     if (userId == null) return;
 
-    final doc = await _firestore.collection('users').doc(userId).get();
-    if (doc.exists && doc.data()!.containsKey('bookmarks')) {
-      List<dynamic> bookmarkList = doc['bookmarks'];
+    final response =
+        await _supabase
+            .from('users')
+            .select('bookmark_ids')
+            .eq('id', userId)
+            .single();
+
+    if (response['bookmark_ids'] is List) {
+      List<String> bookmarkIds = List<String>.from(response['bookmark_ids']);
+
+      if (bookmarkIds.isEmpty) {
+        emit([]);
+        return;
+      }
+
+      final eventsResponse = await _supabase
+          .from('events')
+          .select('*')
+          .filter('id', 'in', '(${bookmarkIds.join(',')})');
+
       List<EventModel> loadedBookmarks =
-          bookmarkList.map((e) => EventModel.fromJson(e)).toList();
+          eventsResponse.map<EventModel>((e) {
+            String imageUrl =
+                e['imageurl'] ?? '';
+
+            if (!imageUrl.startsWith('http')) {
+              final bucketUrl = _supabase.storage
+                  .from('images')
+                  .getPublicUrl(imageUrl);
+              imageUrl = bucketUrl;
+            }
+
+            return EventModel.fromJson({...e, 'imageurl': imageUrl});
+          }).toList();
+
       emit(loadedBookmarks);
     }
   }
 
   Future<void> toggleBookmark(EventModel event) async {
-    String? userId = _getUserId();
+    final userId = _getUserId();
     if (userId == null) return;
 
-    final currentBookmarks = List<EventModel>.from(state);
+    final response =
+        await _supabase
+            .from('users')
+            .select('bookmark_ids')
+            .eq('id', userId)
+            .single();
 
-    if (currentBookmarks.any((e) => e.title == event.title)) {
-      currentBookmarks.removeWhere((e) => e.title == event.title);
+    List<String> bookmarkIds =
+        response['bookmark_ids'] != null
+            ? List<String>.from(response['bookmark_ids'])
+            : [];
+
+    if (bookmarkIds.contains(event.id)) {
+      bookmarkIds.remove(event.id);
     } else {
-      currentBookmarks.add(event);
+      bookmarkIds.add(event.id);
     }
 
-    emit(currentBookmarks);
+    emit([...state.where((e) => e.id != event.id)]);
 
-    await _firestore.collection('users').doc(userId).set({
-      'bookmarks': currentBookmarks.map((e) => e.toJson()).toList(),
-    }, SetOptions(merge: true));
+    await _supabase
+        .from('users')
+        .update({'bookmark_ids': bookmarkIds})
+        .eq('id', userId);
+
+    _loadBookmarks();
   }
 
   String? _getUserId() {
-    if (_firebaseAuth.currentUser != null) {
-      return _firebaseAuth.currentUser?.uid;
-    }
     return _supabase.auth.currentUser?.id;
   }
 }

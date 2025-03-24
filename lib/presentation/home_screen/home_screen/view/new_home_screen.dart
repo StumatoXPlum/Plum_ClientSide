@@ -485,7 +485,7 @@ class _EventWidgetState extends State<EventWidget>
                                 >(
                                   builder: (context, bookmarkedEvents) {
                                     final isBookmarked = bookmarkedEvents.any(
-                                      (e) => e.title == event.title,
+                                      (e) => e.id == event.id,
                                     );
                                     return GestureDetector(
                                       onTap: () {
