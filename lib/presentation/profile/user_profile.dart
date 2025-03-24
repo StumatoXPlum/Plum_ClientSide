@@ -42,7 +42,7 @@ class UserProfileState extends State<UserProfile> {
               .from('users')
               .select('email, name, phonenumber, dateofbirth, avatarurl')
               .eq('id', user.id)
-              .single(); 
+              .single();
 
       setState(() {
         email = response['email'] ?? user.email ?? "Not Available";
@@ -56,7 +56,6 @@ class UserProfileState extends State<UserProfile> {
                 : AuthService.getRandomAvatarUrl(user.id);
       });
 
-      print("Fetched user data: $response"); 
     } catch (e) {
       print("Error fetching user data: $e");
     }
@@ -130,121 +129,132 @@ class UserProfileState extends State<UserProfile> {
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-            child: Column(
-              children: [
-                /// **Header Row**
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: SvgPicture.asset("assets/sign_up_assets/back.svg"),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: padding * 0.4,
-                        vertical: padding * 0.3,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white60, width: 1),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: Row(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                  child: Column(
+                    children: [
+                      Row(
                         children: [
-                          SvgPicture.asset(
-                            "assets/home_assets/coin.svg",
-                            height: size.height * 0.02,
-                            width: size.width * 0.02,
-                            fit: BoxFit.scaleDown,
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: SvgPicture.asset(
+                              "assets/sign_up_assets/back.svg",
+                            ),
                           ),
-                          SizedBox(width: size.width * 0.02),
-                          BlocBuilder<EarnedPointsCubit, int>(
-                            builder: (context, state) {
-                              return Text(
-                                "$state",
-                                style: GoogleFonts.urbanist(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: fontSize * 0.8,
+                          const Spacer(),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: padding * 0.4,
+                              vertical: padding * 0.3,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.white60,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/home_assets/coin.svg",
+                                  height: size.height * 0.02,
+                                  width: size.width * 0.02,
+                                  fit: BoxFit.scaleDown,
                                 ),
-                              );
-                            },
+                                SizedBox(width: size.width * 0.02),
+                                BlocBuilder<EarnedPointsCubit, int>(
+                                  builder: (context, state) {
+                                    return Text(
+                                      "$state",
+                                      style: GoogleFonts.urbanist(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: fontSize * 0.8,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-
-                /// **User Profile Image**
-                SizedBox(height: size.height * 0.04),
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.all(padding * 1.2),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xff3579DD),
-                        width: 4,
-                      ),
-                    ),
-                    child: ClipOval(
-                      child: Image.network(
-                        avatarUrl,
-                        height: size.height * 0.15,
-                        width: size.width * 0.3,
-                        fit: BoxFit.cover,
-                        errorBuilder:
-                            (context, error, stackTrace) => const Icon(
-                              Icons.person,
-                              size: 100,
-                              color: Colors.white,
+                      SizedBox(height: size.height * 0.01),
+                      Center(
+                        child: Container(
+                          padding: EdgeInsets.all(padding * 1.2),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xff3579DD),
+                              width: size.width * 0.01,
                             ),
+                          ),
+                          child: ClipOval(
+                            child: Image.network(
+                              avatarUrl,
+                              height: size.height * 0.15,
+                              width: size.width * 0.3,
+                              fit: BoxFit.cover,
+                              errorBuilder:
+                                  (context, error, stackTrace) => Icon(
+                                    Icons.person,
+                                    size: size.height * 0.15,
+                                    color: Colors.white,
+                                  ),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(height: size.height * 0.02),
+                      Text(
+                        name,
+                        style: GoogleFonts.urbanist(
+                          color: Colors.white,
+                          fontSize: fontSize,
+                        ),
+                      ),
+                      SizedBox(height: size.height * 0.03),
+                      buildTextField(
+                        "Your Email",
+                        email,
+                        Icons.mail_outline,
+                        isReadOnly: true,
+                      ),
+                      SizedBox(height: size.height * 0.02),
+                      buildTextField(
+                        "Phone Number",
+                        phoneNumber,
+                        Icons.phone,
+                        isReadOnly: true,
+                      ),
+                      SizedBox(height: size.height * 0.02),
+                      buildTextField(
+                        "Date of Birth",
+                        dateOfBirth,
+                        Icons.calendar_today,
+                        isReadOnly: true,
+                        onTap: navigateToDateOfBirthScreen,
+                      ),
+                    ],
                   ),
                 ),
-
-                SizedBox(height: size.height * 0.02),
-                Text(
-                  name,
-                  style: GoogleFonts.urbanist(
-                    color: Colors.white,
-                    fontSize: fontSize,
-                  ),
-                ),
-
-                SizedBox(height: size.height * 0.03),
-                buildTextField(
-                  "Your Email",
-                  email,
-                  Icons.mail_outline,
-                  isReadOnly: true,
-                ),
-                SizedBox(height: size.height * 0.02),
-                buildTextField(
-                  "Phone Number",
-                  phoneNumber,
-                  Icons.phone,
-                  isReadOnly: true,
-                ),
-                SizedBox(height: size.height * 0.02),
-                buildTextField(
-                  "Date of Birth",
-                  dateOfBirth,
-                  Icons.calendar_today,
-                  isReadOnly: true,
-                  onTap: navigateToDateOfBirthScreen,
-                ),
-
-                SizedBox(height: size.height * 0.04),
-                CustomButton(buttonText: "Log Out", onTap: _signOut),
-              ],
+              ),
             ),
-          ),
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: size.height * 0.04,
+                left: padding * 1.6,
+                right: padding * 1.6,
+              ),
+              child: CustomButton(buttonText: "Log Out", onTap: _signOut),
+            ),
+          ],
         ),
       ),
     );

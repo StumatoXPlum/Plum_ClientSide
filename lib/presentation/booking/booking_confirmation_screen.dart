@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/custom_widgets/custom_button.dart';
+import 'package:uuid/uuid.dart';
 import '../home_screen/home_screen/model/event_model.dart';
-import '../ticket/cubit/ticket_cubit.dart';
 import '../ticket/model/ticket_model.dart';
 import '../payment/view/payment_screen.dart';
 
@@ -292,15 +292,26 @@ class BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
             child: CustomButton(
               buttonText: 'Proceed to Payment',
               onTap: () {
+                final userId = Supabase.instance.client.auth.currentUser?.id;
+                if (userId == null) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('User not logged in')));
+                  return;
+                }
+                double eventPrice = double.tryParse(widget.event.price) ?? 0.0;
+                double totalPrice = eventPrice * ticketCount;
                 final ticket = TicketModel(
+                  id: const Uuid().v4(),
+                  eventId: widget.event.id,
                   title: widget.event.title,
                   date: widget.event.date,
                   time: widget.event.time,
                   location: widget.event.location,
                   quantity: ticketCount,
-                  id: widget.event.title,
+                  userId: userId,
+                  totalPrice: totalPrice,
                 );
-                context.read<TicketCubit>().setTicket(ticket);
                 Navigator.push(
                   context,
                   CupertinoPageRoute(

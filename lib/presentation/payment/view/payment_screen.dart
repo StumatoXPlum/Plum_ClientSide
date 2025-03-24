@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/core/custom_widgets/custom_button.dart';
+import 'package:task2/presentation/ticket/cubit/ticket_cubit.dart';
 import '../../apple_pay_animation/apple_pay.dart';
 import '../cubit/payment_cubit.dart';
 import '../../ticket/model/ticket_model.dart';
@@ -144,16 +146,56 @@ class PaymentScreen extends StatelessWidget {
                   Divider(color: Colors.grey, thickness: 0.1),
                   SizedBox(height: size.height * 0.01),
                   CustomButton(
-                    buttonText: "Proceed Payment",
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (context) => ApplePayScreen(ticket: ticket),
-                        ),
-                      );
+                    buttonText: "Proceed to Payment",
+                    onTap: () async {
+                      final paymentSuccessful =
+                          await Navigator.push<bool>(
+                            context,
+                            CupertinoPageRoute(
+                              builder:
+                                  (context) => ApplePayScreen(ticket: ticket),
+                            ),
+                          ) ??
+                          false;
+                      if (paymentSuccessful) {
+                        final userId =
+                            Supabase.instance.client.auth.currentUser?.id;
+                        if (userId != null) {
+                          final ticketWithUser = ticket.copyWith(
+                            userId: userId,
+                          );
+                          final ticketData = ticketWithUser.toJson();
+                          ticketData.remove('id');
+                          try {
+                            await Supabase.instance.client
+                                .from('bookings')
+                                .insert(ticketData);
+                            if (context.mounted) {
+                              await context.read<TicketCubit>().fetchTickets();
+                            }
+                            if (context.mounted) {
+                              showDialog(
+                                context: context,
+                                builder:
+                                    (context) => const PaymentSuccessDialog(),
+                              );
+                              await Future.delayed(const Duration(seconds: 3));
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                                Navigator.popUntil(
+                                  context,
+                                  (route) => route.isFirst,
+                                );
+                              }
+                            }
+                          } catch (e) {
+                            print("Booking failed: $e");
+                          }
+                        }
+                      }
                     },
                   ),
+
                   SizedBox(height: size.height * 0.05),
                 ],
               ),
@@ -264,49 +306,4 @@ Widget buildDebitCard(BuildContext context) {
       ),
     ),
   );
-}
-
-class PaymentSuccessDialog extends StatelessWidget {
-  const PaymentSuccessDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-    double padding = size.width * 0.03;
-    double fontSize = size.width * 0.05;
-    return Dialog(
-      insetPadding: EdgeInsets.all(padding),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      backgroundColor: Colors.black,
-      child: Padding(
-        padding: EdgeInsets.all(padding * 1.5),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SvgPicture.asset("assets/receipt_assets/check.svg"),
-            SizedBox(height: size.height * 0.02),
-            Text(
-              "Checkout Success!",
-              style: GoogleFonts.urbanist(
-                fontSize: fontSize,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: size.height * 0.02),
-            Text(
-              "Your order is confirmed and on its way. Get set to savor your chosen delights!",
-              style: GoogleFonts.urbanist(
-                fontSize: fontSize * 0.7,
-                color: Colors.white70,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: size.height * 0.02),
-            const CircularProgressIndicator(color: Color(0xff3579DD)),
-          ],
-        ),
-      ),
-    );
-  }
 }

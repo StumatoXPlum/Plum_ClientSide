@@ -34,7 +34,7 @@ class PointsScreen extends StatelessWidget {
             ),
             SizedBox(height: size.height * 0.01),
             Text(
-              "You can collect points and then sue them to get discounts and exclusive offers",
+              "You can collect points and then use them to get discounts and exclusive offers",
               style: GoogleFonts.urbanist(
                 color: Colors.white70,
                 fontSize: fontSize * 0.7,

@@ -103,9 +103,10 @@ class _BookingScreenState extends State<BookingScreen> {
             padding: const EdgeInsets.all(16.0),
             itemCount: state.tickets.length,
             itemBuilder: (context, index) {
+              final reversedIndex = state.tickets.length - 1 - index;
               return Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
-                child: TicketWidget(ticket: state.tickets[index]),
+                child: TicketWidget(ticket: state.tickets[reversedIndex]),
               );
             },
           );
