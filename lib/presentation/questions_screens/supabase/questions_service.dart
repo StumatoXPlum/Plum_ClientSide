@@ -4,10 +4,7 @@ class QuestionsService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
   Future<List<Map<String, dynamic>>> fetchQuestions() async {
-    final response = await _supabase
-        .from('questions')
-        .select('*')
-        .order('order', ascending: true);
+    final response = await _supabase.from('questions').select('*');
     if (response.isNotEmpty) {
       return response;
     } else {
@@ -24,10 +21,7 @@ class QuestionsService {
   }
 
   Future<List<Map<String, dynamic>>> fetchQuestionsWithOptions() async {
-    final response = await _supabase
-        .from('questions')
-        .select('*, options(*)')
-        .order('order', ascending: true);
+    final response = await _supabase.from('questions').select('*, options(*)');
     if (response.isNotEmpty) {
       return response;
     } else {

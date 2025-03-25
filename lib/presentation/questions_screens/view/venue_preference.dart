@@ -7,11 +7,17 @@ import '../widgets/progress_bar.dart';
 class VenuePreferences extends StatefulWidget {
   final VoidCallback goToNext;
   final VoidCallback goToPrevious;
+  final ValueChanged<bool?> onExclusiveVenueChanged;
+  final ValueChanged<String?> onPreferredVenueTypeChanged;
+  final ValueChanged<String?> onDesiredLocationChanged;
 
   const VenuePreferences({
     super.key,
     required this.goToNext,
     required this.goToPrevious,
+    required this.onExclusiveVenueChanged,
+    required this.onPreferredVenueTypeChanged,
+    required this.onDesiredLocationChanged,
   });
 
   @override
@@ -26,7 +32,7 @@ class VenuePreferencesState extends State<VenuePreferences> {
   bool _isLoading = true;
 
   final TextEditingController _locationController = TextEditingController();
-  String? _exclusiveVenue;
+  bool? _exclusiveVenue;
   String? _venueType;
 
   @override
@@ -93,14 +99,18 @@ class VenuePreferencesState extends State<VenuePreferences> {
                     SizedBox(height: padding * 2),
                     _buildDropdown(
                       "Do you require an exclusive venue?",
-                      _getOptions("Do you require an exclusive venue?"),
+                      ["Yes", "No"],
                       (value) {
                         setState(() {
-                          _exclusiveVenue = value;
+                          _exclusiveVenue = value == "Yes";
+                          widget.onExclusiveVenueChanged(_exclusiveVenue);
                         });
                       },
-                      _exclusiveVenue,
+                      _exclusiveVenue != null
+                          ? (_exclusiveVenue! ? "Yes" : "No")
+                          : null,
                     ),
+
                     SizedBox(height: padding * 1.5),
                     _buildDropdown(
                       "Preferred Venue Type",
@@ -108,6 +118,7 @@ class VenuePreferencesState extends State<VenuePreferences> {
                       (value) {
                         setState(() {
                           _venueType = value;
+                          widget.onPreferredVenueTypeChanged(value);
                         });
                       },
                       _venueType,
@@ -154,7 +165,7 @@ class VenuePreferencesState extends State<VenuePreferences> {
   ) {
     return DropdownButtonFormField<String>(
       dropdownColor: Colors.black,
-      value: options.contains(value) ? value : null,
+      value: value,
       style: GoogleFonts.urbanist(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,

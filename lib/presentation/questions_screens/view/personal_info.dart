@@ -5,7 +5,17 @@ import '../widgets/progress_bar.dart';
 
 class PersonalInfo extends StatelessWidget {
   final VoidCallback goToNext;
-  const PersonalInfo({super.key, required this.goToNext});
+  final ValueChanged<String> onFullNameChanged;
+  final ValueChanged<String> onContactNumberChanged;
+  final ValueChanged<String> onEmailChanged;
+
+  const PersonalInfo({
+    super.key,
+    required this.goToNext,
+    required this.onFullNameChanged,
+    required this.onContactNumberChanged,
+    required this.onEmailChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +48,11 @@ class PersonalInfo extends StatelessWidget {
             SizedBox(height: size.height * 0.02),
             CustomProgressBar(progress: 0.15),
             SizedBox(height: size.height * 0.04),
-            textFieldWidget('Full Name', context),
+            textFieldWidget('Full Name', context, onFullNameChanged),
             SizedBox(height: size.height * 0.02),
-            textFieldWidget('Contact Number', context),
+            textFieldWidget('Contact Number', context, onContactNumberChanged),
             SizedBox(height: size.height * 0.02),
-            textFieldWidget('Email Address', context),
+            textFieldWidget('Email Address', context, onEmailChanged),
             SizedBox(height: size.height * 0.02),
           ],
         ),
@@ -53,27 +63,28 @@ class PersonalInfo extends StatelessWidget {
       ),
     );
   }
-}
 
-Widget textFieldWidget(String label, BuildContext context) {
-  final Size size = MediaQuery.of(context).size;
-  double fontSize = size.width * 0.05;
-  return TextField(
-    style: GoogleFonts.urbanist(color: Colors.white, fontSize: fontSize * 0.8),
-    cursorColor: Colors.white,
-    textInputAction: TextInputAction.next,
-    decoration: InputDecoration(
-      label: Text(label),
-      labelStyle: GoogleFonts.urbanist(
-        color: Colors.white70,
-        fontSize: fontSize * 0.8,
+  Widget textFieldWidget(String label, BuildContext context, ValueChanged<String> onChanged) {
+    final Size size = MediaQuery.of(context).size;
+    double fontSize = size.width * 0.05;
+    return TextField(
+      style: GoogleFonts.urbanist(color: Colors.white, fontSize: fontSize * 0.8),
+      cursorColor: Colors.white,
+      textInputAction: TextInputAction.next,
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        label: Text(label),
+        labelStyle: GoogleFonts.urbanist(
+          color: Colors.white70,
+          fontSize: fontSize * 0.8,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white54),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blue),
+        ),
       ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.white54),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.blue),
-      ),
-    ),
-  );
+    );
+  }
 }

@@ -1,12 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/presentation/questions_screens/supabase/save_response_service.dart';
 import '../../../core/custom_widgets/custom_button.dart';
 import '../widgets/progress_bar.dart';
 
 class AdditionalRequirements extends StatefulWidget {
   final VoidCallback goToPrevious;
-  const AdditionalRequirements({super.key, required this.goToPrevious});
+  final String? userId;
+  final String fullName;
+  final String contactNumber;
+  final String email;
+  final String occasion;
+  final String numberOfGuests;
+  final String preferredDate;
+  final String alternateDate;
+  final String startTime;
+  final String endTime;
+  final bool exclusiveVenue;
+  final String preferredVenueType;
+  final String desiredLocationOrArea;
+  final String vibeOfEvent;
+  final String eventDescription;
+  final double budgetAmount;
+  final ValueChanged<String> onAdditionalRequirementsChanged;
+
+  const AdditionalRequirements({
+    super.key,
+    required this.goToPrevious,
+    required this.userId,
+    required this.fullName,
+    required this.contactNumber,
+    required this.email,
+    required this.occasion,
+    required this.numberOfGuests,
+    required this.preferredDate,
+    required this.alternateDate,
+    required this.startTime,
+    required this.endTime,
+    required this.exclusiveVenue,
+    required this.preferredVenueType,
+    required this.desiredLocationOrArea,
+    required this.vibeOfEvent,
+    required this.eventDescription,
+    required this.budgetAmount,
+    required this.onAdditionalRequirementsChanged,
+  });
 
   @override
   AdditionalRequirementsState createState() => AdditionalRequirementsState();
@@ -37,6 +76,43 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
             response['question_text'] ??
             "Do you have any additional requirements?";
       });
+    }
+  }
+
+  Future<void> _submitForm() async {
+    try {
+      final saveResponseService = SaveResponseService();
+      await saveResponseService.saveResponses(
+        userId: widget.userId,
+        fullName: widget.fullName,
+        contactNumber: widget.contactNumber,
+        email: widget.email,
+        occasion: widget.occasion,
+        numberOfGuests: widget.numberOfGuests,
+        preferredDate:
+            widget.preferredDate.isEmpty ? null : widget.preferredDate,
+        alternateDate:
+            widget.alternateDate.isEmpty ? null : widget.alternateDate,
+        startTime: widget.startTime,
+        endTime: widget.endTime,
+        exclusiveVenue: widget.exclusiveVenue,
+        preferredVenueType: widget.preferredVenueType,
+        desiredLocationOrArea: widget.desiredLocationOrArea,
+        vibeOfEvent: widget.vibeOfEvent,
+        eventDescription: widget.eventDescription,
+        budgetAmount: widget.budgetAmount,
+        additionalRequirements: _requirementsController.text,
+      );
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Responses saved successfully!')));
+      widget.goToPrevious();
+    } catch (e) {
+      print("Failed to save responses: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save responses: ${e.toString()}')),
+      );
     }
   }
 
@@ -74,6 +150,7 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
               TextField(
                 controller: _requirementsController,
                 maxLines: 5,
+                cursorColor: Colors.white,
                 style: GoogleFonts.urbanist(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: questionText,
@@ -85,6 +162,8 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
                     borderSide: BorderSide(color: Colors.blue),
                   ),
                 ),
+                onChanged:
+                    (value) => widget.onAdditionalRequirementsChanged(value),
               ),
               SizedBox(height: size.height * 0.05),
             ],
@@ -93,7 +172,7 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(padding),
-        child: CustomButton(buttonText: "Submit", onTap: () {}),
+        child: CustomButton(buttonText: "Submit", onTap: _submitForm),
       ),
     );
   }

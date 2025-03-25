@@ -7,10 +7,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class BudgetScreen extends StatefulWidget {
   final VoidCallback goToNext;
   final VoidCallback goToPrevious;
+  final ValueChanged<double> onBudgetAmountChanged;
   const BudgetScreen({
     super.key,
     required this.goToNext,
     required this.goToPrevious,
+    required this.onBudgetAmountChanged,
   });
 
   @override
@@ -100,6 +102,7 @@ class BudgetScreenState extends State<BudgetScreen> {
                 setState(() {
                   _selectedBudget = value;
                 });
+                widget.onBudgetAmountChanged(value);
               },
             ),
             SizedBox(height: size.height * 0.05),

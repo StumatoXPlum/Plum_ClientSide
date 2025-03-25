@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/presentation/authentication_screens/sign_up_screen/cubit/auth_cubit.dart';
 import '../../../../core/custom_widgets/bottom_navigation_bar.dart';
 import '../../name_screen/enter_name_screen.dart';
 import '../../phone_number/phone_number.dart';
@@ -13,7 +15,6 @@ class AuthService {
         "615462309629-uacsqqrrstemjgeg68jopd4nrbjj6bmj.apps.googleusercontent.com",
   );
 
-  /// Generates a random avatar for users
   static String getRandomAvatarUrl(String userId) {
     return "https://api.dicebear.com/7.x/notionists/png?seed=$userId";
   }
@@ -86,6 +87,7 @@ class AuthService {
       final User? user = response.user;
       if (user == null) return null;
 
+      context.read<AuthCubit>().setUserId(user.id);
       await _storeUserInSupabase(user);
       _navigateBasedOnUser(context, user);
 

@@ -7,10 +7,25 @@ import '../widgets/progress_bar.dart';
 class EventDetails extends StatefulWidget {
   final VoidCallback goToNext;
   final VoidCallback goToPrevious;
+  final ValueChanged<String> onOccasionChanged;
+  final ValueChanged<String> onGuestsChanged;
+  final ValueChanged<String> onPreferredDateChanged;
+  final ValueChanged<String> onAlternateDateChanged;
+  final ValueChanged<String> onStartTimeChanged;
+  final ValueChanged<String> onEndTimeChanged;
+  final ValueChanged<String> onCustomOccasionChanged;
+
   const EventDetails({
     super.key,
     required this.goToNext,
     required this.goToPrevious,
+    required this.onOccasionChanged,
+    required this.onGuestsChanged,
+    required this.onPreferredDateChanged,
+    required this.onAlternateDateChanged,
+    required this.onStartTimeChanged,
+    required this.onEndTimeChanged,
+    required this.onCustomOccasionChanged,
   });
 
   @override
@@ -23,7 +38,6 @@ class EventDetailsState extends State<EventDetails> {
   List<Map<String, dynamic>> _questions = [];
   Map<String, List<Map<String, dynamic>>> _options = {};
   bool _isLoading = true;
-
   final TextEditingController _guestsController = TextEditingController();
   final TextEditingController _preferredDateController =
       TextEditingController();
@@ -33,7 +47,6 @@ class EventDetailsState extends State<EventDetails> {
   final TextEditingController _endTimeController = TextEditingController();
   final TextEditingController _customOccasionController =
       TextEditingController();
-
   String? _selectedOccasion;
   bool _showCustomOccasionField = false;
 
@@ -54,7 +67,6 @@ class EventDetailsState extends State<EventDetails> {
           question['options'] ?? [],
         );
       }
-
       setState(() {
         _questions = questions;
         _options = options;
@@ -75,24 +87,47 @@ class EventDetailsState extends State<EventDetails> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
+
     if (picked != null) {
+      String formattedDate =
+          "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
       setState(() {
-        controller.text = "${picked.day}/${picked.month}/${picked.year}";
+        controller.text = formattedDate;
+        if (controller == _preferredDateController) {
+          widget.onPreferredDateChanged(formattedDate);
+        } else if (controller == _alternateDateController) {
+          widget.onAlternateDateChanged(formattedDate);
+        }
       });
+    } else {
+      print("No date selected");
     }
   }
 
   Future<void> _selectTime(
     BuildContext context,
     TextEditingController controller,
+    ValueChanged<String?> onTimeChanged,
   ) async {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
+
     if (picked != null) {
+      String formattedTime =
+          "${picked.hour.toString().padLeft(2, '0')}:"
+          "${picked.minute.toString().padLeft(2, '0')}:00";
+
       setState(() {
         controller.text = picked.format(context);
+        onTimeChanged(formattedTime);
+      });
+    } else {
+      String defaultTime = "00:00:00";
+      setState(() {
+        controller.text = TimeOfDay(hour: 0, minute: 0).format(context);
+        onTimeChanged(defaultTime);
       });
     }
   }
@@ -139,12 +174,14 @@ class EventDetailsState extends State<EventDetails> {
                           "Custom Occasion",
                           _customOccasionController,
                           TextInputType.text,
+                          widget.onCustomOccasionChanged,
                         ),
                       SizedBox(height: padding * 1.5),
                       _buildTextField(
                         "Number of Guests",
                         _guestsController,
                         TextInputType.number,
+                        widget.onGuestsChanged,
                       ),
                       SizedBox(height: padding * 1.5),
                       _buildDateField(
@@ -157,9 +194,15 @@ class EventDetailsState extends State<EventDetails> {
                         _alternateDateController,
                       ),
                       SizedBox(height: padding * 1.5),
-                      _buildTimeField("Start Time", _startTimeController),
+                      _buildTimeField("Start Time", _startTimeController, (
+                        value,
+                      ) {
+                        widget.onStartTimeChanged(value ?? "00:00:00");
+                      }),
                       SizedBox(height: padding * 1.5),
-                      _buildTimeField("End Time", _endTimeController),
+                      _buildTimeField("End Time", _endTimeController, (value) {
+                        widget.onEndTimeChanged(value ?? "00:00:00");
+                      }),
                       SizedBox(height: size.height * 0.05),
                     ],
                   ),
@@ -214,10 +257,11 @@ class EventDetailsState extends State<EventDetails> {
                   ),
                 );
               }).toList()
-              : [], // Ensures an empty dropdown doesn't break the UI
+              : [],
       onChanged: (value) {
         setState(() {
           _selectedOccasion = value;
+          widget.onOccasionChanged(value ?? "");
           _showCustomOccasionField = value == "Other";
         });
       },
@@ -228,12 +272,14 @@ class EventDetailsState extends State<EventDetails> {
     String label,
     TextEditingController controller,
     TextInputType keyboardType,
+    ValueChanged<String> onChanged,
   ) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
       cursorColor: Colors.white,
       style: GoogleFonts.urbanist(color: Colors.white),
+      onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
@@ -267,15 +313,20 @@ class EventDetailsState extends State<EventDetails> {
     );
   }
 
-  Widget _buildTimeField(String label, TextEditingController controller) {
+  Widget _buildTimeField(
+    String label,
+    TextEditingController controller,
+    ValueChanged<String?> onTimeChanged,
+  ) {
     return TextField(
       controller: controller,
       readOnly: true,
-      onTap: () => _selectTime(context, controller),
+      onTap: () => _selectTime(context, controller, onTimeChanged),
       style: GoogleFonts.urbanist(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
+        suffixIcon: Icon(Icons.access_time, color: Colors.white70),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
         ),
