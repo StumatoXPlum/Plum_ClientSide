@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/presentation/home_screen/home_screen/supabase/supabase_service.dart';
-import 'package:task2/presentation/questions_screens/view/group_size_screen.dart';
+import 'package:task2/presentation/questions_screens/view/question_flow_screen.dart';
 import '../../../bookmark_screen/cubit/bookmark_cubit.dart';
 import 'event_list_screen.dart';
 import '../../../profile/user_profile.dart';
@@ -216,7 +216,7 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (context) => const GroupSizeScreen(),
+                        builder: (context) => QuestionsFlowScreen(),
                       ),
                     );
                   },
