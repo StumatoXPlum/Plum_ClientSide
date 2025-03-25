@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/core/custom_widgets/custom_button.dart';
 import 'package:task2/presentation/questions_screens/widgets/progress_bar.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ViewAndAmbiance extends StatefulWidget {
   final VoidCallback goToNext;
@@ -19,6 +20,45 @@ class ViewAndAmbiance extends StatefulWidget {
 class ViewAndAmbianceState extends State<ViewAndAmbiance> {
   String? _selectedVibe;
   final TextEditingController _descriptionController = TextEditingController();
+
+  List<String> vibeOptions = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchQuestions();
+  }
+
+  Future<void> fetchQuestions() async {
+    final supabase = Supabase.instance.client;
+
+    try {
+      // Fetch the "Vibe of your event" question and its options
+      final response = await supabase
+          .from('questions')
+          .select('id, question_text, input_type, options(option_text)')
+          .eq('screen_name', 'view_and_ambiance');
+
+      if (response.isNotEmpty) {
+        for (var question in response) {
+          if (question['question_text'] == 'Vibe of your event') {
+            setState(() {
+              vibeOptions = (question['options'] as List)
+                  .map((option) => option['option_text'] as String)
+                  .toList();
+            });
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error fetching questions: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,25 +83,27 @@ class ViewAndAmbianceState extends State<ViewAndAmbiance> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomProgressBar(progress: 0.5),
-              SizedBox(height: padding * 2),
-              _buildDropdown(),
-              SizedBox(height: padding * 1.5),
-              _buildTextField(
-                "Would you like to describe more?",
-                _descriptionController,
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator(color: Colors.white))
+          : SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomProgressBar(progress: 0.5),
+                    SizedBox(height: padding * 2),
+                    _buildDropdown(),
+                    SizedBox(height: padding * 1.5),
+                    _buildTextField(
+                      "Would you like to describe more?",
+                      _descriptionController,
+                    ),
+                    SizedBox(height: size.height * 0.05),
+                  ],
+                ),
               ),
-              SizedBox(height: size.height * 0.05),
-            ],
-          ),
-        ),
-      ),
+            ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(padding),
         child: CustomButton(buttonText: "Next", onTap: widget.goToNext),
@@ -84,18 +126,17 @@ class ViewAndAmbianceState extends State<ViewAndAmbiance> {
           borderSide: BorderSide(color: Colors.blue),
         ),
       ),
-      items:
-          ["Casual", "Luxury", "Romantic"]
-              .map(
-                (label) => DropdownMenuItem(
-                  value: label,
-                  child: Text(
-                    label,
-                    style: GoogleFonts.urbanist(color: Colors.white),
-                  ),
-                ),
-              )
-              .toList(),
+      items: vibeOptions
+          .map(
+            (label) => DropdownMenuItem(
+              value: label,
+              child: Text(
+                label,
+                style: GoogleFonts.urbanist(color: Colors.white),
+              ),
+            ),
+          )
+          .toList(),
       onChanged: (value) {
         setState(() {
           _selectedVibe = value;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
-import 'package:task2/presentation/questions_screens/widgets/progress_bar.dart';
+import '../../../core/custom_widgets/custom_button.dart';
+import '../widgets/progress_bar.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class BudgetScreen extends StatefulWidget {
   final VoidCallback goToNext;
@@ -18,6 +19,28 @@ class BudgetScreen extends StatefulWidget {
 
 class BudgetScreenState extends State<BudgetScreen> {
   double _selectedBudget = 50000;
+  String budgetQuestion = "Loading...";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBudgetQuestion();
+  }
+
+  Future<void> fetchBudgetQuestion() async {
+    final response =
+        await Supabase.instance.client
+            .from('questions')
+            .select('question_text')
+            .eq('screen_name', 'budget_screen')
+            .single();
+
+    if (mounted) {
+      setState(() {
+        budgetQuestion = response['question_text'];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +73,7 @@ class BudgetScreenState extends State<BudgetScreen> {
             CustomProgressBar(progress: 0.9),
             SizedBox(height: padding * 2),
             Text(
-              "Approximate Budget Range",
+              budgetQuestion,
               style: GoogleFonts.urbanist(
                 color: Colors.white,
                 fontSize: fontSize * 0.9,

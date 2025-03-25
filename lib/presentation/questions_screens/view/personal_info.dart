@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
-import 'package:task2/presentation/questions_screens/widgets/progress_bar.dart';
+import '../../../core/custom_widgets/custom_button.dart';
+import '../widgets/progress_bar.dart';
 
 class PersonalInfo extends StatelessWidget {
   final VoidCallback goToNext;

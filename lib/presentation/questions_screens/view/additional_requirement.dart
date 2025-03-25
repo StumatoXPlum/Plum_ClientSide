@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/custom_widgets/custom_button.dart';
 import '../widgets/progress_bar.dart';
 
@@ -13,6 +14,31 @@ class AdditionalRequirements extends StatefulWidget {
 
 class AdditionalRequirementsState extends State<AdditionalRequirements> {
   final TextEditingController _requirementsController = TextEditingController();
+  String questionText = "Loading...";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchQuestion();
+  }
+
+  Future<void> fetchQuestion() async {
+    final supabase = Supabase.instance.client;
+    final response =
+        await supabase
+            .from('questions')
+            .select('question_text')
+            .eq('screen_name', 'additional_requirements')
+            .maybeSingle();
+
+    if (response != null) {
+      setState(() {
+        questionText =
+            response['question_text'] ??
+            "Do you have any additional requirements?";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +76,7 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
                 maxLines: 5,
                 style: GoogleFonts.urbanist(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: "Do you have any additional requirements?",
+                  labelText: questionText,
                   labelStyle: GoogleFonts.urbanist(color: Colors.white70),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white54),
@@ -60,7 +86,6 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
                   ),
                 ),
               ),
-
               SizedBox(height: size.height * 0.05),
             ],
           ),

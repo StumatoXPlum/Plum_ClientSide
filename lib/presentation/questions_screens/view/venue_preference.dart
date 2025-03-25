@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
-import 'package:task2/presentation/questions_screens/widgets/progress_bar.dart';
+import '../../../core/custom_widgets/custom_button.dart';
+import '../supabase/questions_service.dart';
+import '../widgets/progress_bar.dart';
 
 class VenuePreferences extends StatefulWidget {
   final VoidCallback goToNext;
   final VoidCallback goToPrevious;
+
   const VenuePreferences({
     super.key,
     required this.goToNext,
@@ -17,10 +19,42 @@ class VenuePreferences extends StatefulWidget {
 }
 
 class VenuePreferencesState extends State<VenuePreferences> {
-  final TextEditingController _locationController = TextEditingController();
+  final QuestionsService _questionsService = QuestionsService();
 
+  List<Map<String, dynamic>> _questions = [];
+  Map<String, List<Map<String, dynamic>>> _options = {};
+  bool _isLoading = true;
+
+  final TextEditingController _locationController = TextEditingController();
   String? _exclusiveVenue;
   String? _venueType;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchQuestionsAndOptions();
+  }
+
+  Future<void> _fetchQuestionsAndOptions() async {
+    try {
+      final List<Map<String, dynamic>> questions =
+          await _questionsService.fetchQuestionsWithOptions();
+
+      Map<String, List<Map<String, dynamic>>> options = {};
+      for (var question in questions) {
+        options[question['id'].toString()] = List<Map<String, dynamic>>.from(
+          question['options'] ?? [],
+        );
+      }
+      setState(() {
+        _questions = questions;
+        _options = options;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching questions: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,51 +79,71 @@ class VenuePreferencesState extends State<VenuePreferences> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomProgressBar(progress: 0.5),
-              SizedBox(height: padding * 2),
-              _buildDropdown(
-                "Do you require an exclusive venue?",
-                ["Yes", "No"],
-                (value) {
-                  setState(() {
-                    _exclusiveVenue = value;
-                  });
-                },
-                _exclusiveVenue,
+      body:
+          _isLoading
+              ? const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              )
+              : SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomProgressBar(progress: 0.5),
+                    SizedBox(height: padding * 2),
+                    _buildDropdown(
+                      "Do you require an exclusive venue?",
+                      _getOptions("Do you require an exclusive venue?"),
+                      (value) {
+                        setState(() {
+                          _exclusiveVenue = value;
+                        });
+                      },
+                      _exclusiveVenue,
+                    ),
+                    SizedBox(height: padding * 1.5),
+                    _buildDropdown(
+                      "Preferred Venue Type",
+                      _getOptions("Preferred Venue Type"),
+                      (value) {
+                        setState(() {
+                          _venueType = value;
+                        });
+                      },
+                      _venueType,
+                    ),
+                    SizedBox(height: padding * 1.5),
+                    _buildTextField(
+                      "Desired Location or Area",
+                      _locationController,
+                      TextInputType.text,
+                    ),
+
+                    SizedBox(height: size.height * 0.05),
+                  ],
+                ),
               ),
-              SizedBox(height: padding * 1.5),
-              _buildDropdown(
-                "Preferred Venue Type",
-                ["Indoor", "Outdoor", "Rooftop", "Club", "Lounge"],
-                (value) {
-                  setState(() {
-                    _venueType = value;
-                  });
-                },
-                _venueType,
-              ),
-              SizedBox(height: padding * 1.5),
-              _buildTextField(
-                "Desired Location or Area",
-                _locationController,
-                TextInputType.text,
-              ),
-              SizedBox(height: size.height * 0.05),
-            ],
-          ),
-        ),
-      ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(padding),
         child: CustomButton(buttonText: "Next", onTap: widget.goToNext),
       ),
     );
+  }
+
+  List<String> _getOptions(String questionText) {
+    var question = _questions.firstWhere(
+      (q) => q['question_text'] == questionText,
+      orElse: () => {},
+    );
+
+    if (question.isNotEmpty) {
+      String questionId = question['id'].toString();
+      return _options[questionId]
+              ?.map((option) => option['option_text'] as String)
+              .toList() ??
+          [];
+    }
+    return [];
   }
 
   Widget _buildDropdown(
@@ -100,15 +154,15 @@ class VenuePreferencesState extends State<VenuePreferences> {
   ) {
     return DropdownButtonFormField<String>(
       dropdownColor: Colors.black,
-      value: value,
+      value: options.contains(value) ? value : null,
       style: GoogleFonts.urbanist(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.blue),
         ),
       ),
@@ -124,7 +178,9 @@ class VenuePreferencesState extends State<VenuePreferences> {
                 ),
               )
               .toList(),
-      onChanged: onChanged,
+      onChanged: (val) {
+        onChanged(val);
+      },
     );
   }
 
@@ -141,10 +197,10 @@ class VenuePreferencesState extends State<VenuePreferences> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.blue),
         ),
       ),
