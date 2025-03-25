@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/core/custom_widgets/bottom_navigation_bar.dart';
 import 'package:task2/presentation/questions_screens/supabase/save_response_service.dart';
 import '../../../core/custom_widgets/custom_button.dart';
 import '../widgets/progress_bar.dart';
@@ -103,16 +104,17 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
         budgetAmount: widget.budgetAmount,
         additionalRequirements: _requirementsController.text,
       );
-
-      ScaffoldMessenger.of(
+      Navigator.pushAndRemoveUntil(
         context,
-      ).showSnackBar(SnackBar(content: Text('Responses saved successfully!')));
-      widget.goToPrevious();
+        MaterialPageRoute(
+          builder:
+              (context) =>
+                  BottomNavScreen(initialIndex: 2, fromSubmitButton: true),
+        ),
+        (route) => false,
+      );
     } catch (e) {
       print("Failed to save responses: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save responses: ${e.toString()}')),
-      );
     }
   }
 

@@ -111,7 +111,13 @@ class BudgetScreenState extends State<BudgetScreen> {
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(padding),
-        child: CustomButton(buttonText: "Next", onTap: widget.goToNext),
+        child: CustomButton(
+          buttonText: "Next",
+          onTap: () {
+            widget.onBudgetAmountChanged(_selectedBudget);
+            widget.goToNext();
+          },
+        ),
       ),
     );
   }

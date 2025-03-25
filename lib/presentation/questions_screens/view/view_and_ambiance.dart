@@ -170,6 +170,9 @@ class ViewAndAmbianceState extends State<ViewAndAmbiance> {
           borderSide: BorderSide(color: Colors.blue),
         ),
       ),
+       onChanged: (value) {
+        widget.onEventDescriptionChanged(value);
+      },
     );
   }
 }

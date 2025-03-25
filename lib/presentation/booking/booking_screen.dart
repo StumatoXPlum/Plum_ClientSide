@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import '../ticket/cubit/ticket_cubit.dart';
 import '../ticket/view/ticket_widget.dart';
 
 class BookingScreen extends StatefulWidget {
-  const BookingScreen({super.key});
+  final bool fromSubmitButton;
+  const BookingScreen({super.key, this.fromSubmitButton = false});
 
   @override
   State<BookingScreen> createState() => _BookingScreenState();
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.fromSubmitButton ? 1 : 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,10 +132,128 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Widget _groupBookingsList() {
-    return Center(
-      child: Text(
-        "No group bookings yet",
-        style: GoogleFonts.urbanist(color: Colors.white),
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _fetchGroupBookings(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              "Error fetching group bookings",
+              style: GoogleFonts.urbanist(color: Colors.white),
+            ),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: Text(
+              "No group bookings yet",
+              style: GoogleFonts.urbanist(color: Colors.white),
+            ),
+          );
+        }
+        final groupBookings = snapshot.data!;
+        return ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: groupBookings.length,
+          itemBuilder: (context, index) {
+            final booking = groupBookings[index];
+            return _buildBookingCard(booking);
+          },
+        );
+      },
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> _fetchGroupBookings() async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase.from('responses').select();
+    return response;
+  }
+
+  Widget _buildBookingCard(Map<String, dynamic> booking) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xff1E1E2A),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _bookingDetail("Name", booking['full_name'] ?? "N/A"),
+          _bookingDetail("Contact", booking['contact_number'] ?? "N/A"),
+          _bookingDetail("Email", booking['email'] ?? "N/A"),
+          _bookingDetail("Occasion", booking['occasion'] ?? "N/A"),
+          _bookingDetail(
+            "Number of Guests",
+            booking['number_of_guests']?.toString() ?? "N/A",
+          ),
+          _bookingDetail("Preferred Date", booking['preferred_date'] ?? "N/A"),
+          _bookingDetail("Alternate Date", booking['alternate_date'] ?? "N/A"),
+          _bookingDetail(
+            "Time",
+            "${booking['start_time'] ?? 'N/A'} - ${booking['end_time'] ?? 'N/A'}",
+          ),
+          _bookingDetail(
+            "Exclusive Venue",
+            (booking['exclusive_venue'] is bool)
+                ? (booking['exclusive_venue'] ? "Yes" : "No")
+                : (booking['exclusive_venue'] ?? "Not specified"),
+          ),
+          _bookingDetail(
+            "Preferred Venue",
+            booking['preferred_venue_type'] ?? "Not specified",
+          ),
+          _bookingDetail(
+            "Desired location or area",
+            booking['desired_location_or_area'] ?? "No additional info",
+          ),
+          _bookingDetail(
+            "Vibe of Event",
+            booking['vibe_of_event'] ?? "No additional info",
+          ),
+          _bookingDetail(
+            "Event Description",
+            booking['event_description'] ?? "No additional info",
+          ),
+          _bookingDetail(
+            "Budget",
+            booking['budget_amount']?.toString() ?? "No additional info",
+          ),
+          _bookingDetail(
+            "Additional Requirements",
+            booking['additional_requirements'] ?? "No additional info",
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _bookingDetail(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: RichText(
+        text: TextSpan(
+          text: "$label: ",
+          style: GoogleFonts.urbanist(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+          children: [
+            TextSpan(
+              text: value,
+              style: GoogleFonts.urbanist(
+                color: Colors.white70,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

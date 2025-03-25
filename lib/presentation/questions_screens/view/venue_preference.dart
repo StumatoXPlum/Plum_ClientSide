@@ -215,6 +215,9 @@ class VenuePreferencesState extends State<VenuePreferences> {
           borderSide: BorderSide(color: Colors.blue),
         ),
       ),
+      onChanged: (value) {
+        widget.onDesiredLocationChanged(value);
+      },
     );
   }
 }

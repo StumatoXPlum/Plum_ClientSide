@@ -7,6 +7,7 @@ import '../../presentation/music_screen/view/music_screen.dart';
 
 class BottomNavScreen extends StatefulWidget {
   final int initialIndex;
+  final bool fromSubmitButton;
   final bool showSnackbar;
   final DateTime? selectedDate;
   final String? selectedStartTime;
@@ -15,6 +16,7 @@ class BottomNavScreen extends StatefulWidget {
   const BottomNavScreen({
     super.key,
     this.initialIndex = 0,
+    this.fromSubmitButton = false,
     this.showSnackbar = false,
     this.selectedDate,
     this.selectedStartTime,
@@ -53,7 +55,7 @@ class BottomNavScreenState extends State<BottomNavScreen>
       // ),
       NewHomeScreen(),
       BookmarkScreen(),
-      BookingScreen(),
+      BookingScreen(fromSubmitButton: widget.fromSubmitButton),
       MusicScreen(),
     ];
 
