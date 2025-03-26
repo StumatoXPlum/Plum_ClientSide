@@ -171,7 +171,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   }
                   return;
                 }
-
                 final response =
                     await Supabase.instance.client
                         .from('users')

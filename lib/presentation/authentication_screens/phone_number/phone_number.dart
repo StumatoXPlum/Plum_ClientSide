@@ -1,11 +1,13 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
-import 'package:task2/presentation/authentication_screens/phone_number/phone_verification.dart';
+import '../../../core/constants.dart';
+import '../../../core/custom_widgets/custom_button.dart';
+import 'phone_verification.dart';
 
 class PhoneNumber extends StatefulWidget {
   const PhoneNumber({super.key});
@@ -15,6 +17,7 @@ class PhoneNumber extends StatefulWidget {
 }
 
 class _PhoneNumberState extends State<PhoneNumber> {
+  final supabase = Supabase.instance.client;
   String userName = "there";
   Country selectedCountry = Country(
     phoneCode: "91",
@@ -53,67 +56,49 @@ class _PhoneNumberState extends State<PhoneNumber> {
   }
 
   Future<void> fetchUserName() async {
-    final user = Supabase.instance.client.auth.currentUser;
+    final user = supabase.auth.currentUser;
     if (user == null) return;
-
     final userData =
-        await Supabase.instance.client
+        await supabase
             .from('users')
             .select('name')
             .eq('id', user.id)
             .maybeSingle();
 
     if (!mounted) return;
-
     setState(() => userName = userData?['name'] ?? "there");
   }
 
- void verifyNumber() async {
-  if (!isPhoneEnter || isLoading) return;
+  Future<void> sendOtp(String phoneNumber) async {
+    const String twilioAccountSID = AppSecrets.twilioAccountSID;
+    const String twilioAuthToken = AppSecrets.twilioAuthToken;
+    const String twilioServiceSid = AppSecrets.twilioServiceSid;
 
-  setState(() => isLoading = true);
-
-  String phoneNumber = "+${selectedCountry.phoneCode}${phoneController.text.trim()}";
-
-  try {
-    // Twilio OTP is TEMPORARILY DISABLED
-    /*
-    await Supabase.instance.client.auth.signInWithOtp(
-      phone: phoneNumber,
-      shouldCreateUser: false,
+    final Uri url = Uri.parse(
+      "https://verify.twilio.com/v2/Services/$twilioServiceSid/Verifications",
     );
-    */
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user != null) {
-      await Supabase.instance.client
-          .from('users')
-          .update({'phonenumber': phoneNumber})
-          .eq('id', user.id);
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization':
+            'Basic ${base64Encode(utf8.encode('$twilioAccountSID:$twilioAuthToken'))}',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {'To': phoneNumber, 'Channel': 'sms'},
+    );
+
+    if (response.statusCode == 201) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PhoneVerification(phoneNumber: phoneNumber),
+        ),
+      );
+    } else {
+      print("Failed to send OTP: ${response.body}");
     }
-    Navigator.push(
-      context,
-      CupertinoPageRoute(
-        builder: (context) => PhoneVerification(phoneNumber: phoneNumber, isMockOtp: true),
-      ),
-    );
-
-  } on AuthException catch (e) {
-    print("Auth Error: ${e.message}");
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error: ${e.message}")),
-    );
-  } catch (e) {
-    print("Unexpected Error: $e");
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Failed to proceed. Try again!")),
-    );
   }
-
-  setState(() => isLoading = false);
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -222,7 +207,14 @@ class _PhoneNumberState extends State<PhoneNumber> {
               ],
             ),
             SizedBox(height: size.height * 0.07),
-            CustomButton(onTap: verifyNumber, buttonText: "Send OTP"),
+            CustomButton(
+              onTap: () async {
+                String phone =
+                    "+${selectedCountry.phoneCode}${phoneController.text.trim()}";
+                await sendOtp(phone);
+              },
+              buttonText: "Send OTP",
+            ),
           ],
         ),
       ),

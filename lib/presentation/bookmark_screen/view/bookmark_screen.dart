@@ -12,8 +12,7 @@ class BookmarkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    double padding = size.width * 0.04;
-    double fontSize = size.width * 0.045;
+    final double fontSize = size.width * 0.045;
 
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
@@ -40,10 +39,11 @@ class BookmarkScreen extends StatelessWidget {
           }
 
           return ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: padding),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: bookmarkedEvents.length,
             itemBuilder: (context, index) {
               final event = bookmarkedEvents[index];
+
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -64,25 +64,52 @@ class BookmarkScreen extends StatelessWidget {
                           fit: BoxFit.cover,
                           width: size.width * 0.9,
                           height: size.height * 0.24,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            (loadingProgress
+                                                    .expectedTotalBytes ??
+                                                1)
+                                        : null,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              Icons.broken_image,
+                              color: Colors.white,
+                            );
+                          },
                         ),
                       ),
                       Positioned(
                         top: 5,
                         right: 10,
-                        child: GestureDetector(
-                          onTap: () {
-                            context.read<BookmarkCubit>().toggleBookmark(event);
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.bookmark,
-                              color: Colors.white,
-                              size: fontSize,
+                        child: BlocListener<BookmarkCubit, List<EventModel>>(
+                          listener: (context, state) {},
+                          child: GestureDetector(
+                            onTap: () {
+                              context.read<BookmarkCubit>().toggleBookmark(
+                                event,
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: Colors.black,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.bookmark,
+                                color: Colors.white,
+                                size: fontSize,
+                              ),
                             ),
                           ),
                         ),
@@ -92,9 +119,9 @@ class BookmarkScreen extends StatelessWidget {
                         left: 5,
                         right: 5,
                         child: Container(
-                          padding: EdgeInsets.all(padding * 0.5),
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Color(0xff0A0A0A),
+                            color: const Color(0xff0A0A0A),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Column(
@@ -108,7 +135,7 @@ class BookmarkScreen extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(height: size.height * 0.003),
+                              const SizedBox(height: 4),
                               Text(
                                 '${event.date} - ${event.location}',
                                 style: GoogleFonts.urbanist(

@@ -18,38 +18,40 @@ class BookmarkCubit extends Cubit<List<EventModel>> {
             .from('users')
             .select('bookmark_ids')
             .eq('id', userId)
-            .single();
+            .maybeSingle();
 
-    if (response['bookmark_ids'] is List) {
-      List<String> bookmarkIds = List<String>.from(response['bookmark_ids']);
-
-      if (bookmarkIds.isEmpty) {
-        emit([]);
-        return;
-      }
-
-      final eventsResponse = await _supabase
-          .from('events')
-          .select('*')
-          .filter('id', 'in', '(${bookmarkIds.join(',')})');
-
-      List<EventModel> loadedBookmarks =
-          eventsResponse.map<EventModel>((e) {
-            String imageUrl =
-                e['imageurl'] ?? '';
-
-            if (!imageUrl.startsWith('http')) {
-              final bucketUrl = _supabase.storage
-                  .from('images')
-                  .getPublicUrl(imageUrl);
-              imageUrl = bucketUrl;
-            }
-
-            return EventModel.fromJson({...e, 'imageurl': imageUrl});
-          }).toList();
-
-      emit(loadedBookmarks);
+    if (response == null || response['bookmark_ids'] == null) {
+      emit([]);
+      return;
     }
+
+    List<String> bookmarkIds = List<String>.from(response['bookmark_ids']);
+
+    if (bookmarkIds.isEmpty) {
+      emit([]);
+      return;
+    }
+
+    final eventsResponse = await _supabase
+        .from('events')
+        .select('*')
+        .inFilter('id', bookmarkIds);
+
+    List<EventModel> loadedBookmarks =
+        eventsResponse.map<EventModel>((e) {
+          String imageUrl = e['imageUrl'] ?? '';
+
+          if (imageUrl.isNotEmpty && !imageUrl.startsWith('http')) {
+            imageUrl = imageUrl
+                .replaceAll('\\', '/')
+                .replaceFirst(RegExp(r'^/'), '');
+            imageUrl = _supabase.storage.from('images').getPublicUrl(imageUrl);
+          }
+
+          return EventModel.fromJson({...e, 'imageUrl': imageUrl});
+        }).toList();
+
+    emit(loadedBookmarks);
   }
 
   Future<void> toggleBookmark(EventModel event) async {
@@ -70,18 +72,16 @@ class BookmarkCubit extends Cubit<List<EventModel>> {
 
     if (bookmarkIds.contains(event.id)) {
       bookmarkIds.remove(event.id);
+      emit(state.where((e) => e.id != event.id).toList());
     } else {
       bookmarkIds.add(event.id);
+      emit([...state, event]);
     }
-
-    emit([...state.where((e) => e.id != event.id)]);
 
     await _supabase
         .from('users')
         .update({'bookmark_ids': bookmarkIds})
         .eq('id', userId);
-
-    _loadBookmarks();
   }
 
   String? _getUserId() {

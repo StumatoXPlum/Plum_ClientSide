@@ -160,6 +160,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
 
   void onTap() async {
     if (!isDOBSelected) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -177,14 +178,32 @@ class _DateOfBirthState extends State<DateOfBirth> {
     }
 
     String dob = "$selectedDay $selectedMonth $selectedYear";
-    await _storeDateOfBirth(dob);
+    try {
+      await _storeDateOfBirth(dob);
+      if (!mounted) return;
+      if (widget.isFromProfile) {
+        Navigator.pop(context);
+      } else {
+        Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(builder: (context) => BottomNavScreen()),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
 
-    if (widget.isFromProfile) {
-      Navigator.pop(context);
-    } else {
-      Navigator.pushReplacement(
-        context,
-        CupertinoPageRoute(builder: (context) => BottomNavScreen()),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Error storing date of birth: $e",
+            style: GoogleFonts.urbanist(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }

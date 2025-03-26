@@ -64,11 +64,18 @@ class PersonalInfo extends StatelessWidget {
     );
   }
 
-  Widget textFieldWidget(String label, BuildContext context, ValueChanged<String> onChanged) {
+  Widget textFieldWidget(
+    String label,
+    BuildContext context,
+    ValueChanged<String> onChanged,
+  ) {
     final Size size = MediaQuery.of(context).size;
     double fontSize = size.width * 0.05;
     return TextField(
-      style: GoogleFonts.urbanist(color: Colors.white, fontSize: fontSize * 0.8),
+      style: GoogleFonts.urbanist(
+        color: Colors.white,
+        fontSize: fontSize * 0.8,
+      ),
       cursorColor: Colors.white,
       textInputAction: TextInputAction.next,
       onChanged: onChanged,

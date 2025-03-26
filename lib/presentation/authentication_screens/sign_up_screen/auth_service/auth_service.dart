@@ -53,8 +53,6 @@ class AuthService {
           'dateofbirth': "",
           'bookmark_ids': [],
         });
-
-        print("new user: ${user.id}");
       }
     } catch (error) {
       print("Supabase User Insert Error: $error");
@@ -67,7 +65,6 @@ class AuthService {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
-        print("Google Sign-In was canceled.");
         return null;
       }
 
@@ -93,7 +90,6 @@ class AuthService {
 
       return user;
     } catch (e) {
-      print("Google Sign-In Error: $e");
       _showSnackBar(context, "Google Sign-In Error: $e");
       return null;
     }

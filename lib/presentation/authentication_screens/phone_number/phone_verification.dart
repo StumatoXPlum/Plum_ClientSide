@@ -1,21 +1,18 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/core/constants.dart';
 import 'package:task2/core/custom_widgets/custom_button.dart';
-import '../date_of_birth/date_of_birth.dart';
+import 'package:task2/presentation/authentication_screens/date_of_birth/date_of_birth.dart';
 
 class PhoneVerification extends StatefulWidget {
   final String phoneNumber;
-  final bool isMockOtp;
 
-  const PhoneVerification({
-    super.key,
-    required this.phoneNumber,
-    this.isMockOtp = false,
-  });
+  const PhoneVerification({super.key, required this.phoneNumber});
 
   @override
   State<PhoneVerification> createState() => _PhoneVerificationState();
@@ -23,98 +20,92 @@ class PhoneVerification extends StatefulWidget {
 
 class _PhoneVerificationState extends State<PhoneVerification> {
   final TextEditingController otpController = TextEditingController();
-  bool isOtpEntered = false;
-  bool isVerifying = false;
-  final supabase = Supabase.instance.client;
 
-  @override
-  void initState() {
-    super.initState();
+  Future<void> verifyOtp(String phoneNumber, String otpCode) async {
+    const String twilioAccountSID = AppSecrets.twilioAccountSID;
+    const String twilioAuthToken = AppSecrets.twilioAuthToken;
+    const String twilioServiceSid = AppSecrets.twilioServiceSid;
 
-    otpController.addListener(() {
-      setState(() => isOtpEntered = otpController.text.length == 6);
-    });
+    final Uri url = Uri.parse(
+      "https://verify.twilio.com/v2/Services/$twilioServiceSid/VerificationCheck",
+    );
 
-    if (widget.isMockOtp) {
-      Future.delayed(const Duration(milliseconds: 300), () {
+    final String basicAuth =
+        'Basic ${base64Encode(utf8.encode('$twilioAccountSID:$twilioAuthToken'))}';
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': basicAuth,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {'To': phoneNumber, 'Code': otpCode},
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      if (responseData['status'] == 'approved' &&
+          responseData['valid'] == true) {
+        final supabase = Supabase.instance.client;
+        final user = supabase.auth.currentUser;
+
+        if (user == null) {
+          return;
+        }
+        await supabase
+            .from('users')
+            .update({'phonenumber': phoneNumber})
+            .eq('email', user.email!);
+
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                "We're having some issues. Try this OTP: 123456",
-              ),
-              backgroundColor: Colors.orange,
-              behavior: SnackBarBehavior.floating,
-            ),
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => DateOfBirth()),
           );
         }
-      });
+      }
+    } else {
+      print("Failed to verify OTP: ${response.body}");
     }
   }
 
-  void _showError(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red.shade600),
+  Future<void> resendOtp() async {
+    const String twilioAccountSID = AppSecrets.twilioAccountSID;
+    const String twilioAuthToken = AppSecrets.twilioAuthToken;
+    const String twilioServiceSid = AppSecrets.twilioServiceSid;
+
+    final Uri url = Uri.parse(
+      "https://verify.twilio.com/v2/Services/$twilioServiceSid/Verifications",
     );
-  }
 
-  Future<void> _verifyOtp() async {
-    if (!isOtpEntered || isVerifying) return;
+    final String basicAuth =
+        'Basic ${base64Encode(utf8.encode('$twilioAccountSID:$twilioAuthToken'))}';
 
-    setState(() => isVerifying = true);
-    final supabase = Supabase.instance.client;
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': basicAuth,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {'To': widget.phoneNumber, 'Channel': 'sms'},
+    );
 
-    try {
-      final existingUser = supabase.auth.currentUser;
-      if (existingUser == null) {
-        throw AuthException("No authenticated user found.");
-      }
-
-      final existingUserId = existingUser.id;
-      print("Existing user ID: $existingUserId");
-
-      if (widget.isMockOtp && otpController.text == "123456") {
-        print("Mock OTP verified successfully.");
-
-        await supabase
-            .from('users')
-            .update({'phonenumber': widget.phoneNumber})
-            .eq('id', existingUserId);
-
-      } else {
-        final otpResponse = await supabase.auth.verifyOTP(
-          token: otpController.text,
-          type: OtpType.sms, 
-        );
-
-        final verifiedUser = otpResponse.user;
-        if (verifiedUser == null || verifiedUser.id != existingUserId) {
-          throw AuthException("OTP verified, but user session changed.");
-        }
-        await supabase.auth.updateUser(
-          UserAttributes(phone: widget.phoneNumber),
-        );
-        await supabase
-            .from('users')
-            .update({'phonenumber': widget.phoneNumber})
-            .eq('id', existingUserId);
-
-      }
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        CupertinoPageRoute(builder: (context) => const DateOfBirth()),
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("New OTP Sent"),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.green,
+        ),
       );
-    } on AuthException catch (e) {
-      print("Auth Error: ${e.message}");
-      _showError(e.message);
-    } catch (e) {
-      _showError("Something went wrong. Please try again.");
-    } finally {
-      if (mounted) {
-        setState(() => isVerifying = false);
-      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to send new OTP"),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -161,7 +152,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
               ),
               SizedBox(height: size.height * 0.02),
               Text(
-                "We've sent an SMS with an activation code to ${widget.phoneNumber}",
+                "We've sent an SMS with an activation code to your phone ${widget.phoneNumber}",
                 style: GoogleFonts.urbanist(
                   fontSize: fontSize,
                   color: Colors.white70,
@@ -186,8 +177,29 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                   ),
                 ),
               ),
-              SizedBox(height: size.height * 0.05),
-              CustomButton(buttonText: "Verify", onTap: _verifyOtp),
+              SizedBox(height: size.height * 0.03),
+
+              TextButton(
+                onPressed: resendOtp,
+                child: Text(
+                  "Didn't receive code? Resend",
+                  style: GoogleFonts.urbanist(
+                    fontSize: fontSize * 0.8,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              SizedBox(height: size.height * 0.03),
+              CustomButton(
+                buttonText: "Verify",
+                onTap: () async {
+                  String otp = otpController.text.trim();
+                  if (otp.isEmpty || otp.length < 6) {
+                    return;
+                  }
+                  await verifyOtp(widget.phoneNumber, otp);
+                },
+              ),
             ],
           ),
         ),

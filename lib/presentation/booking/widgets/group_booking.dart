@@ -276,12 +276,14 @@ Widget _buildBackSide(
           Icons.description_outlined,
           context,
         ),
+        SizedBox(height: size.height * 0.02),
         _detailText(
           "Additional Requirements",
           booking['additional_requirements'],
           Icons.dashboard_customize_outlined,
           context,
         ),
+        SizedBox(height: size.height * 0.02),
         _detailText(
           "Event Budget",
           "${booking['budget_amount']?.toString()} AED",
