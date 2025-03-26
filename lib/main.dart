@@ -28,7 +28,7 @@ void main() async {
         BlocProvider(create: (context) => BookmarkCubit()),
         BlocProvider(create: (context) => TicketCubit()),
       ],
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }

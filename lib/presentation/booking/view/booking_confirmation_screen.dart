@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/custom_widgets/custom_button.dart';
+import '../../../core/custom_widgets/custom_button.dart';
 import 'package:uuid/uuid.dart';
-import '../home_screen/home_screen/model/event_model.dart';
-import '../ticket/model/ticket_model.dart';
-import '../payment/view/payment_screen.dart';
+import '../../home_screen/home_screen/model/event_model.dart';
+import '../../ticket/model/ticket_model.dart';
+import '../../payment/view/payment_screen.dart';
 
 class BookingConfirmationScreen extends StatefulWidget {
   final EventModel event;
