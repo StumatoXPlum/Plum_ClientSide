@@ -4,9 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
-import 'package:task2/presentation/authentication_screens/sign_up_screen/auth_service/auth_service.dart';
-import 'package:task2/presentation/points_screen/cubit/earned_points_cubit.dart';
+import '../../core/custom_widgets/loading_button.dart';
+import '../authentication_screens/sign_up_screen/auth_service/auth_service.dart';
+import '../points_screen/cubit/earned_points_cubit.dart';
 import '../authentication_screens/date_of_birth/date_of_birth.dart';
 import '../authentication_screens/sign_up_screen/view/sign_up_screen.dart';
 
@@ -23,6 +23,7 @@ class UserProfileState extends State<UserProfile> {
   String phoneNumber = "Not Available";
   String dateOfBirth = "Not set yet";
   String avatarUrl = "";
+  bool _isLoading = false;
 
   final SupabaseClient _supabase = Supabase.instance.client;
 
@@ -55,20 +56,32 @@ class UserProfileState extends State<UserProfile> {
                 ? response['avatarurl']
                 : AuthService.getRandomAvatarUrl(user.id);
       });
-
     } catch (e) {
       print("Error fetching user data: $e");
     }
   }
 
   Future<void> _signOut() async {
-    await _supabase.auth.signOut();
     if (mounted) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        CupertinoPageRoute(builder: (context) => const SignUpScreen()),
-        (route) => false,
-      );
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
+    try {
+      await _supabase.auth.signOut();
+    } catch (e) {
+      print("Error during sign out: $e");
+    }
+
+    if (mounted) {
+      Future.delayed(Duration(milliseconds: 300), () {
+        Navigator.pushAndRemoveUntil(
+          context,
+          CupertinoPageRoute(builder: (context) => const SignUpScreen()),
+          (route) => false,
+        );
+      });
     }
   }
 
@@ -252,7 +265,11 @@ class UserProfileState extends State<UserProfile> {
                 left: padding * 1.6,
                 right: padding * 1.6,
               ),
-              child: CustomButton(buttonText: "Log Out", onTap: _signOut),
+              child: LoadingButton(
+                buttonText: "Log Out",
+                onTap: _signOut,
+                isLoading: _isLoading,
+              ),
             ),
           ],
         ),

@@ -85,11 +85,15 @@ class PersonalInfo extends StatelessWidget {
           color: Colors.white70,
           fontSize: fontSize * 0.8,
         ),
+        filled: true,
+        fillColor: Colors.white10,
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
+          borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+          borderSide: BorderSide(color: Color(0xFF3579DD)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );

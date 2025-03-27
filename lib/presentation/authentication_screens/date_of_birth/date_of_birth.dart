@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
+import 'package:task2/core/custom_widgets/loading_button.dart';
 import '../../../core/custom_widgets/bottom_navigation_bar.dart';
 
 class DateOfBirth extends StatefulWidget {
@@ -18,6 +17,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
   int? selectedDay;
   String? selectedMonth;
   int? selectedYear;
+  bool isLoading = false;
 
   List<int> days = List.generate(31, (index) => index + 1);
   List<String> months = [
@@ -177,21 +177,25 @@ class _DateOfBirthState extends State<DateOfBirth> {
       return;
     }
 
+    setState(() {
+      isLoading = true;
+    });
+
     String dob = "$selectedDay $selectedMonth $selectedYear";
     try {
       await _storeDateOfBirth(dob);
       if (!mounted) return;
+
       if (widget.isFromProfile) {
         Navigator.pop(context);
       } else {
         Navigator.pushReplacement(
           context,
-          CupertinoPageRoute(builder: (context) => BottomNavScreen()),
+          MaterialPageRoute(builder: (context) => BottomNavScreen()),
         );
       }
     } catch (e) {
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -205,6 +209,10 @@ class _DateOfBirthState extends State<DateOfBirth> {
           behavior: SnackBarBehavior.floating,
         ),
       );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -289,7 +297,11 @@ class _DateOfBirthState extends State<DateOfBirth> {
                 ],
               ),
               SizedBox(height: size.height * 0.08),
-              CustomButton(buttonText: "Verify", onTap: onTap),
+              LoadingButton(
+                buttonText: "Verify",
+                onTap: onTap,
+                isLoading: isLoading,
+              ),
               if (!widget.isFromProfile) ...[
                 SizedBox(height: size.height * 0.02),
                 Align(
@@ -298,7 +310,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        CupertinoPageRoute(
+                        MaterialPageRoute(
                           builder: (context) => BottomNavScreen(),
                         ),
                       );

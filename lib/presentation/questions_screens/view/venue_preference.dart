@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/questions_screens/widgets/shimmer_widget.dart';
 import '../../../core/custom_widgets/custom_button.dart';
 import '../supabase/questions_service.dart';
 import '../widgets/progress_bar.dart';
@@ -77,7 +78,7 @@ class VenuePreferencesState extends State<VenuePreferences> {
           style: GoogleFonts.poppins(
             color: Colors.white,
             fontSize: fontSize * 1.2,
-          ),
+          ), 
         ),
         centerTitle: true,
         leading: IconButton(
@@ -85,55 +86,66 @@ class VenuePreferencesState extends State<VenuePreferences> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         ),
       ),
-      body:
-          _isLoading
-              ? const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              )
-              : SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomProgressBar(progress: 0.5),
-                    SizedBox(height: padding * 2),
-                    _buildDropdown(
-                      "Do you require an exclusive venue?",
-                      ["Yes", "No"],
-                      (value) {
-                        setState(() {
-                          _exclusiveVenue = value == "Yes";
-                          widget.onExclusiveVenueChanged(_exclusiveVenue);
-                        });
-                      },
-                      _exclusiveVenue != null
-                          ? (_exclusiveVenue! ? "Yes" : "No")
-                          : null,
-                    ),
+      body: Column(
+        children: [
+          SizedBox(height: size.height * 0.02),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+            child: CustomProgressBar(progress: 0.5),
+          ),
+          SizedBox(height: size.height * 0.04),
+          Expanded(
+            child:
+                _isLoading
+                    ? Padding(
+                      padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                      child: ShimmerList(count: 3),
+                    )
+                    : SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildDropdown(
+                            "Do you require an exclusive venue?",
+                            ["Yes", "No"],
+                            (value) {
+                              setState(() {
+                                _exclusiveVenue = value == "Yes";
+                                widget.onExclusiveVenueChanged(_exclusiveVenue);
+                              });
+                            },
+                            _exclusiveVenue != null
+                                ? (_exclusiveVenue! ? "Yes" : "No")
+                                : null,
+                          ),
 
-                    SizedBox(height: padding * 1.5),
-                    _buildDropdown(
-                      "Preferred Venue Type",
-                      _getOptions("Preferred Venue Type"),
-                      (value) {
-                        setState(() {
-                          _venueType = value;
-                          widget.onPreferredVenueTypeChanged(value);
-                        });
-                      },
-                      _venueType,
-                    ),
-                    SizedBox(height: padding * 1.5),
-                    _buildTextField(
-                      "Desired Location or Area",
-                      _locationController,
-                      TextInputType.text,
-                    ),
+                          SizedBox(height: padding * 1.5),
+                          _buildDropdown(
+                            "Preferred Venue Type",
+                            _getOptions("Preferred Venue Type"),
+                            (value) {
+                              setState(() {
+                                _venueType = value;
+                                widget.onPreferredVenueTypeChanged(value);
+                              });
+                            },
+                            _venueType,
+                          ),
+                          SizedBox(height: padding * 1.5),
+                          _buildTextField(
+                            "Desired Location or Area",
+                            _locationController,
+                            TextInputType.text,
+                          ),
 
-                    SizedBox(height: size.height * 0.05),
-                  ],
-                ),
-              ),
+                          SizedBox(height: size.height * 0.05),
+                        ],
+                      ),
+                    ),
+          ),
+        ],
+      ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(padding),
         child: CustomButton(buttonText: "Next", onTap: widget.goToNext),
@@ -170,11 +182,15 @@ class VenuePreferencesState extends State<VenuePreferences> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
-        enabledBorder: const OutlineInputBorder(
+        filled: true,
+        fillColor: Colors.white10,
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
+          borderRadius: BorderRadius.circular(10),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF3579DD)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
       items:
@@ -208,11 +224,15 @@ class VenuePreferencesState extends State<VenuePreferences> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
-        enabledBorder: const OutlineInputBorder(
+        filled: true,
+        fillColor: Colors.white10,
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
+          borderRadius: BorderRadius.circular(10),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF3579DD)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
       onChanged: (value) {

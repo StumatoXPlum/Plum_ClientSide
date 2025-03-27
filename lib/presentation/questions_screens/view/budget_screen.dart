@@ -21,7 +21,7 @@ class BudgetScreen extends StatefulWidget {
 
 class BudgetScreenState extends State<BudgetScreen> {
   double _selectedBudget = 50000;
-  String budgetQuestion = "Loading...";
+  String budgetQuestion = "Approximate Budget Range";
 
   @override
   void initState() {
@@ -72,8 +72,9 @@ class BudgetScreenState extends State<BudgetScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: size.height * 0.02),
             CustomProgressBar(progress: 0.9),
-            SizedBox(height: padding * 2),
+            SizedBox(height: size.height * 0.04),
             Text(
               budgetQuestion,
               style: GoogleFonts.urbanist(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/questions_screens/widgets/shimmer_widget.dart';
 import '../../../core/custom_widgets/custom_button.dart';
 import '../supabase/questions_service.dart';
 import '../widgets/progress_bar.dart';
@@ -86,6 +87,21 @@ class EventDetailsState extends State<EventDetails> {
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            primaryColor: Color(0xFF3579DD),
+            hintColor: Colors.white,
+            colorScheme: ColorScheme.dark(
+              primary: Color(0xFF3579DD),
+              onPrimary: Colors.white,
+              surface: const Color(0xff1E1E2A),
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -112,6 +128,21 @@ class EventDetailsState extends State<EventDetails> {
     TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            primaryColor: Color(0xFF3579DD),
+            hintColor: Colors.white,
+            colorScheme: ColorScheme.dark(
+              primary: Color(0xFF3579DD),
+              onPrimary: Colors.white,
+              surface: const Color(0xff1E1E2A),
+              onSurface: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -155,59 +186,78 @@ class EventDetailsState extends State<EventDetails> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         ),
       ),
-      body:
-          _isLoading
-              ? Center(child: CircularProgressIndicator(color: Colors.white))
-              : SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomProgressBar(progress: 0.3),
-                      SizedBox(height: padding * 2),
-                      _buildDropdown(),
-                      if (_showCustomOccasionField)
-                        SizedBox(height: padding * 1.5),
-                      if (_showCustomOccasionField)
-                        _buildTextField(
-                          "Custom Occasion",
-                          _customOccasionController,
-                          TextInputType.text,
-                          widget.onCustomOccasionChanged,
+      body: Column(
+        children: [
+          SizedBox(height: size.height * 0.02),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+            child: CustomProgressBar(progress: 0.3),
+          ),
+          SizedBox(height: size.height * 0.04),
+          Expanded(
+            child:
+                _isLoading
+                    ? Padding(
+                      padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                      child: ShimmerList(count: 6),
+                    )
+                    : SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: padding * 1.6,
                         ),
-                      SizedBox(height: padding * 1.5),
-                      _buildTextField(
-                        "Number of Guests",
-                        _guestsController,
-                        TextInputType.number,
-                        widget.onGuestsChanged,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildDropdown(),
+                            if (_showCustomOccasionField)
+                              SizedBox(height: padding * 1.5),
+                            if (_showCustomOccasionField)
+                              _buildTextField(
+                                "Custom Occasion",
+                                _customOccasionController,
+                                TextInputType.text,
+                                widget.onCustomOccasionChanged,
+                              ),
+                            SizedBox(height: padding * 1.5),
+                            _buildTextField(
+                              "Number of Guests",
+                              _guestsController,
+                              TextInputType.number,
+                              widget.onGuestsChanged,
+                            ),
+                            SizedBox(height: padding * 1.5),
+                            _buildDateField(
+                              "Preferred Date",
+                              _preferredDateController,
+                            ),
+                            SizedBox(height: padding * 1.5),
+                            _buildDateField(
+                              "Alternate Date",
+                              _alternateDateController,
+                            ),
+                            SizedBox(height: padding * 1.5),
+                            _buildTimeField(
+                              "Start Time",
+                              _startTimeController,
+                              (value) {
+                                widget.onStartTimeChanged(value ?? "00:00:00");
+                              },
+                            ),
+                            SizedBox(height: padding * 1.5),
+                            _buildTimeField("End Time", _endTimeController, (
+                              value,
+                            ) {
+                              widget.onEndTimeChanged(value ?? "00:00:00");
+                            }),
+                            SizedBox(height: size.height * 0.05),
+                          ],
+                        ),
                       ),
-                      SizedBox(height: padding * 1.5),
-                      _buildDateField(
-                        "Preferred Date",
-                        _preferredDateController,
-                      ),
-                      SizedBox(height: padding * 1.5),
-                      _buildDateField(
-                        "Alternate Date",
-                        _alternateDateController,
-                      ),
-                      SizedBox(height: padding * 1.5),
-                      _buildTimeField("Start Time", _startTimeController, (
-                        value,
-                      ) {
-                        widget.onStartTimeChanged(value ?? "00:00:00");
-                      }),
-                      SizedBox(height: padding * 1.5),
-                      _buildTimeField("End Time", _endTimeController, (value) {
-                        widget.onEndTimeChanged(value ?? "00:00:00");
-                      }),
-                      SizedBox(height: size.height * 0.05),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
+          ),
+        ],
+      ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(padding),
         child: CustomButton(buttonText: "Next", onTap: widget.goToNext),
@@ -239,11 +289,15 @@ class EventDetailsState extends State<EventDetails> {
       decoration: InputDecoration(
         labelText: "Occasion",
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
-        enabledBorder: const OutlineInputBorder(
+        filled: true,
+        fillColor: Colors.white10,
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
+          borderRadius: BorderRadius.circular(10),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xFF3579DD)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
       items:
@@ -283,11 +337,15 @@ class EventDetailsState extends State<EventDetails> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.white10,
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
+          borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+          borderSide: BorderSide(color: Color(0xFF3579DD)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );
@@ -302,12 +360,17 @@ class EventDetailsState extends State<EventDetails> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.white10,
+
         suffixIcon: Icon(Icons.calendar_today, color: Colors.white70),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
+          borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+          borderSide: BorderSide(color: Color(0xFF3579DD)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );
@@ -323,15 +386,20 @@ class EventDetailsState extends State<EventDetails> {
       readOnly: true,
       onTap: () => _selectTime(context, controller, onTimeChanged),
       style: GoogleFonts.urbanist(color: Colors.white),
+
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.white10,
         suffixIcon: Icon(Icons.access_time, color: Colors.white70),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
+          borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+          borderSide: BorderSide(color: Color(0xFF3579DD)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );

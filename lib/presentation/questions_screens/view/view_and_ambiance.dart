@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:task2/core/custom_widgets/custom_button.dart';
 import 'package:task2/presentation/questions_screens/widgets/progress_bar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/presentation/questions_screens/widgets/shimmer_widget.dart';
 
 class ViewAndAmbiance extends StatefulWidget {
   final VoidCallback goToNext;
@@ -88,30 +89,43 @@ class ViewAndAmbianceState extends State<ViewAndAmbiance> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         ),
       ),
-      body:
-          isLoading
-              ? const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              )
-              : SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomProgressBar(progress: 0.5),
-                      SizedBox(height: padding * 2),
-                      _buildDropdown(),
-                      SizedBox(height: padding * 1.5),
-                      _buildTextField(
-                        "Would you like to describe more?",
-                        _descriptionController,
+      body: Column(
+        children: [
+          SizedBox(height: size.height * 0.02),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+            child: CustomProgressBar(progress: 0.7),
+          ),
+          SizedBox(height: size.height * 0.04),
+          Expanded(
+            child:
+                isLoading
+                    ? Padding(
+                      padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
+                      child: ShimmerList(count: 2),
+                    )
+                    : SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: padding * 1.6,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildDropdown(),
+                            SizedBox(height: padding * 1.5),
+                            _buildTextField(
+                              "Would you like to describe more?",
+                              _descriptionController,
+                            ),
+                            SizedBox(height: size.height * 0.05),
+                          ],
+                        ),
                       ),
-                      SizedBox(height: size.height * 0.05),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
+          ),
+        ],
+      ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(padding),
         child: CustomButton(buttonText: "Next", onTap: widget.goToNext),
@@ -127,11 +141,15 @@ class ViewAndAmbianceState extends State<ViewAndAmbiance> {
       decoration: InputDecoration(
         labelText: "Vibe of your event",
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.white10,
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
+          borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+          borderSide: BorderSide(color: Color(0xFF3579DD)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
       items:
@@ -163,14 +181,18 @@ class ViewAndAmbianceState extends State<ViewAndAmbiance> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.white10,
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.white54),
+          borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue),
+          borderSide: BorderSide(color: Color(0xFF3579DD)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
-       onChanged: (value) {
+      onChanged: (value) {
         widget.onEventDescriptionChanged(value);
       },
     );

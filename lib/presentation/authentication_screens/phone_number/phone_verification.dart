@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/core/constants.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
+import 'package:task2/core/custom_widgets/loading_button.dart';
 import 'package:task2/presentation/authentication_screens/date_of_birth/date_of_birth.dart';
 
 class PhoneVerification extends StatefulWidget {
@@ -20,52 +20,59 @@ class PhoneVerification extends StatefulWidget {
 
 class _PhoneVerificationState extends State<PhoneVerification> {
   final TextEditingController otpController = TextEditingController();
+  bool isLoading = false;
 
   Future<void> verifyOtp(String phoneNumber, String otpCode) async {
-    const String twilioAccountSID = AppSecrets.twilioAccountSID;
-    const String twilioAuthToken = AppSecrets.twilioAuthToken;
-    const String twilioServiceSid = AppSecrets.twilioServiceSid;
+    try {
+      const String twilioAccountSID = AppSecrets.twilioAccountSID;
+      const String twilioAuthToken = AppSecrets.twilioAuthToken;
+      const String twilioServiceSid = AppSecrets.twilioServiceSid;
 
-    final Uri url = Uri.parse(
-      "https://verify.twilio.com/v2/Services/$twilioServiceSid/VerificationCheck",
-    );
+      final Uri url = Uri.parse(
+        "https://verify.twilio.com/v2/Services/$twilioServiceSid/VerificationCheck",
+      );
 
-    final String basicAuth =
-        'Basic ${base64Encode(utf8.encode('$twilioAccountSID:$twilioAuthToken'))}';
+      final String basicAuth =
+          'Basic ${base64Encode(utf8.encode('$twilioAccountSID:$twilioAuthToken'))}';
 
-    final response = await http.post(
-      url,
-      headers: {
-        'Authorization': basicAuth,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: {'To': phoneNumber, 'Code': otpCode},
-    );
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': basicAuth,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {'To': phoneNumber, 'Code': otpCode},
+      );
 
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      if (responseData['status'] == 'approved' &&
-          responseData['valid'] == true) {
-        final supabase = Supabase.instance.client;
-        final user = supabase.auth.currentUser;
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
 
-        if (user == null) {
-          return;
+        if (responseData['status'] == 'approved' &&
+            responseData['valid'] == true) {
+          final supabase = Supabase.instance.client;
+          final user = supabase.auth.currentUser;
+
+          if (user == null) {
+            return;
+          }
+
+          await supabase
+              .from('users')
+              .update({'phonenumber': phoneNumber})
+              .eq('email', user.email!);
+
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => DateOfBirth()),
+            );
+          }
         }
-        await supabase
-            .from('users')
-            .update({'phonenumber': phoneNumber})
-            .eq('email', user.email!);
-
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => DateOfBirth()),
-          );
-        }
+      } else {
+        print("Failed to verify OTP: ${response.body}");
       }
-    } else {
-      print("Failed to verify OTP: ${response.body}");
+    } catch (e) {
+      print("Error verifying OTP: $e");
     }
   }
 
@@ -190,14 +197,24 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                 ),
               ),
               SizedBox(height: size.height * 0.03),
-              CustomButton(
+              LoadingButton(
                 buttonText: "Verify",
+                isLoading: isLoading,
                 onTap: () async {
                   String otp = otpController.text.trim();
                   if (otp.isEmpty || otp.length < 6) {
                     return;
                   }
+
+                  setState(() {
+                    isLoading = true; // Start loading
+                  });
+
                   await verifyOtp(widget.phoneNumber, otp);
+
+                  setState(() {
+                    isLoading = false; // Stop loading
+                  });
                 },
               ),
             ],

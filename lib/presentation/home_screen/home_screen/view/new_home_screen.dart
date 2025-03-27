@@ -221,6 +221,7 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                     );
                   },
                   child: Container(
+                    width: double.infinity,
                     decoration: BoxDecoration(
                       color: Colors.transparent,
                       border: Border(
@@ -230,24 +231,30 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                         bottom: BorderSide(color: Color(0xff3579DD), width: 3),
                       ),
                     ),
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Stack(
                       children: [
-                        Text(
-                          "Do you want to book an exclusive group event?",
-                          style: GoogleFonts.urbanist(
-                            color: Colors.white,
-                            fontSize: fontSize * 0.8,
-                            fontWeight: FontWeight.bold,
+                        Positioned(
+                          right: 8,
+                          top: 5,
+                          bottom: 5,
+                          child: SizedBox(
+                            width: size.width * 0.2,
+                            height: size.height * 0.08,
+                            child: Image.asset(
+                              'assets/bookings/booking.png',
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          "(Elevate your experience with a tailored event – choose your vibe!)",
-                          style: GoogleFonts.urbanist(
-                            color: Colors.white70,
-                            fontSize: fontSize * 0.6,
+                        Padding(
+                          padding: EdgeInsets.all(padding * 1.5),
+                          child: Text(
+                            "Do you want to book an exclusive \ngroup event?",
+                            style: GoogleFonts.urbanist(
+                              color: Colors.white,
+                              fontSize: fontSize * 0.8,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],

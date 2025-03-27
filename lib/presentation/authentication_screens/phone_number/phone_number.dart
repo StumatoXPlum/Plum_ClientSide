@@ -5,8 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/core/custom_widgets/loading_button.dart';
 import '../../../core/constants.dart';
-import '../../../core/custom_widgets/custom_button.dart';
 import 'phone_verification.dart';
 
 class PhoneNumber extends StatefulWidget {
@@ -70,33 +70,39 @@ class _PhoneNumberState extends State<PhoneNumber> {
   }
 
   Future<void> sendOtp(String phoneNumber) async {
-    const String twilioAccountSID = AppSecrets.twilioAccountSID;
-    const String twilioAuthToken = AppSecrets.twilioAuthToken;
-    const String twilioServiceSid = AppSecrets.twilioServiceSid;
+    try {
+      const String twilioAccountSID = AppSecrets.twilioAccountSID;
+      const String twilioAuthToken = AppSecrets.twilioAuthToken;
+      const String twilioServiceSid = AppSecrets.twilioServiceSid;
 
-    final Uri url = Uri.parse(
-      "https://verify.twilio.com/v2/Services/$twilioServiceSid/Verifications",
-    );
-
-    final response = await http.post(
-      url,
-      headers: {
-        'Authorization':
-            'Basic ${base64Encode(utf8.encode('$twilioAccountSID:$twilioAuthToken'))}',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: {'To': phoneNumber, 'Channel': 'sms'},
-    );
-
-    if (response.statusCode == 201) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PhoneVerification(phoneNumber: phoneNumber),
-        ),
+      final Uri url = Uri.parse(
+        "https://verify.twilio.com/v2/Services/$twilioServiceSid/Verifications",
       );
-    } else {
-      print("Failed to send OTP: ${response.body}");
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization':
+              'Basic ${base64Encode(utf8.encode('$twilioAccountSID:$twilioAuthToken'))}',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {'To': phoneNumber, 'Channel': 'sms'},
+      );
+
+      if (response.statusCode == 201) {
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PhoneVerification(phoneNumber: phoneNumber),
+            ),
+          );
+        }
+      } else {
+        print("Failed to send OTP: ${response.body}");
+      }
+    } catch (e) {
+      print("Error sending OTP: $e");
     }
   }
 
@@ -207,13 +213,21 @@ class _PhoneNumberState extends State<PhoneNumber> {
               ],
             ),
             SizedBox(height: size.height * 0.07),
-            CustomButton(
+            LoadingButton(
               onTap: () async {
+                setState(() {
+                  isLoading = true;
+                });
+
                 String phone =
                     "+${selectedCountry.phoneCode}${phoneController.text.trim()}";
                 await sendOtp(phone);
+                setState(() {
+                  isLoading = false;
+                });
               },
               buttonText: "Send OTP",
+              isLoading: isLoading,
             ),
           ],
         ),

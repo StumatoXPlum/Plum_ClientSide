@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/core/custom_widgets/bottom_navigation_bar.dart';
+import 'package:task2/core/custom_widgets/loading_button.dart';
 import 'package:task2/presentation/questions_screens/supabase/save_response_service.dart';
-import '../../../core/custom_widgets/custom_button.dart';
 import '../widgets/progress_bar.dart';
 
 class AdditionalRequirements extends StatefulWidget {
@@ -54,7 +54,8 @@ class AdditionalRequirements extends StatefulWidget {
 
 class AdditionalRequirementsState extends State<AdditionalRequirements> {
   final TextEditingController _requirementsController = TextEditingController();
-  String questionText = "Loading...";
+  String questionText = "Do you have any additional requirements?";
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -81,6 +82,9 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
   }
 
   Future<void> _submitForm() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       final saveResponseService = SaveResponseService();
       await saveResponseService.saveResponses(
@@ -115,6 +119,12 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
       );
     } catch (e) {
       print("Failed to save responses: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -147,8 +157,9 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: size.height * 0.02),
               CustomProgressBar(progress: 1.0),
-              SizedBox(height: padding * 2),
+              SizedBox(height: size.height * 0.04),
               TextField(
                 controller: _requirementsController,
                 maxLines: 5,
@@ -157,11 +168,15 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
                 decoration: InputDecoration(
                   labelText: questionText,
                   labelStyle: GoogleFonts.urbanist(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.white10,
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.white54),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue),
+                    borderSide: BorderSide(color: Color(0xFF3579DD)),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 onChanged:
@@ -174,7 +189,11 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(padding),
-        child: CustomButton(buttonText: "Submit", onTap: _submitForm),
+        child: LoadingButton(
+          buttonText: _isLoading ? "Loading..." : "Submit",
+          onTap: _isLoading ? () {} : _submitForm,
+          isLoading: _isLoading,
+        ),
       ),
     );
   }

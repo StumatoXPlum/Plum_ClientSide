@@ -67,6 +67,7 @@ class QuestionsFlowScreenState extends State<QuestionsFlowScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
