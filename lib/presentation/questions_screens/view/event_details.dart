@@ -95,7 +95,7 @@ class EventDetailsState extends State<EventDetails> {
             colorScheme: ColorScheme.dark(
               primary: Color(0xFF3579DD),
               onPrimary: Colors.white,
-              surface: const Color(0xff1E1E2A),
+              surface: const Color(0xff161C25),
               onSurface: Colors.white,
             ),
           ),
@@ -136,7 +136,7 @@ class EventDetailsState extends State<EventDetails> {
             colorScheme: ColorScheme.dark(
               primary: Color(0xFF3579DD),
               onPrimary: Colors.white,
-              surface: const Color(0xff1E1E2A),
+              surface: const Color(0xff161C25),
               onSurface: Colors.white,
             ),
           ),
@@ -282,43 +282,55 @@ class EventDetailsState extends State<EventDetails> {
     List<Map<String, dynamic>> occasionOptions =
         _options[occasionQuestion['id'].toString()] ?? [];
 
-    return DropdownButtonFormField<String>(
-      dropdownColor: Colors.black,
-      value: _selectedOccasion,
-      style: GoogleFonts.urbanist(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: "Occasion",
-        labelStyle: GoogleFonts.urbanist(color: Colors.white70),
-        filled: true,
-        fillColor: Colors.white10,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white54),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF3579DD)),
-          borderRadius: BorderRadius.circular(10),
+    return DropdownButtonHideUnderline(
+      child: ButtonTheme(
+        alignedDropdown: true,
+        child: DropdownButtonFormField<String>(
+          dropdownColor: const Color(0xff161C25),
+          value: _selectedOccasion,
+          style: GoogleFonts.urbanist(color: Colors.white),
+          decoration: InputDecoration(
+            labelText: "Occasion",
+            labelStyle: GoogleFonts.urbanist(color: Colors.white70),
+            filled: true,
+            fillColor: const Color(0xff161C25),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: const Color(0xff202938)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF3579DD)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          items:
+              occasionOptions.isNotEmpty
+                  ? occasionOptions.map((option) {
+                    return DropdownMenuItem<String>(
+                      value: option['option_text'] as String,
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: 200),
+                        child: Text(
+                          option['option_text'] as String,
+                          style: GoogleFonts.urbanist(color: Colors.white),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    );
+                  }).toList()
+                  : [],
+          onChanged: (value) {
+            setState(() {
+              _selectedOccasion = value;
+              widget.onOccasionChanged(value ?? "");
+              _showCustomOccasionField = value == "Other";
+            });
+          },
+          alignment: Alignment.centerLeft,
+          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
-      items:
-          occasionOptions.isNotEmpty
-              ? occasionOptions.map((option) {
-                return DropdownMenuItem<String>(
-                  value: option['option_text'] as String,
-                  child: Text(
-                    option['option_text'] as String,
-                    style: GoogleFonts.urbanist(color: Colors.white),
-                  ),
-                );
-              }).toList()
-              : [],
-      onChanged: (value) {
-        setState(() {
-          _selectedOccasion = value;
-          widget.onOccasionChanged(value ?? "");
-          _showCustomOccasionField = value == "Other";
-        });
-      },
     );
   }
 
@@ -338,9 +350,9 @@ class EventDetailsState extends State<EventDetails> {
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
         filled: true,
-        fillColor: Colors.white10,
+        fillColor: const Color(0xff161C25),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white54),
+          borderSide: BorderSide(color: const Color(0xff202938)),
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
@@ -361,11 +373,10 @@ class EventDetailsState extends State<EventDetails> {
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
         filled: true,
-        fillColor: Colors.white10,
-
+        fillColor: const Color(0xff161C25),
         suffixIcon: Icon(Icons.calendar_today, color: Colors.white70),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white54),
+          borderSide: BorderSide(color: const Color(0xff202938)),
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
@@ -391,10 +402,10 @@ class EventDetailsState extends State<EventDetails> {
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
         filled: true,
-        fillColor: Colors.white10,
+        fillColor: const Color(0xff161C25),
         suffixIcon: Icon(Icons.access_time, color: Colors.white70),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white54),
+          borderSide: BorderSide(color: const Color(0xff202938)),
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(

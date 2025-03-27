@@ -86,8 +86,9 @@ class _EventListScreenState extends State<EventListScreen>
                   ),
                   margin: EdgeInsets.symmetric(vertical: padding * 0.6),
                   decoration: BoxDecoration(
-                    color: Colors.black,
+                    color: Color(0xff161C25),
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Color(0xff202938)),
                   ),
                   child: Row(
                     children: [

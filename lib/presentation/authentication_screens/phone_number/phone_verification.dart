@@ -5,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/constants.dart';
-import 'package:task2/core/custom_widgets/loading_button.dart';
-import 'package:task2/presentation/authentication_screens/date_of_birth/date_of_birth.dart';
+import '../../../core/constants.dart';
+import '../../../core/custom_widgets/loading_button.dart';
+import '../date_of_birth/date_of_birth.dart';
 
 class PhoneVerification extends StatefulWidget {
   final String phoneNumber;
@@ -22,7 +22,11 @@ class _PhoneVerificationState extends State<PhoneVerification> {
   final TextEditingController otpController = TextEditingController();
   bool isLoading = false;
 
-  Future<void> verifyOtp(String phoneNumber, String otpCode) async {
+  Future<void> verifyOtp(
+    String phoneNumber,
+    String otpCode,
+    BuildContext context,
+  ) async {
     try {
       const String twilioAccountSID = AppSecrets.twilioAccountSID;
       const String twilioAuthToken = AppSecrets.twilioAuthToken;
@@ -55,7 +59,29 @@ class _PhoneVerificationState extends State<PhoneVerification> {
           if (user == null) {
             return;
           }
+          final existingUser =
+              await supabase
+                  .from('users')
+                  .select('email')
+                  .eq('phonenumber', phoneNumber)
+                  .maybeSingle();
 
+          if (existingUser != null && existingUser['email'] != user.email) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "This phone number is already registered with: ${existingUser['email']}",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                  duration: Duration(seconds: 5),
+                ),
+              );
+            }
+            return;
+          }
           await supabase
               .from('users')
               .update({'phonenumber': phoneNumber})
@@ -68,11 +94,21 @@ class _PhoneVerificationState extends State<PhoneVerification> {
             );
           }
         }
-      } else {
-        print("Failed to verify OTP: ${response.body}");
       }
     } catch (e) {
-      print("Error verifying OTP: $e");
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Something went wrong. Please try again.",
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 
@@ -97,7 +133,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
       body: {'To': widget.phoneNumber, 'Channel': 'sms'},
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("New OTP Sent"),
@@ -185,7 +221,6 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                 ),
               ),
               SizedBox(height: size.height * 0.03),
-
               TextButton(
                 onPressed: resendOtp,
                 child: Text(
@@ -205,15 +240,12 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                   if (otp.isEmpty || otp.length < 6) {
                     return;
                   }
-
                   setState(() {
-                    isLoading = true; // Start loading
+                    isLoading = true;
                   });
-
-                  await verifyOtp(widget.phoneNumber, otp);
-
+                  await verifyOtp(widget.phoneNumber, otp, context);
                   setState(() {
-                    isLoading = false; // Stop loading
+                    isLoading = false;
                   });
                 },
               ),

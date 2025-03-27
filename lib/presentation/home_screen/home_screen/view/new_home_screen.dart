@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:task2/presentation/home_screen/home_screen/supabase/supabase_service.dart';
 import 'package:task2/presentation/questions_screens/view/question_flow_screen.dart';
 import '../../../bookmark_screen/cubit/bookmark_cubit.dart';
@@ -280,53 +281,11 @@ class EventWidget extends StatefulWidget {
   State<EventWidget> createState() => _EventWidgetState();
 }
 
-class _EventWidgetState extends State<EventWidget>
-    with TickerProviderStateMixin {
+class _EventWidgetState extends State<EventWidget> {
   final ScrollController _scrollController = ScrollController();
-  late AnimationController listController;
-  late List<Animation<Offset>> itemAnimations = [];
-  late AnimationController slideController;
-  late Animation<Offset> slideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    listController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-    slideController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 1000),
-    );
-
-    itemAnimations = List.generate(
-      widget.events.length,
-      (index) => Tween(begin: Offset(-1, 0), end: Offset.zero).animate(
-        CurvedAnimation(
-          parent: listController,
-          curve: Interval(
-            index * (1 / widget.events.length),
-            1,
-            curve: Curves.easeIn,
-          ),
-        ),
-      ),
-    );
-    slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: slideController, curve: Curves.easeIn));
-    if (widget.events.isNotEmpty) {
-      listController.forward();
-      slideController.forward();
-    }
-  }
 
   @override
   void dispose() {
-    listController.dispose();
-    slideController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -413,163 +372,157 @@ class _EventWidgetState extends State<EventWidget>
                       ),
                     );
                   },
-                  child: SlideTransition(
-                    position:
-                        itemAnimations.isNotEmpty
-                            ? itemAnimations[index]
-                            : AlwaysStoppedAnimation(Offset.zero),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(right: padding),
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: SizedBox(
-                                  height: size.height * 0.2,
-                                  width: size.width * 0.7,
-                                  child: OverflowBox(
-                                    maxWidth: size.width * 0.9,
-                                    maxHeight: size.height * 0.24,
-                                    alignment: Alignment.center,
-                                    child: Transform.translate(
-                                      offset: Offset(parallaxOffset, 0),
-                                      child: HeroMode(
-                                        enabled: true,
-                                        child: Hero(
-                                          tag: 'image${event.title}',
-                                          child: Image.network(
-                                            event.imageUrl.isNotEmpty
-                                                ? event.imageUrl
-                                                : "https://tinyurl.com/2mwx6exe",
-                                            fit: BoxFit.cover,
-                                            width: size.width * 0.9,
-                                            height: size.height * 0.24,
-                                            loadingBuilder: (
-                                              context,
-                                              child,
-                                              loadingProgress,
-                                            ) {
-                                              if (loadingProgress == null) {
-                                                return child;
-                                              }
-                                              return Center(
-                                                child: CircularProgressIndicator(
-                                                  value:
-                                                      loadingProgress
-                                                                  .expectedTotalBytes !=
-                                                              null
-                                                          ? loadingProgress
-                                                                  .cumulativeBytesLoaded /
-                                                              (loadingProgress
-                                                                      .expectedTotalBytes ??
-                                                                  1)
-                                                          : null,
-                                                ),
-                                              );
-                                            },
-                                            errorBuilder:
-                                                (context, error, stackTrace) =>
-                                                    Icon(
-                                                      Icons.error,
-                                                      color: Colors.red,
-                                                    ),
-                                          ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(right: padding),
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: SizedBox(
+                                height: size.height * 0.2,
+                                width: size.width * 0.7,
+                                child: OverflowBox(
+                                  maxWidth: size.width * 0.9,
+                                  maxHeight: size.height * 0.24,
+                                  alignment: Alignment.center,
+                                  child: Transform.translate(
+                                    offset: Offset(parallaxOffset, 0),
+                                    child: HeroMode(
+                                      enabled: true,
+                                      child: Hero(
+                                        tag: 'image${event.title}',
+                                        child: Stack(
+                                          children: [
+                                            Shimmer.fromColors(
+                                              baseColor: Colors.grey[800]!,
+                                              highlightColor: Colors.grey[600]!,
+                                              child: Container(
+                                                width: size.width * 0.9,
+                                                height: size.height * 0.24,
+                                                color: Colors.grey[700],
+                                              ),
+                                            ),
+                                            Image.network(
+                                              event.imageUrl.isNotEmpty
+                                                  ? event.imageUrl
+                                                  : "https://tinyurl.com/2mwx6exe",
+                                              fit: BoxFit.cover,
+                                              width: size.width * 0.9,
+                                              height: size.height * 0.24,
+                                              loadingBuilder: (
+                                                context,
+                                                child,
+                                                loadingProgress,
+                                              ) {
+                                                if (loadingProgress == null) {
+                                                  return child;
+                                                }
+                                                return Container();
+                                              },
+                                              errorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => Icon(
+                                                    Icons.error,
+                                                    color: Colors.red,
+                                                  ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                              Positioned(
-                                top: 5,
-                                right: 5,
-                                child: BlocBuilder<
-                                  BookmarkCubit,
-                                  List<EventModel>
-                                >(
-                                  builder: (context, bookmarkedEvents) {
-                                    final isBookmarked = bookmarkedEvents.any(
-                                      (e) => e.id == event.id,
-                                    );
-                                    return GestureDetector(
-                                      onTap: () {
-                                        context
-                                            .read<BookmarkCubit>()
-                                            .toggleBookmark(event);
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          shape: BoxShape.circle,
+                            ),
+                            Positioned(
+                              top: 5,
+                              right: 5,
+                              child:
+                                  BlocBuilder<BookmarkCubit, List<EventModel>>(
+                                    builder: (context, bookmarkedEvents) {
+                                      final isBookmarked = bookmarkedEvents.any(
+                                        (e) => e.id == event.id,
+                                      );
+                                      return GestureDetector(
+                                        onTap: () {
+                                          context
+                                              .read<BookmarkCubit>()
+                                              .toggleBookmark(event);
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            isBookmarked
+                                                ? Icons.bookmark
+                                                : Icons.bookmark_border,
+                                            color: Colors.white,
+                                            size: fontSize,
+                                          ),
                                         ),
-                                        child: Icon(
-                                          isBookmarked
-                                              ? Icons.bookmark
-                                              : Icons.bookmark_border,
-                                          color: Colors.white,
-                                          size: fontSize,
-                                        ),
+                                      );
+                                    },
+                                  ),
+                            ),
+                            Positioned(
+                              bottom: 5,
+                              left: 5,
+                              right: 5,
+                              child: Container(
+                                padding: EdgeInsets.all(padding * 0.5),
+                                decoration: BoxDecoration(
+                                  color: Color(0xff0A0A0A),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${event.title} with ${event.artist}',
+                                      style: GoogleFonts.urbanist(
+                                        color: Colors.white,
+                                        fontSize: fontSize * 0.7,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    );
-                                  },
+                                    ),
+                                    SizedBox(height: size.height * 0.003),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          event.date,
+                                          style: GoogleFonts.urbanist(
+                                            color: Colors.white70,
+                                            fontSize: fontSize * 0.6,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          event.location,
+                                          style: GoogleFonts.urbanist(
+                                            color: Colors.white70,
+                                            fontSize: fontSize * 0.6,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Positioned(
-                                bottom: 5,
-                                left: 5,
-                                right: 5,
-                                child: Container(
-                                  padding: EdgeInsets.all(padding * 0.5),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xff0A0A0A),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${event.title} with ${event.artist}',
-                                        style: GoogleFonts.urbanist(
-                                          color: Colors.white,
-                                          fontSize: fontSize * 0.7,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: size.height * 0.003),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            event.date,
-                                            style: GoogleFonts.urbanist(
-                                              color: Colors.white70,
-                                              fontSize: fontSize * 0.6,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            event.location,
-                                            style: GoogleFonts.urbanist(
-                                              color: Colors.white70,
-                                              fontSize: fontSize * 0.6,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 );
               },
@@ -589,61 +542,7 @@ class NearEventsWidget extends StatefulWidget {
   State<NearEventsWidget> createState() => _NearEventsWidgetState();
 }
 
-class _NearEventsWidgetState extends State<NearEventsWidget>
-    with TickerProviderStateMixin {
-  late AnimationController listController;
-  late AnimationController slideController;
-  late Animation<Offset> slideAnimation;
-  late List<Animation<Offset>> itemAnimations = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _initAnimations();
-  }
-
-  void _initAnimations() {
-    listController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-    slideController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-
-    itemAnimations = List.generate(
-      widget.events.length,
-      (index) => Tween(begin: const Offset(0, 1), end: Offset.zero).animate(
-        CurvedAnimation(
-          parent: listController,
-          curve: Interval(
-            index * (1 / (widget.events.isNotEmpty ? widget.events.length : 1)),
-            1,
-            curve: Curves.easeIn,
-          ),
-        ),
-      ),
-    );
-
-    slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: slideController, curve: Curves.easeIn));
-
-    if (widget.events.isNotEmpty) {
-      listController.forward();
-      slideController.forward();
-    }
-  }
-
-  @override
-  void dispose() {
-    listController.dispose();
-    slideController.dispose();
-    super.dispose();
-  }
-
+class _NearEventsWidgetState extends State<NearEventsWidget> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -696,9 +595,7 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
           itemCount: widget.events.length,
           itemBuilder: (context, index) {
             if (widget.events.isEmpty) return const SizedBox();
-
             final event = widget.events[index];
-
             return Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: padding,
@@ -713,121 +610,123 @@ class _NearEventsWidgetState extends State<NearEventsWidget>
                     ),
                   );
                 },
-                child: SlideTransition(
-                  position:
-                      itemAnimations.isNotEmpty
-                          ? itemAnimations[index]
-                          : AlwaysStoppedAnimation(Offset.zero),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: padding * 0.4,
-                      horizontal: padding * 0.4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xff042455),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: HeroMode(
-                            enabled: true,
-                            child: Hero(
-                              tag: 'image${event.title}',
-                              child: Image.network(
-                                event.imageUrl.isNotEmpty
-                                    ? event.imageUrl
-                                    : "https://tinyurl.com/2mwx6exe",
-                                fit: BoxFit.cover,
-                                width: size.width * 0.2,
-                                height: size.height * 0.10,
-                                loadingBuilder: (
-                                  context,
-                                  child,
-                                  loadingProgress,
-                                ) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(padding),
-                                      child: CircularProgressIndicator(
-                                        backgroundColor: Colors.white70,
-                                        value:
-                                            loadingProgress
-                                                        .expectedTotalBytes !=
-                                                    null
-                                                ? loadingProgress
-                                                        .cumulativeBytesLoaded /
-                                                    (loadingProgress
-                                                            .expectedTotalBytes ??
-                                                        1)
-                                                : null,
-                                      ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: padding * 0.4,
+                    horizontal: padding * 0.4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xff161C25),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Color(0xff202938)),
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: HeroMode(
+                          enabled: true,
+                          child: Hero(
+                            tag: 'image${event.title}',
+                            child: Stack(
+                              children: [
+                                Shimmer.fromColors(
+                                  baseColor: Colors.grey[800]!,
+                                  highlightColor: Colors.grey[600]!,
+                                  child: Container(
+                                    width: size.width * 0.2,
+                                    height: size.height * 0.10,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[700],
+                                      borderRadius: BorderRadius.circular(6),
                                     ),
-                                  );
-                                },
-                                errorBuilder:
-                                    (context, error, stackTrace) =>
-                                        Icon(Icons.error, color: Colors.red),
-                              ),
+                                  ),
+                                ),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: Image.network(
+                                    event.imageUrl.isNotEmpty
+                                        ? event.imageUrl
+                                        : "https://tinyurl.com/2mwx6exe",
+                                    fit: BoxFit.cover,
+                                    width: size.width * 0.2,
+                                    height: size.height * 0.10,
+                                    loadingBuilder: (
+                                      context,
+                                      child,
+                                      loadingProgress,
+                                    ) {
+                                      if (loadingProgress == null) {
+                                        return child;
+                                      }
+                                      return Container();
+                                    },
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Icon(
+                                          Icons.error,
+                                          color: Colors.red,
+                                          size: size.width * 0.08,
+                                        ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        SizedBox(width: size.width * 0.03),
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    '${event.title}: ',
+                      ),
+                      SizedBox(width: size.width * 0.03),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  '${event.title}: ',
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.white,
+                                    fontSize: fontSize * 0.9,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Flexible(
+                                  child: Text(
+                                    event.artist,
                                     style: GoogleFonts.urbanist(
                                       color: Colors.white,
                                       fontSize: fontSize * 0.9,
                                       fontWeight: FontWeight.bold,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
-                                  Flexible(
-                                    child: Text(
-                                      event.artist,
-                                      style: GoogleFonts.urbanist(
-                                        color: Colors.white,
-                                        fontSize: fontSize * 0.9,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: size.height * 0.01),
-                              Text(
-                                event.date,
-                                style: GoogleFonts.urbanist(
-                                  color: Colors.white70,
-                                  fontSize: fontSize * 0.7,
-                                  fontWeight: FontWeight.bold,
                                 ),
+                              ],
+                            ),
+                            SizedBox(height: size.height * 0.01),
+                            Text(
+                              event.date,
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white70,
+                                fontSize: fontSize * 0.7,
+                                fontWeight: FontWeight.bold,
                               ),
-                              SizedBox(height: size.height * 0.003),
-                              Text(
-                                event.location,
-                                style: GoogleFonts.urbanist(
-                                  color: Colors.white70,
-                                  fontSize: fontSize * 0.7,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
+                            ),
+                            SizedBox(height: size.height * 0.003),
+                            Text(
+                              event.location,
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white70,
+                                fontSize: fontSize * 0.7,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
-                          ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

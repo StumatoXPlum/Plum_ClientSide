@@ -78,7 +78,7 @@ class VenuePreferencesState extends State<VenuePreferences> {
           style: GoogleFonts.poppins(
             color: Colors.white,
             fontSize: fontSize * 1.2,
-          ), 
+          ),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -175,39 +175,50 @@ class VenuePreferencesState extends State<VenuePreferences> {
     Function(String?) onChanged,
     String? value,
   ) {
-    return DropdownButtonFormField<String>(
-      dropdownColor: Colors.black,
-      value: value,
-      style: GoogleFonts.urbanist(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: GoogleFonts.urbanist(color: Colors.white70),
-        filled: true,
-        fillColor: Colors.white10,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white54),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF3579DD)),
-          borderRadius: BorderRadius.circular(10),
+    return DropdownButtonHideUnderline(
+      child: ButtonTheme(
+        alignedDropdown: true,
+        child: DropdownButtonFormField<String>(
+          dropdownColor: const Color(0xff161C25),
+          value: value,
+          style: GoogleFonts.urbanist(color: Colors.white),
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: GoogleFonts.urbanist(color: Colors.white70),
+            filled: true,
+            fillColor: const Color(0xff161C25),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: const Color(0xff202938)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF3579DD)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          items:
+              options
+                  .map(
+                    (label) => DropdownMenuItem(
+                      value: label,
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: 200),
+                        child: Text(
+                          label,
+                          style: GoogleFonts.urbanist(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+          onChanged: (val) {
+            onChanged(val);
+          },
+          alignment: Alignment.centerLeft,
+          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
-      items:
-          options
-              .map(
-                (label) => DropdownMenuItem(
-                  value: label,
-                  child: Text(
-                    label,
-                    style: GoogleFonts.urbanist(color: Colors.white),
-                  ),
-                ),
-              )
-              .toList(),
-      onChanged: (val) {
-        onChanged(val);
-      },
     );
   }
 
@@ -225,9 +236,9 @@ class VenuePreferencesState extends State<VenuePreferences> {
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
         filled: true,
-        fillColor: Colors.white10,
+        fillColor: const Color(0xff161C25),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white54),
+          borderSide: BorderSide(color: const Color(0xff202938)),
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(

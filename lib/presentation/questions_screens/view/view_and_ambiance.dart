@@ -134,42 +134,54 @@ class ViewAndAmbianceState extends State<ViewAndAmbiance> {
   }
 
   Widget _buildDropdown() {
-    return DropdownButtonFormField<String>(
-      dropdownColor: Colors.black,
-      value: _selectedVibe,
-      style: GoogleFonts.urbanist(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: "Vibe of your event",
-        labelStyle: GoogleFonts.urbanist(color: Colors.white70),
-        filled: true,
-        fillColor: Colors.white10,
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white54),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF3579DD)),
-          borderRadius: BorderRadius.circular(10),
+    return DropdownButtonHideUnderline(
+      child: ButtonTheme(
+        alignedDropdown: true,
+        child: DropdownButtonFormField<String>(
+          dropdownColor: const Color(0xff161C25),
+          value: _selectedVibe,
+          style: GoogleFonts.urbanist(color: Colors.white),
+          decoration: InputDecoration(
+            labelText: "Vibe of your event",
+            labelStyle: GoogleFonts.urbanist(color: Colors.white70),
+            filled: true,
+            fillColor: const Color(0xff161C25),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: const Color(0xff202938)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF3579DD)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          items:
+              vibeOptions
+                  .map(
+                    (label) => DropdownMenuItem(
+                      value: label,
+                      child: Container(
+                        constraints: BoxConstraints(maxWidth: 200),
+
+                        child: Text(
+                          label,
+                          style: GoogleFonts.urbanist(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedVibe = value;
+            });
+            widget.onVibeOfEventChanged(value);
+          },
+          alignment: Alignment.centerLeft,
+          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
-      items:
-          vibeOptions
-              .map(
-                (label) => DropdownMenuItem(
-                  value: label,
-                  child: Text(
-                    label,
-                    style: GoogleFonts.urbanist(color: Colors.white),
-                  ),
-                ),
-              )
-              .toList(),
-      onChanged: (value) {
-        setState(() {
-          _selectedVibe = value;
-        });
-        widget.onVibeOfEventChanged(value);
-      },
     );
   }
 
@@ -182,9 +194,9 @@ class ViewAndAmbianceState extends State<ViewAndAmbiance> {
         labelText: label,
         labelStyle: GoogleFonts.urbanist(color: Colors.white70),
         filled: true,
-        fillColor: Colors.white10,
+        fillColor: const Color(0xff161C25),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white54),
+          borderSide: BorderSide(color: const Color(0xff202938)),
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(

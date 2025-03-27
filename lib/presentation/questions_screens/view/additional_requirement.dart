@@ -169,9 +169,9 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
                   labelText: questionText,
                   labelStyle: GoogleFonts.urbanist(color: Colors.white70),
                   filled: true,
-                  fillColor: Colors.white10,
+                  fillColor: const Color(0xff161C25),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white54),
+                    borderSide: BorderSide(color: const Color(0xff202938)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   focusedBorder: OutlineInputBorder(

@@ -86,7 +86,7 @@ class BudgetScreenState extends State<BudgetScreen> {
             Text(
               "AED ${_selectedBudget.toInt()}",
               style: GoogleFonts.urbanist(
-                color: Colors.blueAccent,
+                color: Color(0xFF3579DD),
                 fontSize: fontSize,
                 fontWeight: FontWeight.bold,
               ),
@@ -96,8 +96,8 @@ class BudgetScreenState extends State<BudgetScreen> {
               min: 1000,
               max: 100000,
               divisions: 99,
-              activeColor: Colors.blueAccent,
-              inactiveColor: Colors.white54,
+              activeColor: Color(0xFF3579DD),
+              inactiveColor: const Color(0xff202938),
               label: "AED ${_selectedBudget.toInt()}",
               onChanged: (double value) {
                 setState(() {

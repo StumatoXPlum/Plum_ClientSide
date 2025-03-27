@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:task2/presentation/authentication_screens/sign_up_screen/cubit/auth_cubit.dart';
-import 'package:task2/presentation/questions_screens/view/additional_requirement.dart';
-import 'package:task2/presentation/questions_screens/view/budget_screen.dart';
-import 'package:task2/presentation/questions_screens/view/event_details.dart';
-import 'package:task2/presentation/questions_screens/view/personal_info.dart';
-import 'package:task2/presentation/questions_screens/view/venue_preference.dart';
-import 'package:task2/presentation/questions_screens/view/view_and_ambiance.dart';
+import '../../authentication_screens/sign_up_screen/cubit/auth_cubit.dart';
+import 'additional_requirement.dart';
+import 'budget_screen.dart';
+import 'event_details.dart';
+import 'personal_info.dart';
+import 'venue_preference.dart';
+import 'view_and_ambiance.dart';
 
 class QuestionsFlowScreen extends StatefulWidget {
   const QuestionsFlowScreen({super.key});
@@ -48,8 +48,8 @@ class QuestionsFlowScreenState extends State<QuestionsFlowScreen> {
     if (_currentPage < 5) {
       _pageController.animateToPage(
         ++_currentPage,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOutCubic,
       );
     }
   }
@@ -58,8 +58,8 @@ class QuestionsFlowScreenState extends State<QuestionsFlowScreen> {
     if (_currentPage > 0) {
       _pageController.animateToPage(
         --_currentPage,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeIn,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOutCubic,
       );
     }
   }
