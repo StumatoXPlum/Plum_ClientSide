@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/custom_widgets/custom_button.dart';
-import '../widgets/progress_bar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../../core/custom_widgets/custom_button.dart';
+import '../../custom_widgets/custom_app_bar.dart';
+import '../../custom_widgets/custom_progress_bar.dart';
 
 class BudgetScreen extends StatefulWidget {
   final VoidCallback goToNext;
@@ -52,21 +53,7 @@ class BudgetScreenState extends State<BudgetScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff090D14),
-        title: Text(
-          "Budget",
-          style: GoogleFonts.poppins(
-            color: Colors.white,
-            fontSize: fontSize * 1.2,
-          ),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: widget.goToPrevious,
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-        ),
-      ),
+      appBar: CustomAppBar(title: "Budget", onBack: widget.goToPrevious),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
         child: Column(

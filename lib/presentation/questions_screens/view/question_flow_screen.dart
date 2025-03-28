@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../authentication_screens/sign_up_screen/cubit/auth_cubit.dart';
-import 'additional_requirement.dart';
-import 'budget_screen.dart';
-import 'event_details.dart';
-import 'personal_info.dart';
-import 'venue_preference.dart';
-import 'view_and_ambiance.dart';
+import 'additional_requirements/additional_requirement.dart';
+import 'budget/budget_screen.dart';
+import 'event_details/view/event_details.dart';
+import 'personal_info/personal_info.dart';
+import 'venue_prefs/venue_preference.dart';
+import 'view_ambiance/view_and_ambiance.dart';
 
 class QuestionsFlowScreen extends StatefulWidget {
   const QuestionsFlowScreen({super.key});

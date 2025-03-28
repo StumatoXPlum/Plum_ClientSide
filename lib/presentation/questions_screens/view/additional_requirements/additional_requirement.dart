@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/custom_widgets/bottom_navigation_bar.dart';
-import 'package:task2/core/custom_widgets/loading_button.dart';
-import 'package:task2/presentation/questions_screens/supabase/save_response_service.dart';
-import '../widgets/progress_bar.dart';
+import '../../../../core/custom_widgets/bottom_navigation_bar.dart';
+import '../../../../core/custom_widgets/loading_button.dart';
+import '../../supabase/save_response_service.dart';
+import '../../custom_widgets/custom_app_bar.dart';
+import '../../custom_widgets/custom_progress_bar.dart';
 
 class AdditionalRequirements extends StatefulWidget {
   final VoidCallback goToPrevious;
@@ -132,24 +133,12 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
-    double fontSize = size.width * 0.05;
 
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff090D14),
-        title: Text(
-          "Additional Requirements",
-          style: GoogleFonts.poppins(
-            color: Colors.white,
-            fontSize: fontSize * 1.2,
-          ),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: widget.goToPrevious,
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-        ),
+      appBar: CustomAppBar(
+        title: "Additional Requirements",
+        onBack: widget.goToPrevious,
       ),
       body: SingleChildScrollView(
         child: Padding(

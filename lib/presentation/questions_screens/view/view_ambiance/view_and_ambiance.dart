@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
-import 'package:task2/presentation/questions_screens/widgets/custom_text_field.dart';
-import 'package:task2/presentation/questions_screens/widgets/progress_bar.dart';
+import '../../../../core/custom_widgets/custom_button.dart';
+import '../../custom_widgets/custom_app_bar.dart';
+import '../../custom_widgets/custom_text_field.dart';
+import '../../custom_widgets/custom_progress_bar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/presentation/questions_screens/widgets/shimmer_widget.dart';
+import '../../custom_widgets/custom_shimmer_widget.dart';
 
 class ViewAndAmbiance extends StatefulWidget {
   final VoidCallback goToNext;
@@ -71,24 +72,12 @@ class ViewAndAmbianceState extends State<ViewAndAmbiance> {
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
-    double fontSize = size.width * 0.05;
 
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
-      appBar: AppBar(
-        backgroundColor: const Color(0xff090D14),
-        title: Text(
-          "View and Ambiance",
-          style: GoogleFonts.poppins(
-            color: Colors.white,
-            fontSize: fontSize * 1.2,
-          ),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: widget.goToPrevious,
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-        ),
+      appBar: CustomAppBar(
+        title: "View and Ambiance",
+        onBack: widget.goToPrevious,
       ),
       body: Column(
         children: [
