@@ -17,9 +17,13 @@ class TimePickerService {
       builder: (context) {
         return _CustomTimePicker(
           onTimeSelected: (selectedTime) {
+            int hour = selectedTime.hourOfPeriod;
+            String period = selectedTime.period == DayPeriod.am ? "AM" : "PM";
+            String formattedDisplayTime =
+                "${hour == 0 ? 12 : hour}:${selectedTime.minute.toString().padLeft(2, '0')} $period";
             String formattedTime =
                 "${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}:00";
-            controller.text = selectedTime.format(context);
+            controller.text = formattedDisplayTime;
             onTimeChanged(formattedTime);
             Navigator.of(context).pop();
           },
@@ -302,7 +306,7 @@ class CustomTimeField extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Color(0xFF3579DD), width: 2),
+          borderSide: const BorderSide(color: Color(0xFF3579DD)),
           borderRadius: BorderRadius.circular(12),
         ),
       ),

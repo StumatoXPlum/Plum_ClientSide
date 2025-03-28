@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task2/presentation/booking/widgets/toggle_switch.dart';
+import 'package:task2/presentation/questions_screens/view/personal_info/cubit/personal_info_cubit.dart';
 import '../widgets/group_booking.dart';
 import '../widgets/your_booking.dart';
 
@@ -22,6 +24,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final personalInfoState = context.watch<PersonalInfoCubit>().state;
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
       body: SafeArea(
@@ -38,7 +41,7 @@ class _BookingScreenState extends State<BookingScreen> {
               child:
                   _selectedIndex == 0
                       ? const YourBookingsList()
-                      : GroupBookingsList(),
+                      : GroupBookingsList(personalInfoState: personalInfoState),
             ),
           ],
         ),

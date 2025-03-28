@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:neopop/widgets/buttons/neopop_tilted_button/neopop_tilted_button.dart';
 
-class LoadingButton extends StatelessWidget {
+class NeopopButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onTap;
   final bool isLoading;
-  const LoadingButton({
+  const NeopopButton({
     super.key,
     required this.buttonText,
     required this.onTap,
@@ -16,8 +16,8 @@ class LoadingButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-
     double fontSize = size.width * 0.05;
+
     return SizedBox(
       height: size.height * 0.08,
       width: double.infinity,

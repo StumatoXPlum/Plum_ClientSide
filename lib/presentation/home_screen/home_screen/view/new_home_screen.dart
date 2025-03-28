@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/presentation/home_screen/home_screen/supabase/supabase_service.dart';
 import 'package:task2/presentation/questions_screens/view/question_flow_screen.dart';
 import '../../../bookmark_screen/cubit/bookmark_cubit.dart';
@@ -27,8 +28,8 @@ class _NewHomeScreenState extends State<NewHomeScreen>
   List<EventModel> nearbyEvents = [];
   late AnimationController controller;
   late Animation<Offset> slideAnimation;
-  final String _locationText = "Tap to set location";
   String? _yourLocation;
+  final supabase = Supabase.instance.client;
 
   @override
   void initState() {
@@ -45,6 +46,8 @@ class _NewHomeScreenState extends State<NewHomeScreen>
     ).animate(CurvedAnimation(parent: controller, curve: Curves.easeIn));
 
     controller.forward();
+
+    _fetchUserLocation();
   }
 
   Future<void> loadEvents() async {
@@ -71,6 +74,34 @@ class _NewHomeScreenState extends State<NewHomeScreen>
     });
   }
 
+  Future<void> _fetchUserLocation() async {
+    final userId = supabase.auth.currentUser?.id;
+
+    if (userId == null) {
+      return;
+    }
+
+    final response =
+        await supabase
+            .from('users')
+            .select('location')
+            .eq('id', userId)
+            .single();
+
+    final locationString = response['location'];
+    if (locationString != null && locationString.isNotEmpty) {
+      setState(() {
+        _yourLocation =
+            locationString; 
+      });
+    } else {
+      setState(() {
+        _yourLocation =
+            "Fetching location..."; 
+      });
+    }
+  }
+
   @override
   void dispose() {
     controller.dispose();
@@ -82,6 +113,7 @@ class _NewHomeScreenState extends State<NewHomeScreen>
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.03;
     double fontSize = size.width * 0.05;
+
     return Scaffold(
       backgroundColor: const Color(0xff090D14),
       body: SingleChildScrollView(
@@ -120,7 +152,6 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                   ),
                 ),
               ),
-
               SizedBox(height: size.height * 0.04),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
@@ -138,6 +169,13 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                       setState(() {
                         _yourLocation = selectedLocation;
                       });
+                      final userId = supabase.auth.currentUser?.id;
+                      if (userId != null) {
+                        await supabase
+                            .from('users')
+                            .update({'location': selectedLocation})
+                            .eq('id', userId);
+                      }
                     }
                   },
                   child: SlideTransition(
@@ -181,7 +219,7 @@ class _NewHomeScreenState extends State<NewHomeScreen>
                                 ),
                                 SizedBox(height: size.height * 0.001),
                                 Text(
-                                  _yourLocation ?? _locationText,
+                                  _yourLocation ?? "Fetching location...",
                                   style: GoogleFonts.urbanist(
                                     color: Colors.white60,
                                   ),

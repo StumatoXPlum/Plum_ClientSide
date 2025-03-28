@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
 import '../../../../core/custom_widgets/bottom_navigation_bar.dart';
-import '../../../../core/custom_widgets/loading_button.dart';
 import '../../supabase/save_response_service.dart';
 import '../../custom_widgets/custom_app_bar.dart';
 import '../../custom_widgets/custom_progress_bar.dart';
@@ -178,7 +178,7 @@ class AdditionalRequirementsState extends State<AdditionalRequirements> {
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(padding),
-        child: LoadingButton(
+        child: CustomButton(
           buttonText: _isLoading ? "Loading..." : "Submit",
           onTap: _isLoading ? () {} : _submitForm,
           isLoading: _isLoading,

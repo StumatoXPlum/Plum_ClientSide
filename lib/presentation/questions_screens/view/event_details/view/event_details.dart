@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/custom_widgets/custom_button.dart';
+import 'package:task2/core/custom_widgets/custom_button.dart';
 import '../../../custom_widgets/custom_app_bar.dart';
 import '../../../custom_widgets/custom_progress_bar.dart';
 import '../../../custom_widgets/custom_shimmer_widget.dart';
@@ -83,6 +83,17 @@ class EventDetailsState extends State<EventDetails> {
   }
 
   void _validateAndProceed() {
+    if (_selectedOccasion == null || _selectedOccasion!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please select an occasion"),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
     if (_guestsController.text.isEmpty ||
         _preferredDateController.text.isEmpty ||
         _startTimeController.text.isEmpty ||
@@ -90,13 +101,19 @@ class EventDetailsState extends State<EventDetails> {
         (_showCustomOccasionField && _customOccasionController.text.isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Please fill all required fields", style: TextStyle()),
+          content: Text("Please fill all required fields"),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
       );
       return;
     }
+    String finalOccasion =
+        _showCustomOccasionField
+            ? _customOccasionController.text
+            : _selectedOccasion!;
+
+    widget.onOccasionChanged(finalOccasion);
     widget.goToNext();
   }
 
@@ -177,7 +194,7 @@ class EventDetailsState extends State<EventDetails> {
                             ),
                             SizedBox(height: padding * 1.5),
                             CustomTextField(
-                              label: "Alternate Date",
+                              label: "Alternate Date (optional)",
                               controller: _alternateDateController,
                               keyboardType: TextInputType.datetime,
                               onChanged: widget.onAlternateDateChanged,

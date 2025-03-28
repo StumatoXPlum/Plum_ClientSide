@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/custom_widgets/loading_button.dart';
+import 'package:task2/core/custom_widgets/neopop_button.dart';
 import '../../../core/constants.dart';
 import 'phone_verification.dart';
 
@@ -213,7 +213,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
               ],
             ),
             SizedBox(height: size.height * 0.07),
-            LoadingButton(
+            NeopopButton(
               onTap: () async {
                 setState(() {
                   isLoading = true;

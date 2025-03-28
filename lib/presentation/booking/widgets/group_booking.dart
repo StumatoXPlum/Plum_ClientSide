@@ -1,13 +1,16 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../questions_screens/view/personal_info/cubit/personal_info_cubit.dart';
 
 class GroupBookingsList extends StatelessWidget {
-  GroupBookingsList({super.key});
+  final PersonalInfoState personalInfoState;
+  GroupBookingsList({super.key, required this.personalInfoState});
 
   final List<String> _bookingImages = [
     "assets/bookings/booking1.svg",
@@ -52,7 +55,13 @@ class GroupBookingsList extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> _fetchGroupBookings() async {
     final supabase = Supabase.instance.client;
-    return await supabase.from('responses').select();
+
+    final data = await supabase
+        .from('responses')
+        .select('*, users(name, phonenumber, email)')
+        .eq('users.email', supabase.auth.currentUser?.email as Object);
+
+    return data;
   }
 
   Widget _errorMessage(String message) {
@@ -106,6 +115,11 @@ class GroupBookingsList extends StatelessWidget {
     final Size size = MediaQuery.of(context).size;
     double padding = size.width * 0.04;
     double fontSize = size.width * 0.045;
+    final personalInfoState = context.watch<PersonalInfoCubit>().state;
+    String hostName =
+        personalInfoState.fullName.isNotEmpty
+            ? personalInfoState.fullName
+            : booking['users']['name'] ?? "N/A";
     return Container(
       margin: EdgeInsets.only(bottom: padding),
       padding: EdgeInsets.all(padding),
@@ -153,7 +167,7 @@ class GroupBookingsList extends StatelessWidget {
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "Hosted by: ${booking['full_name'] ?? "N/A"}",
+                    "Hosted by: $hostName",
                     style: GoogleFonts.urbanist(
                       color: Colors.white,
                       fontSize: fontSize,
@@ -246,6 +260,7 @@ Widget _buildBackSide(
   double padding,
   double fontSize,
 ) {
+  final personalInfoState = context.watch<PersonalInfoCubit>().state;
   return Container(
     margin: EdgeInsets.only(bottom: padding),
     padding: EdgeInsets.all(padding),
@@ -311,21 +326,28 @@ Widget _buildBackSide(
               SizedBox(height: size.height * 0.01),
               DottedLine(dashColor: Colors.white30),
               SizedBox(height: size.height * 0.02),
+
               _detailText(
                 "Full Name",
-                booking['full_name'],
+                personalInfoState.fullName.isNotEmpty
+                    ? personalInfoState.fullName
+                    : booking['users']['name'],
                 Icons.person,
                 context,
               ),
               _detailText(
                 "Contact",
-                booking['contact_number'],
+                personalInfoState.contactNumber.isNotEmpty
+                    ? personalInfoState.contactNumber
+                    : booking['users']['phonenumber'],
                 Icons.phone_android_sharp,
                 context,
               ),
               _detailText(
                 "Email",
-                booking['email'],
+                personalInfoState.email.isNotEmpty
+                    ? personalInfoState.email
+                    : booking['users']['email'],
                 Icons.mail_outline,
                 context,
               ),

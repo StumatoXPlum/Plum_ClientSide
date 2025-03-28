@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class DatePickerService {
   static Future<void> selectDate({
@@ -17,9 +18,13 @@ class DatePickerService {
       builder: (context) {
         return _CustomDatePicker(
           onDateSelected: (selectedDate) {
+            String formattedDisplayDate = DateFormat(
+              "dd MMM yyyy",
+            ).format(selectedDate);
             String formattedDate =
-                "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
-            controller.text = formattedDate;
+                "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}"; // For storing
+
+            controller.text = formattedDisplayDate;
             onDateChanged(formattedDate);
             Navigator.of(context).pop();
           },
@@ -39,24 +44,25 @@ class _CustomDatePicker extends StatefulWidget {
 }
 
 class _CustomDatePickerState extends State<_CustomDatePicker> {
-  late DateTime _selectedDate;
   late List<String> _months;
   late List<int> _years;
   late int _selectedMonthIndex;
   late int _selectedYear;
   late int _selectedDay;
 
-  final _monthController = FixedExtentScrollController();
+  final _monthController = FixedExtentScrollController(
+    initialItem: DateTime.now().month - 1,
+  );
   final _dayController = FixedExtentScrollController();
   final _yearController = FixedExtentScrollController();
 
   @override
   void initState() {
     super.initState();
-    _selectedDate = DateTime.now();
-    _selectedMonthIndex = _selectedDate.month - 1;
-    _selectedYear = _selectedDate.year;
-    _selectedDay = _selectedDate.day;
+    DateTime now = DateTime.now();
+    _selectedMonthIndex = DateTime.now().month - 1;
+    _selectedYear = now.year;
+    _selectedDay = now.day;
 
     _months = [
       'Jan',
@@ -73,10 +79,15 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
       'Dec',
     ];
 
-    _years = List.generate(11, (index) => _selectedDate.year + index);
+    _years = List.generate(11, (index) => now.year + index);
+
     _monthController.jumpToItem(_selectedMonthIndex);
     _yearController.jumpToItem(0);
     _dayController.jumpToItem(_selectedDay - 1);
+  }
+
+  int _getDaysInMonth(int year, int month) {
+    return DateTime(year, month + 1, 0).day;
   }
 
   @override
@@ -87,14 +98,27 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
     super.dispose();
   }
 
-  int _getDaysInMonth(int year, int month) {
-    return DateTime(year, month + 1, 0).day;
-  }
-
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
     int daysInMonth = _getDaysInMonth(_selectedYear, _selectedMonthIndex + 1);
-    List<int> days = List.generate(daysInMonth, (index) => index + 1);
+
+    int minDay =
+        (_selectedYear == now.year && _selectedMonthIndex == now.month - 1)
+            ? now.day
+            : 1;
+    int maxDay = daysInMonth;
+    if (_selectedDay < minDay) {
+      _selectedDay = minDay;
+    } else if (_selectedDay > maxDay) {
+      _selectedDay = maxDay;
+    }
+
+    List<int> days = List.generate(
+      (maxDay - minDay + 1).clamp(1, maxDay),
+      (index) => minDay + index,
+    );
+
     final Size size = MediaQuery.of(context).size;
     double fontSize = size.width * 0.05;
     double padding = size.width * 0.03;
@@ -187,13 +211,53 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
               SizedBox(width: size.width * 0.04),
               ElevatedButton(
                 onPressed: () {
-                  widget.onDateSelected(
-                    DateTime(
-                      _selectedYear,
-                      _selectedMonthIndex + 1,
-                      _selectedDay,
-                    ),
+                  DateTime selectedDate = DateTime(
+                    _selectedYear,
+                    _selectedMonthIndex + 1,
+                    _selectedDay,
                   );
+
+                  if (selectedDate.isBefore(
+                    DateTime.now().subtract(const Duration(days: 1)),
+                  )) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          backgroundColor: const Color(0xFF1E2330),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          title: Text(
+                            "Invalid Date",
+                            style: GoogleFonts.urbanist(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          content: Text(
+                            "You cant select a past date.",
+                            style: GoogleFonts.urbanist(color: Colors.white70),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text(
+                                "OK",
+                                style: GoogleFonts.urbanist(
+                                  color: const Color(0xFF3579DD),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: fontSize * 1,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    widget.onDateSelected(selectedDate);
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF3579DD),
@@ -229,6 +293,7 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
     required int initialItem,
   }) {
     final Size size = MediaQuery.of(context).size;
+
     return Container(
       width: size.width * 0.25,
       height: size.height * 0.3,
@@ -236,7 +301,7 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
         color: const Color(0xFF2C3340),
         borderRadius: BorderRadius.circular(15),
       ),
-      child: ListWheelScrollView(
+      child: ListWheelScrollView.useDelegate(
         controller: controller,
         physics: const FixedExtentScrollPhysics(),
         diameterRatio: 1.5,
@@ -244,20 +309,24 @@ class _CustomDatePickerState extends State<_CustomDatePicker> {
         useMagnifier: true,
         magnification: 1.3,
         itemExtent: 50,
-        onSelectedItemChanged: onSelectedItemChanged,
-        children: List.generate(
-          items.length,
-          (index) => Center(
-            child: Text(
-              items[index],
-              style: GoogleFonts.urbanist(
-                fontSize: index == initialItem ? 24 : 18,
-                color: index == initialItem ? Colors.white : Colors.white54,
-                fontWeight:
-                    index == initialItem ? FontWeight.bold : FontWeight.normal,
+        onSelectedItemChanged: (index) {
+          onSelectedItemChanged(index);
+        },
+        childDelegate: ListWheelChildBuilderDelegate(
+          builder: (context, index) {
+            bool isSelected = index == controller.selectedItem;
+            return Center(
+              child: Text(
+                items[index],
+                style: GoogleFonts.urbanist(
+                  fontSize: isSelected ? 24 : 18,
+                  color: isSelected ? Colors.white : Colors.white54,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
               ),
-            ),
-          ),
+            );
+          },
+          childCount: items.length,
         ),
       ),
     );

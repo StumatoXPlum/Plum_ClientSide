@@ -4,8 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
 import '../../../core/custom_widgets/bottom_navigation_bar.dart';
+import '../../../core/custom_widgets/neopop_button.dart';
 import '../name_screen/enter_name_screen.dart';
 
 class EmailVerification extends StatefulWidget {
@@ -275,32 +275,10 @@ class _EmailVerificationState extends State<EmailVerification> {
                 ),
               ),
               SizedBox(height: size.height * 0.04),
-              CustomButton(
+              NeopopButton(
                 buttonText: "Verify",
                 onTap: verifyOtp,
-                child: Center(
-                  child:
-                      isVerifying
-                          ? SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                              strokeWidth: 2.5,
-                            ),
-                          )
-                          : Text(
-                            "Verify",
-                            style: GoogleFonts.urbanist(
-                              fontSize: fontSize * 0.9,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                ),
+               
               ),
             ],
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/presentation/questions_screens/view/personal_info/cubit/personal_info_cubit.dart';
 import 'presentation/bookmark_screen/cubit/bookmark_cubit.dart';
 import 'presentation/ticket/cubit/ticket_cubit.dart';
 import 'core/custom_widgets/bottom_navigation_bar.dart';
@@ -27,6 +28,7 @@ void main() async {
         BlocProvider(create: (context) => EarnedPointsCubit()),
         BlocProvider(create: (context) => BookmarkCubit()),
         BlocProvider(create: (context) => TicketCubit()),
+        BlocProvider(create: (context) => PersonalInfoCubit()),
       ],
       child: const MyApp(),
     ),

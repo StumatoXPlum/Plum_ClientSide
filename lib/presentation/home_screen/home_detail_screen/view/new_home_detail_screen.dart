@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
+import 'package:task2/core/custom_widgets/neopop_button.dart';
 import '../../../booking/view/booking_confirmation_screen.dart';
 import '../widgets/details_container.dart';
 import '../../home_screen/model/event_model.dart';
@@ -233,7 +233,7 @@ class _NewHomeDetailScreenState extends State<NewHomeDetailScreen>
             padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
             child: SlideTransition(
               position: slideAnimation,
-              child: CustomButton(
+              child: NeopopButton(
                 buttonText: "Book Event",
                 onTap: () {
                   Navigator.push(

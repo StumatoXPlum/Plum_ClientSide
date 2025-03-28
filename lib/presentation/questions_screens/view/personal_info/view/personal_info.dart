@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/custom_widgets/custom_button.dart';
-import '../../custom_widgets/custom_app_bar.dart';
-import '../../custom_widgets/custom_progress_bar.dart';
-import '../../custom_widgets/custom_shimmer_widget.dart';
-import '../../custom_widgets/custom_text_field.dart';
+import '../../../../../core/custom_widgets/custom_button.dart';
+import '../cubit/personal_info_cubit.dart';
+import '../../../custom_widgets/custom_app_bar.dart';
+import '../../../custom_widgets/custom_progress_bar.dart';
+import '../../../custom_widgets/custom_shimmer_widget.dart';
+import '../../../custom_widgets/custom_text_field.dart';
 
 class PersonalInfo extends StatefulWidget {
   final VoidCallback goToNext;
@@ -106,21 +108,48 @@ class _PersonalInfoState extends State<PersonalInfo> {
                             label: "Full Name",
                             controller: fullNameController,
                             keyboardType: TextInputType.text,
-                            onChanged: widget.onFullNameChanged,
+                            onChanged: (value) {
+                              context
+                                  .read<PersonalInfoCubit>()
+                                  .updatePersonalInfo(
+                                    fullName: value,
+                                    contactNumber: contactNumberController.text,
+                                    email: emailController.text,
+                                  );
+                              widget.onFullNameChanged(value);
+                            },
                           ),
                           SizedBox(height: size.height * 0.02),
                           CustomTextField(
                             label: "Contact Number",
                             controller: contactNumberController,
                             keyboardType: TextInputType.phone,
-                            onChanged: widget.onContactNumberChanged,
+                            onChanged: (value) {
+                              context
+                                  .read<PersonalInfoCubit>()
+                                  .updatePersonalInfo(
+                                    fullName: fullNameController.text,
+                                    contactNumber: value,
+                                    email: emailController.text,
+                                  );
+                              widget.onContactNumberChanged(value);
+                            },
                           ),
                           SizedBox(height: size.height * 0.02),
                           CustomTextField(
                             label: "Email Address",
                             controller: emailController,
                             keyboardType: TextInputType.emailAddress,
-                            onChanged: widget.onEmailChanged,
+                            onChanged: (value) {
+                              context
+                                  .read<PersonalInfoCubit>()
+                                  .updatePersonalInfo(
+                                    fullName: fullNameController.text,
+                                    contactNumber: contactNumberController.text,
+                                    email: value,
+                                  );
+                              widget.onEmailChanged(value);
+                            },
                           ),
                           SizedBox(height: size.height * 0.02),
                         ],

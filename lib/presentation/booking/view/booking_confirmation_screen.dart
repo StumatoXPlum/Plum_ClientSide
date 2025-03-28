@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../core/custom_widgets/custom_button.dart';
+import 'package:task2/core/custom_widgets/neopop_button.dart';
 import 'package:uuid/uuid.dart';
 import '../../home_screen/home_screen/model/event_model.dart';
 import '../../ticket/model/ticket_model.dart';
@@ -289,7 +289,7 @@ class BookingConfirmationScreenState extends State<BookingConfirmationScreen> {
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: padding * 1.6),
-            child: CustomButton(
+            child: NeopopButton(
               buttonText: 'Proceed to Payment',
               onTap: () {
                 final userId = Supabase.instance.client.auth.currentUser?.id;

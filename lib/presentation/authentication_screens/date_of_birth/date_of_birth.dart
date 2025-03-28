@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/custom_widgets/loading_button.dart';
+import 'package:task2/core/custom_widgets/neopop_button.dart';
 import '../../../core/custom_widgets/bottom_navigation_bar.dart';
 
 class DateOfBirth extends StatefulWidget {
@@ -297,7 +297,7 @@ class _DateOfBirthState extends State<DateOfBirth> {
                 ],
               ),
               SizedBox(height: size.height * 0.08),
-              LoadingButton(
+              NeopopButton(
                 buttonText: "Verify",
                 onTap: onTap,
                 isLoading: isLoading,

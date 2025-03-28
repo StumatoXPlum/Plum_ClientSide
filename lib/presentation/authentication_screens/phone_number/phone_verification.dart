@@ -5,8 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:pinput/pinput.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task2/core/custom_widgets/neopop_button.dart';
 import '../../../core/constants.dart';
-import '../../../core/custom_widgets/loading_button.dart';
 import '../date_of_birth/date_of_birth.dart';
 
 class PhoneVerification extends StatefulWidget {
@@ -232,7 +232,7 @@ class _PhoneVerificationState extends State<PhoneVerification> {
                 ),
               ),
               SizedBox(height: size.height * 0.03),
-              LoadingButton(
+              NeopopButton(
                 buttonText: "Verify",
                 isLoading: isLoading,
                 onTap: () async {

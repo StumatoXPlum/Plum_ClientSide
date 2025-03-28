@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/custom_widgets/custom_button.dart';
 import '../../custom_widgets/custom_app_bar.dart';
-import '../../custom_widgets/custom_text_field.dart';
 import '../../custom_widgets/custom_progress_bar.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../custom_widgets/custom_shimmer_widget.dart';
+import '../../custom_widgets/custom_text_field.dart';
 
 class ViewAndAmbiance extends StatefulWidget {
   final VoidCallback goToNext;

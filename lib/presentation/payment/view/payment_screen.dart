@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:task2/core/custom_widgets/custom_button.dart';
+import 'package:task2/core/custom_widgets/neopop_button.dart';
 import 'package:task2/presentation/ticket/cubit/ticket_cubit.dart';
 import '../../apple_pay_animation/apple_pay.dart';
 import '../cubit/payment_cubit.dart';
@@ -145,7 +145,7 @@ class PaymentScreen extends StatelessWidget {
                   SizedBox(height: size.height * 0.05),
                   Divider(color: Colors.grey, thickness: 0.1),
                   SizedBox(height: size.height * 0.01),
-                  CustomButton(
+                  NeopopButton(
                     buttonText: "Proceed to Payment",
                     onTap: () async {
                       final paymentSuccessful =

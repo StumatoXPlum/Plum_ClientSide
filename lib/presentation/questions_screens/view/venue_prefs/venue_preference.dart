@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:task2/presentation/questions_screens/custom_widgets/custom_app_bar.dart';
-import 'package:task2/presentation/questions_screens/custom_widgets/custom_text_field.dart';
-import 'package:task2/presentation/questions_screens/custom_widgets/custom_shimmer_widget.dart';
 import '../../../../core/custom_widgets/custom_button.dart';
+import '../../custom_widgets/custom_app_bar.dart';
+import '../../custom_widgets/custom_text_field.dart';
+import '../../custom_widgets/custom_shimmer_widget.dart';
 import '../../supabase/questions_service.dart';
 import '../../custom_widgets/custom_progress_bar.dart';
 

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../core/custom_widgets/loading_button.dart';
+import 'package:task2/core/custom_widgets/neopop_button.dart';
 import '../authentication_screens/sign_up_screen/auth_service/auth_service.dart';
 import '../points_screen/cubit/earned_points_cubit.dart';
 import '../authentication_screens/date_of_birth/date_of_birth.dart';
@@ -265,7 +265,7 @@ class UserProfileState extends State<UserProfile> {
                 left: padding * 1.6,
                 right: padding * 1.6,
               ),
-              child: LoadingButton(
+              child: NeopopButton(
                 buttonText: "Log Out",
                 onTap: _signOut,
                 isLoading: _isLoading,

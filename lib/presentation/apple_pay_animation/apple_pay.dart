@@ -33,8 +33,8 @@ class ApplePayScreenState extends State<ApplePayScreen> {
 
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pop(context); 
-        Navigator.pop(context, true); 
+        Navigator.pop(context);
+        Navigator.pop(context, true);
         _navigateToPointsScreen();
       }
     });
@@ -93,10 +93,11 @@ class PaymentSuccessDialog extends StatelessWidget {
             ),
             SizedBox(height: size.height * 0.02),
             Text(
-              "Your order is confirmed and on its way. Get set to savor your chosen delights!",
+              "Your booking is confirmed.",
               style: GoogleFonts.urbanist(
                 fontSize: fontSize * 0.7,
                 color: Colors.white70,
+                letterSpacing: 1.2,
               ),
               textAlign: TextAlign.center,
             ),

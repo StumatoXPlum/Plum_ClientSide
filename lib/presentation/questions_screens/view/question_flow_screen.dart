@@ -4,7 +4,7 @@ import '../../authentication_screens/sign_up_screen/cubit/auth_cubit.dart';
 import 'additional_requirements/additional_requirement.dart';
 import 'budget/budget_screen.dart';
 import 'event_details/view/event_details.dart';
-import 'personal_info/personal_info.dart';
+import 'personal_info/view/personal_info.dart';
 import 'venue_prefs/venue_preference.dart';
 import 'view_ambiance/view_and_ambiance.dart';
 
