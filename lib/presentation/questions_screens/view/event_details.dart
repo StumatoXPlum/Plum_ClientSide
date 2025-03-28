@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/questions_screens/widgets/custom_text_field.dart';
 import 'package:task2/presentation/questions_screens/widgets/shimmer_widget.dart';
 import '../../../core/custom_widgets/custom_button.dart';
 import '../supabase/questions_service.dart';
@@ -213,18 +214,18 @@ class EventDetailsState extends State<EventDetails> {
                             if (_showCustomOccasionField)
                               SizedBox(height: padding * 1.5),
                             if (_showCustomOccasionField)
-                              _buildTextField(
-                                "Custom Occasion",
-                                _customOccasionController,
-                                TextInputType.text,
-                                widget.onCustomOccasionChanged,
+                              CustomTextField(
+                                label: "Custom Occasion",
+                                controller: _customOccasionController,
+                                keyboardType: TextInputType.text,
+                                onChanged: widget.onCustomOccasionChanged,
                               ),
                             SizedBox(height: padding * 1.5),
-                            _buildTextField(
-                              "Number of Guests",
-                              _guestsController,
-                              TextInputType.number,
-                              widget.onGuestsChanged,
+                            CustomTextField(
+                              label: "Number of Guests",
+                              controller: _guestsController,
+                              keyboardType: TextInputType.number,
+                              onChanged: widget.onGuestsChanged,
                             ),
                             SizedBox(height: padding * 1.5),
                             _buildDateField(
@@ -329,35 +330,6 @@ class EventDetailsState extends State<EventDetails> {
           alignment: Alignment.centerLeft,
           icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
           borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller,
-    TextInputType keyboardType,
-    ValueChanged<String> onChanged,
-  ) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      cursorColor: Colors.white,
-      style: GoogleFonts.urbanist(color: Colors.white),
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: GoogleFonts.urbanist(color: Colors.white70),
-        filled: true,
-        fillColor: const Color(0xff161C25),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: const Color(0xff202938)),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF3579DD)),
-          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );

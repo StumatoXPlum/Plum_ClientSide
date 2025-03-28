@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/questions_screens/widgets/custom_text_field.dart';
 import '../../../core/custom_widgets/custom_button.dart';
 import '../widgets/progress_bar.dart';
 
-class PersonalInfo extends StatelessWidget {
+class PersonalInfo extends StatefulWidget {
   final VoidCallback goToNext;
   final ValueChanged<String> onFullNameChanged;
   final ValueChanged<String> onContactNumberChanged;
@@ -16,6 +17,23 @@ class PersonalInfo extends StatelessWidget {
     required this.onContactNumberChanged,
     required this.onEmailChanged,
   });
+
+  @override
+  State<PersonalInfo> createState() => _PersonalInfoState();
+}
+
+class _PersonalInfoState extends State<PersonalInfo> {
+  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController contactNumberController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    fullNameController.dispose();
+    contactNumberController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +55,7 @@ class PersonalInfo extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
         ),
       ),
       body: Padding(
@@ -48,53 +66,33 @@ class PersonalInfo extends StatelessWidget {
             SizedBox(height: size.height * 0.02),
             CustomProgressBar(progress: 0.15),
             SizedBox(height: size.height * 0.04),
-            textFieldWidget('Full Name', context, onFullNameChanged),
+            CustomTextField(
+              label: "Full Name",
+              controller: fullNameController,
+              keyboardType: TextInputType.text,
+              onChanged: widget.onFullNameChanged,
+            ),
             SizedBox(height: size.height * 0.02),
-            textFieldWidget('Contact Number', context, onContactNumberChanged),
+            CustomTextField(
+              label: "Contact Number",
+              controller: contactNumberController,
+              keyboardType: TextInputType.phone,
+              onChanged: widget.onContactNumberChanged,
+            ),
             SizedBox(height: size.height * 0.02),
-            textFieldWidget('Email Address', context, onEmailChanged),
+            CustomTextField(
+              label: "Email Address",
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              onChanged: widget.onEmailChanged,
+            ),
             SizedBox(height: size.height * 0.02),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(padding),
-        child: CustomButton(buttonText: "Next", onTap: goToNext),
-      ),
-    );
-  }
-
-  Widget textFieldWidget(
-    String label,
-    BuildContext context,
-    ValueChanged<String> onChanged,
-  ) {
-    final Size size = MediaQuery.of(context).size;
-    double fontSize = size.width * 0.05;
-    return TextField(
-      style: GoogleFonts.urbanist(
-        color: Colors.white,
-        fontSize: fontSize * 0.8,
-      ),
-      cursorColor: Colors.white,
-      textInputAction: TextInputAction.next,
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        label: Text(label),
-        labelStyle: GoogleFonts.urbanist(
-          color: Colors.white70,
-          fontSize: fontSize * 0.8,
-        ),
-        filled: true,
-        fillColor: const Color(0xff161C25),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: const Color(0xff202938)),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF3579DD)),
-          borderRadius: BorderRadius.circular(10),
-        ),
+        child: CustomButton(buttonText: "Next", onTap: widget.goToNext),
       ),
     );
   }

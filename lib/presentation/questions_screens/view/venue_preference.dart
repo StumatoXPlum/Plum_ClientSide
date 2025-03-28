@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:task2/presentation/questions_screens/widgets/custom_text_field.dart';
 import 'package:task2/presentation/questions_screens/widgets/shimmer_widget.dart';
 import '../../../core/custom_widgets/custom_button.dart';
 import '../supabase/questions_service.dart';
@@ -133,12 +134,12 @@ class VenuePreferencesState extends State<VenuePreferences> {
                             _venueType,
                           ),
                           SizedBox(height: padding * 1.5),
-                          _buildTextField(
-                            "Desired Location or Area",
-                            _locationController,
-                            TextInputType.text,
+                          CustomTextField(
+                            label: "Desired Location or Area",
+                            controller: _locationController,
+                            keyboardType: TextInputType.text,
+                            onChanged: widget.onDesiredLocationChanged,
                           ),
-
                           SizedBox(height: size.height * 0.05),
                         ],
                       ),
@@ -219,36 +220,6 @@ class VenuePreferencesState extends State<VenuePreferences> {
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller,
-    TextInputType keyboardType,
-  ) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      cursorColor: Colors.white,
-      style: GoogleFonts.urbanist(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: GoogleFonts.urbanist(color: Colors.white70),
-        filled: true,
-        fillColor: const Color(0xff161C25),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: const Color(0xff202938)),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF3579DD)),
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      onChanged: (value) {
-        widget.onDesiredLocationChanged(value);
-      },
     );
   }
 }
