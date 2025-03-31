@@ -62,13 +62,17 @@
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
 
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>google</string>
+        <string>googlechrome</string>
+    </array>
 
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>We use your location to provide better services and personalized experiences.</string>
 
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>We need access to your location while using the app for enhanced functionality.</string>
-
 
     <key>CFBundleURLTypes</key>
     <array>
@@ -77,7 +81,7 @@
             <string>Editor</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>com.example.aks</string>
+                <string>com.googleusercontent.apps.615462309629-ac20inr619qukj43a70rmin2pd5ic50d</string>
             </array>
         </dict>
     </array>
