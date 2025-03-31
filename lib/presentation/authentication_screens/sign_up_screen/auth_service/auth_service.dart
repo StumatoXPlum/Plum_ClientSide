@@ -96,7 +96,7 @@ class AuthService {
 
   Future<User?> signInWithApple(BuildContext context) async {
     try {
-      await _supabase.auth.signInWithOAuth(OAuthProvider.apple, redirectTo: "");
+      await _supabase.auth.signInWithOAuth(OAuthProvider.apple, redirectTo: "https://lezqjxjtvjgrvrlwvkko.supabase.co/auth/v1/callback");
 
       final Session? session = _supabase.auth.currentSession;
       final User? user = session?.user;
