@@ -5,7 +5,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/presentation/authentication_screens/sign_up_screen/cubit/auth_cubit.dart';
 import '../../../../core/custom_widgets/bottom_navigation_bar.dart';
-import '../../name_screen/enter_name_screen.dart';
 import '../../phone_number/phone_number.dart';
 
 class AuthService {
@@ -97,10 +96,7 @@ class AuthService {
 
   Future<User?> signInWithApple(BuildContext context) async {
     try {
-      await _supabase.auth.signInWithOAuth(
-        OAuthProvider.apple,
-        redirectTo: "your-app://callback",
-      );
+      await _supabase.auth.signInWithOAuth(OAuthProvider.apple, redirectTo: "");
 
       final Session? session = _supabase.auth.currentSession;
       final User? user = session?.user;
@@ -111,7 +107,7 @@ class AuthService {
       }
       return user;
     } catch (e) {
-      print("Apple Sign-In Error: $e");
+      print("Apple SignIn Error: $e");
       return null;
     }
   }
@@ -130,11 +126,6 @@ class AuthService {
           Navigator.push(
             context,
             CupertinoPageRoute(builder: (context) => PhoneNumber()),
-          );
-        } else if (response['dateofbirth'] == "") {
-          Navigator.push(
-            context,
-            CupertinoPageRoute(builder: (context) => EnterNameScreen()),
           );
         } else {
           Navigator.pushReplacement(
