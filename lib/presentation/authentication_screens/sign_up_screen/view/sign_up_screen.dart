@@ -221,6 +221,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             imageUrl: "assets/sign_up_assets/apple.svg",
             onTap: () async {
               if (isAppleLoading) return;
+
               setState(() {
                 isAppleLoading = true;
               });
@@ -236,7 +237,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 } else {
                   showCustomSnackbar(
                     context,
-                    "Sign-in failed. Please try again.",
+                    "Sign in failed. Please try again.",
                     Colors.red.shade600,
                   );
                 }

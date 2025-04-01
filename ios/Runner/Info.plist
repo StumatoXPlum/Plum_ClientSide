@@ -66,6 +66,7 @@
     <array>
         <string>google</string>
         <string>googlechrome</string>
+        <string>https</string>
     </array>
 
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
@@ -73,6 +74,11 @@
 
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>We need access to your location while using the app for enhanced functionality.</string>
+
+    <key>com.apple.developer.associated-domains</key>
+    <array>
+        <string>applinks:lezqjxjtvjgrvrlwvkko.supabase.co</string>
+    </array>
 
     <key>CFBundleURLTypes</key>
     <array>
@@ -82,6 +88,8 @@
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>com.googleusercontent.apps.615462309629-ac20inr619qukj43a70rmin2pd5ic50d</string>
+                
+                <string>lezqjxjtvjgrvrlwvkko.supabase.co</string>
             </array>
         </dict>
     </array>

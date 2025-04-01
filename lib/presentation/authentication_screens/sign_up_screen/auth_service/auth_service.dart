@@ -96,20 +96,27 @@ class AuthService {
 
   Future<User?> signInWithApple(BuildContext context) async {
     try {
-      await _supabase.auth.signInWithOAuth(OAuthProvider.apple, redirectTo: "https://lezqjxjtvjgrvrlwvkko.supabase.co/auth/v1/callback");
+      final success = await Supabase.instance.client.auth.signInWithOAuth(
+        OAuthProvider.apple,
+        redirectTo: "https://lezqjxjtvjgrvrlwvkko.supabase.co/auth/v1/callback",
+      );
 
-      final Session? session = _supabase.auth.currentSession;
-      final User? user = session?.user;
-
-      if (user != null) {
-        await _storeUserInSupabase(user);
-        _navigateBasedOnUser(context, user);
+      if (!success) {
+        print(" signIn failed.");
+        return null;
       }
-      return user;
+      await for (final event
+          in Supabase.instance.client.auth.onAuthStateChange) {
+        final session = event.session;
+        if (session != null) {
+          return session.user;
+        }
+      }
     } catch (e) {
-      print("Apple SignIn Error: $e");
-      return null;
+      print("apple Sign-In Error: $e");
     }
+
+    return null;
   }
 
   void _navigateBasedOnUser(BuildContext context, User user) async {
