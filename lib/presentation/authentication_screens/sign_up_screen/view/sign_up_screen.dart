@@ -230,10 +230,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 final user = await _authService.signInWithApple(context);
                 if (user != null) {
                   context.read<AuthCubit>().setUserEmail(user.email ?? "");
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BottomNavScreen()),
-                  );
                 } else {
                   showCustomSnackbar(
                     context,
