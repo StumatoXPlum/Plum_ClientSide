@@ -182,11 +182,9 @@ class ChooseCountryScreenState extends State<ChooseCountryScreen> {
           child: CustomButton(
             buttonText: "Continue",
             onTap: () {
-              selectedCountry != null
-                  ? () {
-                    Navigator.pop(context, selectedCountry);
-                  }
-                  : null;
+              if (selectedCountry != null) {
+                Navigator.pop(context, selectedCountry);
+              }
             },
           ),
         ),

@@ -4,11 +4,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:neopop/widgets/buttons/neopop_button/neopop_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/custom_widgets/bottom_navigation_bar.dart';
 import '../../../../core/custom_widgets/custom_snackbar.dart';
 import '../auth_service/auth_service.dart';
 import '../../email/email_verification.dart';
-import '../../phone_number/phone_number.dart';
 import '../cubit/auth_cubit.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -170,34 +168,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     );
                   }
                   return;
-                }
-                final response =
-                    await Supabase.instance.client
-                        .from('users')
-                        .select()
-                        .eq('id', user.id)
-                        .maybeSingle();
-                context.read<AuthCubit>().setUserEmail(user.email ?? "");
-                bool isRegistrationComplete =
-                    response?['registrationComplete'] == true;
-                bool hasPhoneNumber =
-                    response?['phonenumber'] != null &&
-                    response?['phonenumber'].isNotEmpty;
-
-                if (mounted) {
-                  if (isRegistrationComplete && hasPhoneNumber) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BottomNavScreen(),
-                      ),
-                    );
-                  } else if (!hasPhoneNumber) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => PhoneNumber()),
-                    );
-                  }
                 }
               } catch (e) {
                 if (mounted) {

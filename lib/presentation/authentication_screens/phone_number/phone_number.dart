@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,6 +7,8 @@ import 'package:country_picker/country_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task2/core/custom_widgets/neopop_button.dart';
+import 'package:task2/presentation/authentication_screens/phone_number/country_picker.dart';
+import 'package:task2/presentation/authentication_screens/sign_up_screen/view/sign_up_screen.dart';
 import '../../../core/constants.dart';
 import 'phone_verification.dart';
 
@@ -45,14 +48,15 @@ class _PhoneNumberState extends State<PhoneNumber> {
     });
   }
 
-  void _pickCountry() {
-    showCountryPicker(
-      context: context,
-      showPhoneCode: true,
-      onSelect: (Country country) {
-        setState(() => selectedCountry = country);
-      },
+  void _pickCountry() async {
+    final selected = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ChooseCountryScreen()),
     );
+
+    if (selected != null && selected is Country) {
+      setState(() => selectedCountry = selected);
+    }
   }
 
   Future<void> fetchUserName() async {
@@ -120,7 +124,13 @@ class _PhoneNumberState extends State<PhoneNumber> {
         leading: Padding(
           padding: EdgeInsets.only(left: padding * 1.5),
           child: InkWell(
-            onTap: () => Navigator.pop(context),
+            onTap: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                CupertinoPageRoute(builder: (context) => SignUpScreen()),
+                (route) => false,
+              );
+            },
             child: SvgPicture.asset(
               "assets/sign_up_assets/back.svg",
               height: iconSize,
@@ -137,7 +147,7 @@ class _PhoneNumberState extends State<PhoneNumber> {
           children: [
             SizedBox(height: size.height * 0.03),
             Text(
-              "Hi! $userName",
+              "Hi $userName",
               style: GoogleFonts.urbanist(
                 color: Colors.white,
                 fontSize: fontSize * 1.6,

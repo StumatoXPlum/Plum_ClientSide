@@ -24,9 +24,8 @@ class AuthService {
       final name = user.userMetadata?['full_name'] ?? '';
       final avatarUrl = getRandomAvatarUrl(user.id);
 
-      if (email.isEmpty) {
-        return;
-      }
+      if (email.isEmpty) return;
+
       final existingUser =
           await _supabase
               .from('users')
@@ -48,13 +47,39 @@ class AuthService {
           'email': email,
           'name': name,
           'avatarurl': avatarUrl,
-          'phonenumber': "",
-          'dateofbirth': "",
           'bookmark_ids': [],
         });
       }
     } catch (error) {
       print("Supabase User Insert Error: $error");
+    }
+  }
+
+  void _navigateBasedOnUser(BuildContext context, User user) async {
+    try {
+      final response =
+          await _supabase
+              .from('users')
+              .select('phonenumber, dateofbirth')
+              .eq('id', user.id)
+              .maybeSingle();
+
+      if (response != null) {
+        if (response['phonenumber'] == null ||
+            response['phonenumber'].isEmpty) {
+          Navigator.push(
+            context,
+            CupertinoPageRoute(builder: (context) => PhoneNumber()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            CupertinoPageRoute(builder: (context) => BottomNavScreen()),
+          );
+        }
+      }
+    } catch (error) {
+      print("Navigation Error: $error");
     }
   }
 
@@ -122,33 +147,6 @@ class AuthService {
       }
       _showSnackBar(context, "Apple Sign-In Error: $e");
       return null;
-    }
-  }
-
-  void _navigateBasedOnUser(BuildContext context, User user) async {
-    try {
-      final response =
-          await _supabase
-              .from('users')
-              .select('phonenumber, dateofbirth')
-              .eq('id', user.id)
-              .maybeSingle();
-
-      if (response != null) {
-        if (response['phonenumber'] == "") {
-          Navigator.push(
-            context,
-            CupertinoPageRoute(builder: (context) => PhoneNumber()),
-          );
-        } else {
-          Navigator.pushReplacement(
-            context,
-            CupertinoPageRoute(builder: (context) => BottomNavScreen()),
-          );
-        }
-      }
-    } catch (error) {
-      print("Navigation Error: $error");
     }
   }
 
