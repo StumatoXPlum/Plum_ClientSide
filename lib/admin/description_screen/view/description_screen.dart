@@ -1,6 +1,6 @@
-import 'package:aloha_funds/admin/description_screen/cubit/description_cubit.dart';
-import 'package:aloha_funds/admin/view_report/view_report_screen.dart';
-import 'package:aloha_funds/core/custom_widgets/button_widget.dart';
+import '../cubit/description_cubit.dart';
+import '../../view_report/view/view_report_screen.dart';
+import '../../../core/custom_widgets/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';

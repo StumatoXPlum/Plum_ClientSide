@@ -1,3 +1,4 @@
+import 'package:aloha_funds/core/bottom_navigation_bar.dart';
 import 'package:aloha_funds/core/custom_widgets/button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -37,7 +38,13 @@ class SuccessDialogContent extends StatelessWidget {
           SizedBox(height: size.height * 0.03),
           ButtonWidget(
             buttonText: "Close",
-            onTap: () => Navigator.popUntil(context, (route) => route.isFirst),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => BottomNavScreen()),
+              );
+            },
           ),
         ],
       ),

@@ -17,7 +17,7 @@ class DatePickerService {
       backgroundColor: const Color(0xff1F265E),
       builder: (context) {
         return _CustomDatePicker(
-          onDateSelected: (selectedDate) {
+          onDateSelected: (selectedDate) { 
             String formattedDate = DateFormat(
               "MMMM dd, yyyy",
             ).format(selectedDate);
@@ -345,7 +345,7 @@ class CustomDateField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    double fontSize = size.width * 0.05;
+   double fontSize = size.width * 0.045;
     return TextField(
       controller: controller,
       readOnly: true,

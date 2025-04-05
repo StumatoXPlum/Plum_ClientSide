@@ -280,6 +280,8 @@ class CustomTimeField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
+    double fontSize = size.width * 0.045;
     return TextField(
       controller: controller,
       readOnly: true,
@@ -291,12 +293,15 @@ class CustomTimeField extends StatelessWidget {
           ),
       style: GoogleFonts.poppins(
         color: Colors.white,
-        fontSize: 16,
+        fontSize: fontSize,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: GoogleFonts.poppins(color: Colors.white70, fontSize: 14),
+        labelStyle: GoogleFonts.poppins(
+          color: Colors.white70,
+          fontSize: fontSize * 0.9,
+        ),
         filled: true,
         fillColor: Colors.white10,
         suffixIcon: const Icon(Icons.access_time, color: Color(0xff8E97FD)),

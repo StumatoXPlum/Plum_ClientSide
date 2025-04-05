@@ -77,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      SizedBox(height: size.height * 0.01),
                       Text(
                         "Your curated summary of key market insights and trends to empower your financial journey.",
                         style: GoogleFonts.poppins(
@@ -92,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            SizedBox(height: size.height * 0.02),
             Stack(
               alignment: Alignment.center,
               children: [
@@ -184,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisExtent: size.height * 0.22,
                   ),
                   itemBuilder: (context, index) {
-                    final report = reports[index];
+                    final report = reports.reversed.toList()[index];
                     return InkWell(
                       onTap: () {
                         Navigator.push(

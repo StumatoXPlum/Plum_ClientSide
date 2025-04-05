@@ -1,6 +1,6 @@
-import 'package:aloha_funds/admin/authentication/admin_login.dart';
-import 'package:aloha_funds/core/custom_widgets/button_widget.dart';
-import 'package:aloha_funds/presentation/start_screen/start_screen.dart';
+import '../../admin/authentication/admin_login.dart';
+import '../../core/custom_widgets/button_widget.dart';
+import '../start_screen/start_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';

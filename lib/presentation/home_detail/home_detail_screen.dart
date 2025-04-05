@@ -207,6 +207,7 @@ class _HomeDetailScreenState extends State<HomeDetailScreen> {
                 ],
               ),
             ),
+            SizedBox(height: size.height * 0.03),
           ],
         ),
       ),

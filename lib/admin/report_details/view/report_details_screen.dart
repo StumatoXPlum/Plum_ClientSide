@@ -128,10 +128,8 @@ class _ReportDetailsScreenState extends State<ReportDetailsScreen> {
     VoidCallback? onTap,
   ) {
     final cubit = context.read<ReportDetailsCubit>();
-
     final Size size = MediaQuery.of(context).size;
     double fontSize = size.width * 0.045;
-
     bool isDateOrTime = label == "Date" || label == "Time";
 
     return TextFormField(
@@ -139,12 +137,15 @@ class _ReportDetailsScreenState extends State<ReportDetailsScreen> {
       cursorColor: const Color(0xff8E97FD),
       readOnly: isDateOrTime,
       onTap: isDateOrTime ? onTap : null,
-      style: GoogleFonts.poppins(color: Colors.white),
+      style: GoogleFonts.poppins(color: Colors.white, fontSize: fontSize),
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
         label: Text(
           label,
-          style: GoogleFonts.poppins(color: Colors.white70, fontSize: fontSize),
+          style: GoogleFonts.poppins(
+            color: Colors.white70,
+            fontSize: fontSize * 0.9,
+          ),
         ),
         filled: true,
         fillColor: Colors.white10,
